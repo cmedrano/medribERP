@@ -48,6 +48,11 @@ namespace PresupuestoMVC.Data
                 .ForMember(dest => dest.Nota, opt => opt.MapFrom(src => src.Note))
                 .ForMember(dest => dest.Fecha, opt => opt.MapFrom(src => src.Date));
 
+            // Cliente
+            CreateMap<Cliente, ClienteResponseDTO>();
+            CreateMap<CreateClienteViewRequest, Cliente>();
+            CreateMap<UpdateClienteViewRequest, Cliente>();
+
         }
     }
 }

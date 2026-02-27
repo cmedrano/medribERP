@@ -18,6 +18,9 @@ namespace PresupuestoMVC.Data
         public DbSet<Diary> Diary { get; set; }
         public DbSet<Cuenta> Cuentas { get; set; }
         public DbSet<Income> Income { get; set; }
+        public DbSet<Cliente> Clientes { get; set; }
+        public DbSet<Provincia> Provincias { get; set; }
+        public DbSet<LocalidadPostal> localidades_postales { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -28,6 +31,13 @@ namespace PresupuestoMVC.Data
                 .WithMany(r => r.SubRubros)
                 .HasForeignKey(r => r.RubroPadreId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Configuración para LocalidadPostal
+            //modelBuilder.Entity<LocalidadPostal>()
+            //    //.HasOne(l => l.Provincia)
+            //    .WithMany()
+            //    .HasForeignKey(l => l.IdProvincia)
+            //    .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
