@@ -1,0 +1,561 @@
+@using PresupuestoMVC.Models.DTOs
+@model PaginacionRespuestaDto<ClienteResponseDTO>
+
+@{
+    var currentPage = (int)ViewData["CurrentPage"];
+    var searchNombre = (string)ViewData["SearchNombre"];
+    var searchFantasia = (string)ViewData["SearchFantasia"];
+}
+
+<!-- Header -->
+<div style="background-color: #f8f9fa; padding: 30px 0; margin-bottom: 30px;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-5 fw-bold">
+                    <i class="bi bi-shop me-3"></i>
+                    Clientes
+                </h1>
+                <p class="lead mb-0">Gestión comercial y cuentas corrientes.</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <button type="button" class="btn rounded-pill px-4 fw-bold shadow-sm"
+                        onclick="abrirModalCliente(true)"
+                        style="background-color: #6f42c1; color: white;">
+                    + Crear Nuevo Cliente
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Filtros -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body p-4">
+            <form class="row g-3 align-items-end" id="filtrosForm">
+                <div class="col-md-6">
+                    <label class="form-label small fw-bold mb-2" style="color: #6f42c1;">NOMBRE</label>
+                    <input type="text" id="inputNombre" name="searchNombre" class="form-control bg-light border-0 rounded-3 py-2" value="@searchNombre" placeholder="Buscar por nombre...">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label small fw-bold mb-2" style="color: #6f42c1;">NOMBRE FANTASÍA</label>
+                    <input type="text" id="inputNombreFantasia" name="searchFantasia" class="form-control bg-light border-0 rounded-3 py-2" value="@searchFantasia" placeholder="Buscar por fantasía...">
+                </div>
+
+                <div class="col-md-12">
+                    <button type="button" class="btn btn-sm btn-outline-primary rounded-3" onclick="limpiarFiltros()">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Limpiar
+                    </button>
+                    <span id="loadingIndicator" class="ms-2 d-none">
+                        <span class="spinner-border spinner-border-sm me-2" style="color: #6f42c1;"></span>
+                        <small>Buscando...</small>
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Contenedor de la tabla (se reemplaza por AJAX) -->
+    <div id="tablaContainer">
+        @await Html.PartialAsync("_TablaClientesPartial", Model)
+    </div>
+</div>
+
+<!-- Modal Cliente (Crear/Ver/Editar) -->
+<div class="modal fade" id="modalCliente" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 pb-0 ps-4 pt-4 rounded-top-4" style="background-color: #6f42c1; color: white;">
+                <h5 class="modal-title fw-bold" id="modalClienteTitle">
+                    <i class="bi bi-plus-circle me-2"></i>Crear Nuevo Cliente
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formCliente" method="post">
+                <div class="modal-body p-4 bg-white">
+                    <input type="hidden" name="Id" id="clienteId">
+
+                    <div class="row g-4">
+                        <!-- COLUMNA IZQUIERDA -->
+                        <div class="col-md-6">
+                            <!-- Datos Básicos -->
+                            <h6 class="fw-bold text-secondary mb-3" style="color: #6f42c1;">DATOS BÁSICOS</h6>
+                            <div class="row g-3 mb-3">
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-secondary">NOMBRE</label>
+                                    <input type="text" name="Nombre" id="clienteNombre" class="form-control bg-light border-0 rounded-3 py-2" required>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-secondary">NOMBRE FANTASÍA</label>
+                                    <input type="text" name="Fantasia" id="clienteFantasia" class="form-control bg-light border-0 rounded-3 py-2">
+                                </div>
+
+                             <h6 class="fw-bold text-secondary mb-3" style="color: #6f42c1;">CATEGORIZACIÓN</h6>
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-secondary">CATEGORÍA</label>
+                                    <select name="Categoria" id="clienteCategoria" class="form-select bg-light border-0 rounded-3 py-2">
+                                        <option value="">Seleccionar...</option>
+                                        <option value="Mayorista">Mayorista</option>
+                                        <option value="Minorista">Minorista</option>
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-secondary">CONDICIÓN DE VENTA</label>
+                                    <select name="CondicionDeVenta" id="clienteCondicionDeVenta" class="form-select bg-light border-0 rounded-3 py-2">
+                                        <option value="">Seleccionar...</option>
+                                        <option value="Contado">Contado</option>
+                                        <option value="Cuenta Corriente">Cuenta Corriente</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Documentos -->
+                            <h6 class="fw-bold text-secondary mb-3 mt-4" style="color: #6f42c1;">DOCUMENTOS</h6>
+                            <div class="row g-3 mb-3">
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-secondary">DNI</label>
+                                    <input type="text" name="DNI" id="clienteDNI" class="form-control bg-light border-0 rounded-3 py-2">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-secondary">CUIT</label>
+                                    <input type="text" name="CUIT" id="clienteCUIT" class="form-control bg-light border-0 rounded-3 py-2">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- COLUMNA DERECHA -->
+                        <div class="col-md-6">
+                            <!-- Contacto/Ubicación -->
+                            <h6 class="fw-bold text-secondary mb-3" style="color: #6f42c1;">CONTACTO/UBICACIÓN</h6>
+                            <div class="row g-3 mb-3">
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-secondary">TELÉFONO</label>
+                                    <input type="tel" name="Telefono" id="clienteTelefono" class="form-control bg-light border-0 rounded-3 py-2">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-secondary">CELULAR</label>
+                                    <input type="tel" name="Celular" id="clienteCelular" class="form-control bg-light border-0 rounded-3 py-2">
+                                </div>
+                                @* <div class="col-12">
+                                    <label class="form-label small fw-bold text-secondary">EMAIL</label>
+                                    <input type="email" name="Email" id="clienteEmail" class="form-control bg-light border-0 rounded-3 py-2">
+                                </div> *@
+                                <!-- En la sección del modal, dentro de la COLUMNA DERECHA, reemplazá el input de EMAIL con este código: -->
+                                <div class="col-12">
+                                    <label class="form-label small fw-bold text-secondary">EMAIL</label>
+                                    <input type="email" name="Email" id="clienteEmail" class="form-control bg-light border-0 rounded-3 py-2">
+                                    <div id="emailErrorContainer" class="invalid-feedback mt-2 d-none" style="color: #dc3545; font-size: 0.875rem;">
+                                        <i class="bi bi-exclamation-circle me-1"></i><span id="emailErrorMessage"></span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-secondary">DOMICILIO</label>
+                                    <input type="text" name="Domicilio" id="clienteDomicilio" class="form-control bg-light border-0 rounded-3 py-2">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-secondary">CÓDIGO POSTAL</label>
+                                    <input type="text" name="CodigoPostal" id="clienteCodigoPostal" class="form-control bg-light border-0 rounded-3 py-2">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-secondary">LOCALIDAD</label>
+                                    <select name="Localidad" id="clienteLocalidad" class="form-select bg-light border-0 rounded-3 py-2">
+                                        <option value="">Seleccionar localidad...</option>
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-secondary">PROVINCIA</label>
+                                    <input type="text" name="Provincia" id="clienteProvincia" class="form-control bg-light border-0 rounded-3 py-2">
+                                </div>
+                            </div>
+
+                            <!-- Opciones -->
+                            <div class="mt-4">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" name="OperacionesContado" id="clienteOperacionesContado" value="true">
+                                    <label class="form-check-label text-dark" for="clienteOperacionesContado">Operaciones al contado</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="InhabilitadoFacturar" id="clienteInhabilitadoFacturar" value="true">
+                                    <label class="form-check-label text-dark" for="clienteInhabilitadoFacturar">Inhabilitado para facturar</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pe-4 pb-4 bg-white rounded-bottom-4">
+                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn fw-bold rounded-pill px-4" id="btnSubmitForm" style="background-color: #6f42c1; color: white;">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Modal Confirmar Eliminar -->
+<div class="modal fade" id="modalConfirmarEliminar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-body p-5 text-center">
+                <div class="mb-4">
+                    <i class="bi bi-exclamation-circle-fill text-danger" style="font-size: 3rem;"></i>
+                </div>
+                <h5 class="fw-bold mb-2">¿Estás seguro?</h5>
+                <p class="text-muted">Se eliminará a <strong id="clienteEliminarNombre"></strong></p>
+            </div>
+            <div class="modal-footer border-0 bg-light d-flex justify-content-center gap-2">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger rounded-pill px-4" id="btnConfirmarEliminar">Sí, Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    let debounceTimer;
+    let isCreating = true;
+    const DEBOUNCE_DELAY = 300;
+    const MIN_SEARCH_LENGTH = 3;
+
+    // Inicializar event listeners en los inputs
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputNombre = document.getElementById('inputNombre');
+        const inputNombreFantasia = document.getElementById('inputNombreFantasia');
+        const formCliente = document.getElementById('formCliente');
+        const emailInput = document.getElementById('clienteEmail');
+        const codigoPostalInput = document.getElementById('clienteCodigoPostal');
+
+        inputNombre.addEventListener('input', realizarBusqueda);
+        inputNombreFantasia.addEventListener('input', realizarBusqueda);
+
+        // Agregar validación al enviar el formulario
+        formCliente.addEventListener('submit', validarEmailAntesDeSomete);
+
+        // Limpiar errores al escribir en el email
+        emailInput.addEventListener('input', limpiarErrorEmail);
+        
+        // Agregar evento onBlur para cargar localidades y provincia
+        codigoPostalInput.addEventListener('blur', cargarLocalidadesYProvincia);
+    });
+
+    // Función para limpiar errores del email
+       function limpiarErrorEmail() {
+        const emailInput = document.getElementById('clienteEmail');
+        const errorContainer = document.getElementById('emailErrorContainer');
+        const errorMessage = document.getElementById('emailErrorMessage');
+
+        emailInput.classList.remove('is-invalid');
+        errorMessage.textContent = ''; // Vaciamos el texto
+        errorContainer.classList.add('d-none'); // Escondemos el contenedor
+        errorContainer.classList.remove('d-block');
+      }
+
+    // Función para validar email antes de enviar el formulario
+    async function validarEmailAntesDeSomete(event) {
+        const emailInput = document.getElementById('clienteEmail');
+        const email = emailInput.value.trim();
+        const clienteId = document.getElementById('clienteId').value;
+
+        // Si no hay email, dejar que se envíe (es opcional)
+        if (!email) {
+            return true;
+        }
+
+        // Detener el envío del formulario mientras se valida
+        event.preventDefault();
+
+        try {
+            const params = new URLSearchParams();
+            params.append('email', email);
+            if (clienteId) {
+                params.append('clienteId', clienteId);
+            }
+
+            const response = await fetch(`@Url.Action("ValidarEmail", "Clientes")?${params.toString()}`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            const data = await response.json();
+
+            if (!data.valido) {
+                // Mostrar error
+                mostrarErrorEmail(data.mensaje);
+                return false;
+            } else {
+                // Email válido, enviar formulario
+                limpiarErrorEmail();
+                event.target.submit();
+            }
+        } catch (error) {
+            console.error('Error validando email:', error);
+            mostrarErrorEmail('Error al validar el email. Por favor, intente nuevamente.');
+        }
+    }
+
+    // Función para mostrar error de email
+        function mostrarErrorEmail(mensaje) {
+        const emailInput = document.getElementById('clienteEmail');
+        const errorContainer = document.getElementById('emailErrorContainer');
+        const errorMessage = document.getElementById('emailErrorMessage');
+
+        emailInput.classList.add('is-invalid');
+        errorMessage.textContent = mensaje;
+        errorContainer.classList.remove('d-none'); // Mostramos
+        errorContainer.classList.add('d-block');
+    }
+    // Función de debounce
+    function realizarBusqueda() {
+        clearTimeout(debounceTimer);
+
+        const searchNombre = document.getElementById('inputNombre').value.trim();
+        const searchFantasia = document.getElementById('inputNombreFantasia').value.trim();
+
+        // Verificar si al menos uno cumple con el mínimo de caracteres
+        const nombreValido = searchNombre.length >= MIN_SEARCH_LENGTH || searchNombre.length === 0;
+        const fantasiaValida = searchFantasia.length >= MIN_SEARCH_LENGTH || searchFantasia.length === 0;
+
+        if (!nombreValido || !fantasiaValida) {
+            return;
+        }
+
+        debounceTimer = setTimeout(() => {
+            buscarClientes(1, searchNombre, searchFantasia);
+        }, DEBOUNCE_DELAY);
+    }
+
+    // Función para buscar clientes (AJAX)
+    function buscarClientes(page = 1, searchNombre = '', searchFantasia = '') {
+        const loading = document.getElementById('loadingIndicator');
+        loading.classList.remove('d-none');
+
+        const params = new URLSearchParams();
+        if (searchNombre) params.append('searchNombre', searchNombre);
+        if (searchFantasia) params.append('searchFantasia', searchFantasia);
+        params.append('page', page);
+
+        fetch(`@Url.Action("Index", "Clientes")?${params.toString()}`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Error en la respuesta del servidor');
+            return response.text();
+        })
+        .then(html => {
+            document.getElementById('tablaContainer').innerHTML = html;
+            loading.classList.add('d-none');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            loading.classList.add('d-none');
+            alert('Error al buscar clientes');
+        });
+    }
+
+    // Función para cambiar página
+    function cambiarPagina(page) {
+        const searchNombre = document.getElementById('inputNombre').value.trim();
+        const searchFantasia = document.getElementById('inputNombreFantasia').value.trim();
+        buscarClientes(page, searchNombre, searchFantasia);
+    }
+
+    // Función para limpiar filtros
+    function limpiarFiltros() {
+        document.getElementById('inputNombre').value = '';
+        document.getElementById('inputNombreFantasia').value = '';
+        buscarClientes(1, '', '');
+    }
+
+    function abrirModalCliente(crear, id, nombre, telefono, domicilio, localidad, provincia, codigoPostal, email, celular, dni, cuit, fantasia, condicionDeVenta, categoria, operacionesContado, inhabitadoFacturar, soloVer = false) {
+        isCreating = crear;
+        const btnSubmit = document.getElementById('btnSubmitForm');
+
+        if (crear) {
+            // Modo crear
+            document.getElementById('modalClienteTitle').innerHTML = '<i class="bi bi-plus-circle me-2"></i>Crear Nuevo Cliente';
+            document.getElementById('formCliente').action = '@Url.Action("GuardarCliente", "Clientes")';
+            document.getElementById('btnSubmitForm').innerText = 'Registrar Cliente';
+            document.getElementById('formCliente').reset();
+            btnSubmit.style.display = 'block';
+
+            // Habilitar todos los campos
+            document.querySelectorAll('#formCliente input, #formCliente select').forEach(el => {
+                el.disabled = false;
+            });
+
+            // Limpiar errores
+            limpiarErrorEmail();
+        } else {
+            // Modo ver/editar
+            document.getElementById('clienteId').value = id;
+            document.getElementById('clienteNombre').value = nombre;
+            document.getElementById('clienteFantasia').value = fantasia || '';
+            document.getElementById('clienteTelefono').value = telefono || '';
+            document.getElementById('clienteCelular').value = celular || '';
+            document.getElementById('clienteEmail').value = email || '';
+            document.getElementById('clienteDomicilio').value = domicilio || '';
+            document.getElementById('clienteCodigoPostal').value = codigoPostal || '';
+            document.getElementById('clienteProvincia').value = provincia || '';
+            document.getElementById('clienteDNI').value = dni || '';
+            document.getElementById('clienteCUIT').value = cuit || '';
+            document.getElementById('clienteCategoria').value = categoria || '';
+            document.getElementById('clienteCondicionDeVenta').value = condicionDeVenta || '';
+            document.getElementById('clienteOperacionesContado').checked = String(operacionesContado) === 'true';
+            document.getElementById('clienteInhabilitadoFacturar').checked = String(inhabitadoFacturar) === 'true';
+
+            // Cargar localidades si hay código postal
+            if (codigoPostal) {
+                cargarLocalidadesYProvinciaAlEditar(codigoPostal, localidad);
+            } else {
+                document.getElementById('clienteLocalidad').innerHTML = '<option value="">Seleccionar localidad...</option>';
+            }
+
+            if (soloVer) {
+                document.getElementById('modalClienteTitle').innerHTML = '<i class="bi bi-eye me-2"></i>Detalles del Cliente';
+                btnSubmit.style.display = 'none';
+            } else {
+                document.getElementById('modalClienteTitle').innerHTML = '<i class="bi bi-pencil-square me-2"></i>Editar Cliente';
+                document.getElementById('formCliente').action = '@Url.Action("EditarCliente", "Clientes")';
+                document.getElementById('btnSubmitForm').innerText = 'Actualizar';
+                btnSubmit.style.display = 'block';
+            }
+
+            // Aplicar readonly/disabled según soloVer
+            document.querySelectorAll('#formCliente input, #formCliente select').forEach(el => {
+                el.disabled = soloVer;
+            });
+
+            // Limpiar errores
+            limpiarErrorEmail();
+        }
+
+        const modal = new bootstrap.Modal(document.getElementById('modalCliente'));
+        modal.show();
+    }
+
+    // Función auxiliar para cargar localidades al editar
+    async function cargarLocalidadesYProvinciaAlEditar(codigoPostal, localidadActual) {
+        const localidadSelect = document.getElementById('clienteLocalidad');
+        
+        if (!codigoPostal) {
+            localidadSelect.innerHTML = '<option value="">Seleccionar localidad...</option>';
+            return;
+        }
+
+        try {
+            const response = await fetch(`@Url.Action("ObtenerLocalidadPorCodigoPostal", "Clientes")?codigoPostal=${encodeURIComponent(codigoPostal)}`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Llenar el select de localidades
+                localidadSelect.innerHTML = '';
+                data.localidades.forEach((localidad) => {
+                    const option = document.createElement('option');
+                    option.value = localidad;
+                    option.textContent = localidad;
+                    // Seleccionar la localidad actual si existe
+                    if (localidad === localidadActual) {
+                        option.selected = true;
+                    }
+                    localidadSelect.appendChild(option);
+                });
+
+                // Si no se encontró la localidad actual, seleccionar la primera
+                if (!localidadSelect.value && data.localidades.length > 0) {
+                    localidadSelect.value = data.localidades[0];
+                }
+            } else {
+                localidadSelect.innerHTML = '<option value="">Seleccionar localidad...</option>';
+            }
+        } catch (error) {
+            console.error('Error al obtener localidades:', error);
+            localidadSelect.innerHTML = '<option value="">Seleccionar localidad...</option>';
+        }
+    }
+
+    function abrirModalEliminar(id, nombre) {
+        document.getElementById('clienteEliminarNombre').innerText = nombre;
+        document.getElementById('btnConfirmarEliminar').onclick = function() {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '@Url.Action("EliminarCliente", "Clientes")';
+
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'id';
+            input.value = id;
+
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+        };
+    }
+
+    // Función para cargar localidades y provincia cuando sale del campo código postal
+    async function cargarLocalidadesYProvincia() {
+        const codigoPostalInput = document.getElementById('clienteCodigoPostal');
+        const localidadSelect = document.getElementById('clienteLocalidad');
+        const provinciaInput = document.getElementById('clienteProvincia');
+        const codigoPostal = codigoPostalInput.value.trim();
+
+        // Limpiar si el código postal está vacío
+        if (!codigoPostal) {
+            localidadSelect.innerHTML = '<option value="">Seleccionar localidad...</option>';
+            provinciaInput.value = '';
+            return;
+        }
+
+        try {
+            const response = await fetch(`@Url.Action("ObtenerLocalidadPorCodigoPostal", "Clientes")?codigoPostal=${encodeURIComponent(codigoPostal)}`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Llenar el select de localidades
+                localidadSelect.innerHTML = '';
+                data.localidades.forEach((localidad, index) => {
+                    const option = document.createElement('option');
+                    option.value = localidad;
+                    option.textContent = localidad;
+                    if (index === 0) {
+                        option.selected = true; // Seleccionar la primera localidad por defecto
+                    }
+                    localidadSelect.appendChild(option);
+                });
+
+                // Llenar el campo de provincia
+                provinciaInput.value = data.provincia;
+                // provinciaInput.readOnly = true; // Hacerlo de solo lectura
+            } else {
+                // Mostrar error
+                console.warn(data.mensaje);
+                localidadSelect.innerHTML = '<option value="">Seleccionar localidad...</option>';
+                provinciaInput.value = '';
+                provinciaInput.readOnly = false;
+            }
+        } catch (error) {
+            console.error('Error al obtener localidades:', error);
+            localidadSelect.innerHTML = '<option value="">Seleccionar localidad...</option>';
+            provinciaInput.value = '';
+            provinciaInput.readOnly = false;
+        }
+    }
+</script>
