@@ -53,6 +53,10 @@ namespace PresupuestoMVC.Data
             CreateMap<CreateClienteViewRequest, Cliente>();
             CreateMap<UpdateClienteViewRequest, Cliente>();
 
+            // Articulo
+            CreateMap<Articulo, ArticuloResponseDTO>();
+            CreateMap<ArticuloCreateDTO, Articulo>();
+            CreateMap<ArticuloUpdateDTO, Articulo>();
         }
     }
 }
