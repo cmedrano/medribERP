@@ -21,6 +21,7 @@ namespace PresupuestoMVC.Data
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Provincia> Provincias { get; set; }
         public DbSet<LocalidadPostal> localidades_postales { get; set; }
+        public DbSet<Articulo> Articulos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

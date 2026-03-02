@@ -59,6 +59,11 @@
                                 <i class="fs-4 bi-shop"></i> <span class="ms-1 d-none d-sm-inline">Clientes</span>
                             </a>
                         </li>
+                        <li>
+                            <a asp-controller="Articulos" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Articulos")">
+                                <i class="fs-4 bi-shop"></i> <span class="ms-1 d-none d-sm-inline">Articulos</span>
+                            </a>
+                        </li>
 
                     </ul>
                     <hr>

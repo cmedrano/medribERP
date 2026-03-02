@@ -41,6 +41,8 @@ namespace PresupuestoMVC
             builder.Services.AddScoped<ILocalidadPostalService, LocalidadPostalService>();
             builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
             builder.Services.AddScoped<ILocalidadPostalRepository, LocalidadPostalRepository>();
+            builder.Services.AddScoped<IArticuloService, ArticuloService>();
+            builder.Services.AddScoped<IArticuloRepository, ArticuloRepository>();
 
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
