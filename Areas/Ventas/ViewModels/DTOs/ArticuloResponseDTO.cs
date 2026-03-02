@@ -1,4 +1,4 @@
-namespace PresupuestoMVC.Models.DTOs
+﻿namespace PresupuestoMVC.Areas.Ventas.ViewModels.DTOs
 {
     public class ArticuloResponseDTO
     {

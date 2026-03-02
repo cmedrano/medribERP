@@ -1,9 +1,10 @@
-using Microsoft.AspNetCore.Authorization;
+ï»¿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PresupuestoMVC.Areas.Ventas.ViewModels;
 using PresupuestoMVC.Models.ViewModels;
 using PresupuestoMVC.Services.Interfaces;
 
-namespace PresupuestoMVC.Controllers
+namespace PresupuestoMVC.Areas.Ventas.Controllers
 {
     [Authorize]
     public class ArticulosController : Controller
@@ -30,7 +31,7 @@ namespace PresupuestoMVC.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Error"] = "Error al cargar los artículos: " + ex.Message;
+                TempData["Error"] = "Error al cargar los artÃ­culos: " + ex.Message;
                 return RedirectToAction("Error", "Home");
             }
         }
@@ -46,18 +47,18 @@ namespace PresupuestoMVC.Controllers
             try
             {
                 await _articuloService.CrearAsync(model);
-                TempData["Success"] = "Artículo creado exitosamente";
+                TempData["Success"] = "ArtÃ­culo creado exitosamente";
                 return RedirectToAction("Index");
             }
             //catch (Exception ex)
             //{
-            //    TempData["Error"] = "Error al crear el artículo: " + ex.Message;
+            //    TempData["Error"] = "Error al crear el artÃ­culo: " + ex.Message;
             //    return View(model);
             //}
             catch (Exception ex)
             {
                 // 1. Logueamos el error real para nosotros
-                _logger.LogError(ex, "Error al intentar crear el artículo: {Nombre}", model.Nombre);
+                _logger.LogError(ex, "Error al intentar crear el artÃ­culo: {Nombre}", model.Nombre);
 
                 // 2. Mensaje amigable para el usuario
                 TempData["Error"] = "No se pudo procesar la solicitud. Si el problema persiste, contacte a soporte.";
@@ -77,12 +78,12 @@ namespace PresupuestoMVC.Controllers
             try
             {
                 await _articuloService.ActualizarAsync(model);
-                TempData["Success"] = "Artículo actualizado exitosamente";
+                TempData["Success"] = "ArtÃ­culo actualizado exitosamente";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                TempData["Error"] = "Error al actualizar el artículo: " + ex.Message;
+                TempData["Error"] = "Error al actualizar el artÃ­culo: " + ex.Message;
                 return View(model);
             }
         }
@@ -93,11 +94,11 @@ namespace PresupuestoMVC.Controllers
             try
             {
                 await _articuloService.EliminarAsync(id);
-                TempData["Success"] = "Artículo eliminado exitosamente";
+                TempData["Success"] = "ArtÃ­culo eliminado exitosamente";
             }
             catch (Exception ex)
             {
-                TempData["Error"] = "Error al eliminar el artículo: " + ex.Message;
+                TempData["Error"] = "Error al eliminar el artÃ­culo: " + ex.Message;
             }
 
             return RedirectToAction("Index");

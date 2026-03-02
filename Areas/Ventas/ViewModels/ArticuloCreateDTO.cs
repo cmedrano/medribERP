@@ -1,11 +1,11 @@
-using System.ComponentModel.DataAnnotations;
+ï»¿using System.ComponentModel.DataAnnotations;
 
-namespace PresupuestoMVC.Models.ViewModels
+namespace PresupuestoMVC.Areas.Ventas.ViewModels
 {
     public class ArticuloCreateDTO
     {
-        [Required(ErrorMessage = "El código es obligatorio")]
-        [StringLength(100, ErrorMessage = "El código no puede exceder 100 caracteres")]
+        [Required(ErrorMessage = "El cÃ³digo es obligatorio")]
+        [StringLength(100, ErrorMessage = "El cÃ³digo no puede exceder 100 caracteres")]
         public string Codigo { get; set; }
 
         [Required(ErrorMessage = "El nombre es obligatorio")]

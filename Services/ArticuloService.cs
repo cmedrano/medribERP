@@ -1,7 +1,7 @@
 using AutoMapper;
-using PresupuestoMVC.Models.DTOs;
+using PresupuestoMVC.Areas.Ventas.ViewModels;
+using PresupuestoMVC.Areas.Ventas.ViewModels.DTOs;
 using PresupuestoMVC.Models.Entities;
-using PresupuestoMVC.Models.ViewModels;
 using PresupuestoMVC.Repository.Interfaces;
 using PresupuestoMVC.Services.Interfaces;
 
