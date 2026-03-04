@@ -124,5 +124,10 @@ namespace PresupuestoMVC.Repository
                 SaldoActual = accountOrigin.SaldoActual
             };
         }
+        public async Task<int> GetAccountsCountAsync()
+        {
+            var totalAccounts = await _context.Cuentas.CountAsync();
+            return totalAccounts;
+        }
     }
 }

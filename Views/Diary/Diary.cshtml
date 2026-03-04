@@ -288,9 +288,9 @@
                         <select id="crearRubroId" name="RubroTypeId"
                                 class="form-select" required>
                             <option value="">Seleccionar rubro...</option>
-                            @if (ViewBag.Rubros != null)
+                            @if (rubros != null)
                             {
-                                foreach (var rubro in ViewBag.Rubros)
+                                foreach (var rubro in rubros)
                                 {
                                     <option value="@rubro.Id">@rubro.nombreRubro</option>
                                 }

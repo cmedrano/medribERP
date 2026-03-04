@@ -22,7 +22,7 @@ namespace PresupuestoMVC.Repository
             var categories = await _context.RubroType
                 .Where(r => r.RubroPadreId == null)
                 .Include(r => r.SubRubros)
-                .OrderBy(r => r.nombreRubro)
+                .OrderBy(r => r.nombreRubro.ToLower())
                 .ToListAsync();
 
             var categoriesDto = categories.Select(x => new CategoryResponseDto()
@@ -56,6 +56,12 @@ namespace PresupuestoMVC.Repository
                 Id = createdCategory.Id,
                 nombreRubro = createdCategory.nombreRubro
             };
+        }
+
+        public async Task<int> GetCategoriesCountAsync()
+        {
+            var totalCategories = await _context.RubroType.CountAsync();
+            return totalCategories;
         }
     }
 }

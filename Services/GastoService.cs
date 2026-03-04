@@ -247,6 +247,12 @@ namespace PresupuestoMVC.Services
             return _mapper.Map<List<CuentaResponseDto>>(cuentas);
         }
 
+        public async Task<int> GetGastosCountAsync()
+        {
+            var totalGastos = await _context.Gastos.CountAsync();
+            return totalGastos;
+        }
+
         public async Task<PaginacionRespuestaDto<GastoResponseDto>> GetFiltradosAsync(FiltroGastoViewRequest filtro, int pagina, int tamañoPagina)
         {
             try

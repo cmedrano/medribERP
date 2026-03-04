@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.EntityFrameworkCore;
 using PresupuestoMVC.Helpers;
 using PresupuestoMVC.Models.DTOs;
 using PresupuestoMVC.Models.Entities;
@@ -42,5 +43,10 @@ namespace PresupuestoMVC.Services
             return await _userRepository.ResetPassword(email, userId, randomPassword);
         }
 
+        public async Task<int> GetUsersCountAsync()
+        {
+            var totalUsers = await _userRepository.GetUsersCountAsync();
+            return totalUsers;
+        }
     }
 }

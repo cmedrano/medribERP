@@ -13,6 +13,7 @@ namespace PresupuestoMVC.Services
         Task<bool> DeleteGastoAsync(int gastoId);
         Task<IEnumerable<CuentaResponseDto>> GetAllCuentasAsync();
         Task<PaginacionRespuestaDto<GastoResponseDto>> GetFiltradosAsync(FiltroGastoViewRequest filtro, int pagina, int tamañoPagina);
+        Task<int> GetGastosCountAsync();
 
     }
 }

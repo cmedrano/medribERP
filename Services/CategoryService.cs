@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using PresupuestoMVC.Models.DTOs;
 using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Models.ViewModels;
@@ -33,6 +34,11 @@ namespace PresupuestoMVC.Services
                 CompanyId = CreateDto.CompanyId
             };
             return await _categoryRepository.CreateAsync(CategoryDto);
+        }
+        public async Task<int> GetCategoriesCountAsync()
+        {
+            var totalCategories = await _categoryRepository.GetCategoriesCountAsync();
+            return totalCategories;
         }
     }
 }
