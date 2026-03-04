@@ -15,57 +15,83 @@
             <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 border-end border-bottom border-3 border-dark">
                 <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white h-100 sidebar">
                     <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                        <span class="fs-3 d-none d-sm-inline sidebar-type-color">Dashboard Presupuesto</span>
+                        <span class="fs-3 d-none d-sm-inline sidebar-type-color fw-bold border-bottom pb-1">Presupuesto</span>
                     </a>
-                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
-                        <li class="nav-item">
-                            <a asp-controller="Home" asp-action="Index" class="nav-link align-middle px-0 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home")">
-                                <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Home</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a asp-controller="Budget" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Budget")">
-                                 <i class="bi bi-wallet2 fs-4"></i>
-                                <span class="ms-1 d-none d-sm-inline">Presupuesto</span>
-                            </a>
-                        </li>
-@*                         <li>
-                            <a asp-controller="Gasto" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Gasto")">
-                                <i class="fs-4 bi-cash-stack"></i> <span class="ms-1 d-none d-sm-inline">Gastos</span>
-                            </a>
-                        </li> *@
-                        <li>
-                            <a asp-controller="Diary" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Diary")">
-                                <i class="fs-4 bi-cash-stack"></i> <span class="ms-1 d-none d-sm-inline">Diario</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a asp-controller="Category" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Category")">
-                                <i class="fs-4 bi-file-earmark-text"></i> <span class="ms-1 d-none d-sm-inline">Rubros</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a asp-controller="Account" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Account")">
-                                <i class="fs-4 bi-building"></i> <span class="ms-1 d-none d-sm-inline">Cuentas</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a asp-controller="User" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "User")">
-                                <i class="fs-4 bi-person"></i> <span class="ms-1 d-none d-sm-inline">Usuarios</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a asp-controller="Clientes" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Clientes")">
-                                <i class="fs-4 bi-shop"></i> <span class="ms-1 d-none d-sm-inline">Clientes</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a asp-controller="Articulos" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Articulos")">
-                                <i class="fs-4 bi-shop"></i> <span class="ms-1 d-none d-sm-inline">Articulos</span>
-                            </a>
-                        </li>
+                    <!-- Dashboard -->
+                    <li class="nav-item">
+                        <a asp-controller="Home" asp-action="Index" class="nav-link align-middle px-0 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home")">
+                            <i class="fs-4 bi-house text-muted"></i> <span class="ms-1 d-none text-muted d-sm-inline">Dashboard</span>
+                        </a>
+                    </li>
 
-                    </ul>
+                    @{
+                        var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+                        var isBudgetSection =
+                        currentController == "Budget" ||
+                        currentController == "Diary" ||
+                        currentController == "Category" ||
+                        currentController == "Account";
+                    }
+                    <!-- Presupuesto -->
+                    <li>
+                        <a class="nav-link px-0 align-middle d-flex justify-content-between align-items-center"
+                           data-bs-toggle="collapse"
+                           href="#budgetSubmenu"
+                           role="button"
+                           aria-expanded="false"
+                           aria-controls="budgetSubmenu">
+
+                            <span>
+                                <i class="bi bi-wallet2 fs-4 text-muted"></i>
+                                <span class="ms-1 d-none d-sm-inline text-muted">Presupuesto</span>
+                            </span>
+
+                            <i class="bi bi-chevron-down small"></i>
+                        </a>
+
+                        <div class="collapse @(isBudgetSection ? "show" : "")"
+                             id="budgetSubmenu">
+
+                            <ul class="nav flex-column ms-4">
+
+                                <li>
+                                    <a asp-controller="Budget" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Budget")">
+                                        @* <i class="bi bi-list-ul me-1"></i> *@
+                                        <span class="ms-1 d-none d-sm-inline text-muted">Presupuestos</span>
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a asp-controller="Diary" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Diary")">
+                                        @* <i class="fs-4 bi-cash-stack"></i>  *@
+                                        <span class="ms-1 d-none d-sm-inline text-muted">Diario</span>
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a asp-controller="Category" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Category")">
+                                        @* <i class="fs-4 bi-file-earmark-text"></i> *@
+                                        <span class="ms-1 d-none d-sm-inline text-muted">Rubros</span>
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a asp-controller="Account" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Account")">
+                                        @* <i class="fs-4 bi-building"></i>  *@
+                                        <span class="ms-1 d-none d-sm-inline text-muted">Cuentas</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <!-- Usuarios -->
+                    <li>
+                        <a asp-controller="User" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "User")">
+                            <i class="fs-4 bi-person text-muted"></i>
+                            <span class="ms-1 d-none d-sm-inline text-muted">Usuarios</span>
+                        </a>
+                    </li>
+
                     <hr>
                     <div class="dropdown pb-4 mt-auto">
                         <a href="#" class="d-flex align-items-center text-white text-decoration-none" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">

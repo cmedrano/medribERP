@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using PresupuestoMVC.Models.DTOs;
 using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Models.ViewModels;
@@ -38,6 +39,11 @@ namespace PresupuestoMVC.Services
         public async Task<CuentaResponseDto> CreateTransferAsync(CreateTransferViewRequest transfer)
         {
             return await _accountRepository.CreateTransferAsync(transfer);
+        }
+        public async Task<int> GetAccountsCountAsync()
+        {
+            var totalAccounts = await _accountRepository.GetAccountsCountAsync();
+            return totalAccounts;
         }
     }
 }

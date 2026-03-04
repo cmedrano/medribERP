@@ -228,5 +228,10 @@ namespace PresupuestoMVC.Services
 
             return categories;
         }
+        public async Task<int> GetBudgetCountAsync()
+        {
+            var totalBudget = await _context.Budget.CountAsync();
+            return totalBudget;
+        }
     }
 }

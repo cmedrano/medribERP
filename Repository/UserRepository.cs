@@ -111,6 +111,13 @@ namespace PresupuestoMVC.Repository
                 await transaction.RollbackAsync();
                 throw;
             }
-}
+        }
+
+        public async Task<int> GetUsersCountAsync()
+        {
+            var totalUsers = await _context.Users.CountAsync();
+            return totalUsers;
+        }
+
     }
 }
