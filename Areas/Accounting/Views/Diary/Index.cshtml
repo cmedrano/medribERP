@@ -6,6 +6,7 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    Layout = "~/Views/Shared/_Layout.cshtml";
     var rubros = ViewBag.Rubros as IEnumerable<CategoryResponseDto>;
     var cuentas = ViewBag.Cuentas as IEnumerable<CuentaResponseDto>;
     var paginacion = ViewBag.Paginacion as PaginacionRespuestaDto<GastoResponseDto>;
@@ -348,7 +349,7 @@
 <div class="modal fade" id="modalEditarGastoId" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form asp-controller="Gasto" asp-action="Edit" method="post">
+            <form action="@Url.Action("Edit","Gasto")" method="post">
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title">
                         <i class="bi bi-pencil-square me-2"></i>Editar Gasto
@@ -444,7 +445,7 @@
             </div>
 
             <!-- Formulario -->
-            <form asp-controller="Gasto" asp-action="DeleteGasto" method="post">
+            <form action="@Url.Action("DeleteGasto","Gasto")" method="post">
                 <div class="modal-body">
                     <!-- Campo oculto para el ID -->
                     <input type="hidden" id="deleteGastoId" name="gastoId" />
@@ -598,7 +599,7 @@
 
         const formData = new FormData(form);
         console.log(formData.get("RubroTypeId"));
-        fetch('/Gasto/Create', {
+        fetch('@Url.Action("Create", "Gasto", new { area = "Accounting" })', {
             method: 'POST',
             body: formData,
             headers: {
@@ -654,7 +655,7 @@
 
         if (!date) return;
 
-        fetch(`/Budget/GetCategoriesbyDate?date=${date}`)
+        fetch('@Url.Action("GetCategoriesbyDate", "Budget", new { area = "Accounting" })?date=' + date)
             .then(res => res.json())
             .then(data => {
 

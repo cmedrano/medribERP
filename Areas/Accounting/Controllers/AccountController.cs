@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace PresupuestoMVC.Controllers
 {
+    [Area("Accounting")]
     public class AccountController : Controller
     {
         private readonly IAccountService _AccountService;
@@ -23,7 +24,7 @@ namespace PresupuestoMVC.Controllers
                 var accounts = await _AccountService.GetAllAccountAsync();
                 ViewBag.Accounts = accounts;
 
-                return View("Views/Account/Account.cshtml");
+                return View();
             }
             catch (Exception ex)
             {
