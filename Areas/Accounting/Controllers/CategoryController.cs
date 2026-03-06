@@ -5,6 +5,7 @@ using PresupuestoMVC.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 namespace PresupuestoMVC.Controllers
 {
+    [Area("Accounting")]
     public class CategoryController : Controller
     {
         private readonly ICategoryService _categoryService;
@@ -19,7 +20,7 @@ namespace PresupuestoMVC.Controllers
                 var categories = await _categoryService.GetAllCategoriesAsync();
                 ViewBag.Categories = categories;
 
-                return View("Views/Category/Category.cshtml");
+                return View();
             }
             catch (Exception ex)
             {

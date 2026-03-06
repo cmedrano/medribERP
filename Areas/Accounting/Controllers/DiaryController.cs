@@ -6,6 +6,7 @@ using PresupuestoMVC.Services;
 
 namespace PresupuestoMVC.Controllers
 {
+    [Area("Accounting")]
     public class DiaryController : Controller
     {
         private readonly IDiaryService _diaryService;
@@ -54,7 +55,7 @@ namespace PresupuestoMVC.Controllers
                 ViewBag.PaginaActual = pagina;
                 ViewBag.TamañoPagina = tamañoPagina;
 
-                return View("Views/Diary/Diary.cshtml");
+                return View();
             }
             catch (Exception ex)
             {

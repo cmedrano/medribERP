@@ -8,6 +8,7 @@ using System.Security.Claims;
 
 namespace PresupuestoMVC.Controllers
 {
+    [Area("Accounting")]
     public class GastoController : Controller
     {
         private readonly IGastoService _gastoService;
@@ -51,7 +52,7 @@ namespace PresupuestoMVC.Controllers
                 ViewBag.PaginaActual = pagina;
                 ViewBag.TamañoPagina = tamañoPagina;
 
-                return View("Views/Diary/Diary.cshtml");
+                return View();
             }
             catch (Exception ex)
             {
@@ -69,18 +70,18 @@ namespace PresupuestoMVC.Controllers
                 if (!ModelState.IsValid)
                 {
                     TempData["Error"] = "Datos inválidos";
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index", "Diary");
                 }
 
                 await _gastoService.UpdateAsync(updateDto);
 
                 TempData["Success"] = "Gasto actualizado correctamente";
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Diary");
             }
             catch (Exception ex)
             {
                 TempData["Error"] = "Error: " + ex.Message;
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Diary");
             }
         }
 
@@ -111,7 +112,7 @@ namespace PresupuestoMVC.Controllers
                 }
                 return Json(new
                 {
-                    redirectUrl = Url.Action("Index", "Diary")
+                    redirectUrl = Url.Action("Index", "Diary", new { area = "Accounting" })
                 });
 
             }
@@ -132,18 +133,18 @@ namespace PresupuestoMVC.Controllers
                 if (!ModelState.IsValid)
                 {
                     TempData["Error"] = "Datos inválidos";
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index", "Diary");
                 }
 
                 await _gastoService.DeleteGastoAsync(gastoId);
 
                 TempData["Success"] = "Gasto eliminado correctamente";
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Diary");
             }
             catch (Exception ex)
             {
                 TempData["Error"] = "Error: " + ex.Message;
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Diary");
             }
         }
 

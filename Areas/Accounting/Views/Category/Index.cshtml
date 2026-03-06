@@ -5,6 +5,7 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    Layout = "~/Views/Shared/_Layout.cshtml";
     var categories = ViewBag.Categories as IEnumerable<CategoryResponseDto>;
 }
 <!-- Header -->
@@ -248,7 +249,7 @@
             </div>
 
             <!-- Formulario -->
-            <form asp-controller="Category" asp-action="CreateCategory" method="post">
+            <form action="@Url.Action("CreateCategory")" method="post">
                 <div class="modal-body">
 
                     <!-- Rubro -->
@@ -293,7 +294,7 @@
             </div>
 
             <!-- Formulario -->
-            <form asp-controller="Category" asp-action="CreateCategory" method="post">
+            <form action="@Url.Action("CreateCategory")" method="post">
                 <div class="modal-body">
 
                     <!-- Rubro -->
@@ -392,7 +393,7 @@
             </div>
 
             <!-- Formulario -->
-            <form asp-controller="Category" asp-action="DeleteCategory" method="delete">
+            <form action="@Url.Action("DeleteCategory")" method="delete">
                 <div class="modal-body">
                     <!-- Campo oculto para el ID -->
                     <input type="hidden" id="deleteCategoryId" name="Id" />

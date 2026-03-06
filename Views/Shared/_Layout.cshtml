@@ -19,7 +19,7 @@
                     </a>
                     <!-- Dashboard -->
                     <li class="nav-item">
-                        <a asp-controller="Home" asp-action="Index" class="nav-link align-middle px-0 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home")">
+                        <a asp-area="" asp-controller="Home" asp-action="Index" class="nav-link align-middle px-0 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home")">
                             <i class="fs-4 bi-house text-muted"></i> <span class="ms-1 d-none text-muted d-sm-inline">Dashboard</span>
                         </a>
                     </li>
@@ -55,28 +55,28 @@
                             <ul class="nav flex-column ms-4">
 
                                 <li>
-                                    <a asp-controller="Budget" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Budget")">
+                                    <a asp-area="Accounting" asp-controller="Budget" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Budget")">
                                         @* <i class="bi bi-list-ul me-1"></i> *@
                                         <span class="ms-1 d-none d-sm-inline text-muted">Presupuestos</span>
                                     </a>
                                 </li>
 
                                 <li>
-                                    <a asp-controller="Diary" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Diary")">
+                                    <a asp-area="Accounting" asp-controller="Diary" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Diary")">
                                         @* <i class="fs-4 bi-cash-stack"></i>  *@
                                         <span class="ms-1 d-none d-sm-inline text-muted">Diario</span>
                                     </a>
                                 </li>
 
                                 <li>
-                                    <a asp-controller="Category" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Category")">
+                                    <a asp-area="Accounting" asp-controller="Category" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Category")">
                                         @* <i class="fs-4 bi-file-earmark-text"></i> *@
                                         <span class="ms-1 d-none d-sm-inline text-muted">Rubros</span>
                                     </a>
                                 </li>
 
                                 <li>
-                                    <a asp-controller="Account" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Account")">
+                                    <a asp-area="Accounting" asp-controller="Account" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Account")">
                                         @* <i class="fs-4 bi-building"></i>  *@
                                         <span class="ms-1 d-none d-sm-inline text-muted">Cuentas</span>
                                     </a>
@@ -86,7 +86,7 @@
                     </li>
                     <!-- Usuarios -->
                     <li>
-                        <a asp-controller="User" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "User")">
+                        <a asp-area="" asp-controller="User" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "User")">
                             <i class="fs-4 bi-person text-muted"></i>
                             <span class="ms-1 d-none d-sm-inline text-muted">Usuarios</span>
                         </a>

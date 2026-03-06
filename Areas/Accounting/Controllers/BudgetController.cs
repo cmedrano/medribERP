@@ -8,8 +8,9 @@ using PresupuestoMVC.Services.Interfaces;
 using System.Globalization;
 using System.Security.Claims;
 
-namespace PresupuestoMVC.Controllers
+namespace PresupuestoMVC.Areas.Accounting.Controllers
 {
+    [Area("Accounting")]
     public class BudgetController : Controller
     {
         private readonly IBudgetService _budgetService;
@@ -88,7 +89,7 @@ namespace PresupuestoMVC.Controllers
                 ViewBag.PaginaActual = pagina;
                 ViewBag.TamañoPagina = tamañoPagina;
 
-                return View("Views/Budget/Budget.cshtml");
+                return View();
             }
             catch (Exception ex)
             {
