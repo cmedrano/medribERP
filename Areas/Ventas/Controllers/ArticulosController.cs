@@ -7,6 +7,7 @@ using PresupuestoMVC.Services.Interfaces;
 namespace PresupuestoMVC.Areas.Ventas.Controllers
 {
     [Authorize]
+    [Area("Ventas")]
     public class ArticulosController : Controller
     {
         private readonly IArticuloService _articuloService;
@@ -50,11 +51,6 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
                 TempData["Success"] = "Artículo creado exitosamente";
                 return RedirectToAction("Index");
             }
-            //catch (Exception ex)
-            //{
-            //    TempData["Error"] = "Error al crear el artículo: " + ex.Message;
-            //    return View(model);
-            //}
             catch (Exception ex)
             {
                 // 1. Logueamos el error real para nosotros

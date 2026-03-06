@@ -1,0 +1,163 @@
+﻿@using PresupuestoMVC.Areas.Ventas.ViewModels.DTOs
+@model IEnumerable<ArticuloResponseDTO>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div style="background-color: #f8f9fa; padding: 30px 0; margin-bottom: 30px;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-5 fw-bold">
+                    <i class="bi bi-box-seam me-3"></i>
+                    Artículos
+                </h1>
+                <p class="lead mb-0">Gestión de artículos y productos.</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <button type="button" class="btn rounded-pill px-4 fw-bold shadow-sm"
+                        onclick="abrirModalArticulo(true)"
+                        style="background-color: #fd7e14; color: white;">
+                    + Crear Nuevo Articulo
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div id="tablaContainer">
+        @await Html.PartialAsync("_TablaArticulosPartial", Model)
+    </div>
+</div>
+
+<!-- Modal Articulo (Crear/Ver/Editar) -->
+<div class="modal fade" id="modalArticulo" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 pb-0 ps-4 pt-4 rounded-top-4" style="background-color: #fd7e14; color: white;">
+                <h5 class="modal-title fw-bold" id="modalArticuloTitle">
+                    <i class="bi bi-plus-circle me-2"></i>Crear Nuevo Articulo
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formArticulo" method="post">
+                <div class="modal-body p-4 bg-white">
+                    <input type="hidden" name="Id" id="articuloId">
+
+                    <div class="row g-4">
+                        <!-- COLUMNA IZQUIERDA -->
+                        <div class="col-md-6">
+                            <!-- Datos Básicos -->
+                            <h6 class="fw-bold text-secondary mb-3" style="color: #fd7e14;">DATOS BÁSICOS</h6>
+                            <div class="row g-3 mb-3">
+
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-secondary">CODIGO</label>
+                                    <input type="text" name="Codigo" id="articuloCodigo" class="form-control bg-light border-0 rounded-3 py-2" required>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-secondary">NOMBRE</label>
+                                    <input type="text" name="Nombre" id="articuloNombre" class="form-control bg-light border-0 rounded-3 py-2" required>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold text-secondary">UNIDAD DE MEDIDA</label>
+                                    <input type="text" name="UnidadMedida" id="articuloUnidadMedida" class="form-control bg-light border-0 rounded-3 py-2" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pe-4 pb-4 bg-white rounded-bottom-4">
+                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn fw-bold rounded-pill px-4" id="btnSubmitForm" style="background-color: #fd7e14; color: white;">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Eliminación -->
+<div class="modal fade" id="modalConfirmarEliminar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-body p-5 text-center">
+                <div class="mb-4">
+                    <i class="bi bi-exclamation-circle-fill text-danger" style="font-size: 3rem;"></i>
+                </div>
+                <h5 class="fw-bold mb-2">¿Estás seguro?</h5>
+                <p class="text-muted">Se eliminará a <strong id="articuloEliminarNombre"></strong></p>
+            </div>
+            <div class="modal-footer border-0 bg-light d-flex justify-content-center gap-2">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger rounded-pill px-4" id="btnConfirmarEliminar">Sí, Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function abrirModalArticulo(crear, id, codigo, nombre, unidadMedida, soloVer = false) {
+        isCreating = crear;
+        const btnSubmit = document.getElementById('btnSubmitForm');
+
+        if (crear) {
+            // Modo crear
+            document.getElementById('modalArticuloTitle').innerHTML = '<i class="bi bi-plus-circle me-2"></i>Crear Nuevo Articulo';
+            document.getElementById('formArticulo').action = '@Url.Action("GuardarArticulo", "Articulos")';
+            document.getElementById('btnSubmitForm').innerText = 'Registrar Articulo';
+            document.getElementById('formArticulo').reset();
+            btnSubmit.style.display = 'block';
+
+            // Habilitar todos los campos
+            document.querySelectorAll('#formArticulo input, #formArticulo select').forEach(el => {
+                el.disabled = false;
+            });
+        } else {
+            // Modo ver/editar
+            document.getElementById('articuloId').value = id;
+            document.getElementById('articuloNombre').value = nombre;
+            document.getElementById('articuloCodigo').value = codigo || '';
+            document.getElementById('articuloUnidadMedida').value = unidadMedida || '';
+
+
+
+            if (soloVer) {
+                document.getElementById('modalArticuloTitle').innerHTML = '<i class="bi bi-eye me-2"></i>Detalles del Articulo';
+                btnSubmit.style.display = 'none';
+            } else {
+                document.getElementById('modalArticuloTitle').innerHTML = '<i class="bi bi-pencil-square me-2"></i>Editar Articulo';
+                document.getElementById('formArticulo').action = '@Url.Action("EditarArticulo", "Articulos")';
+                document.getElementById('btnSubmitForm').innerText = 'Actualizar';
+                btnSubmit.style.display = 'block';
+            }
+
+            // Aplicar readonly/disabled según soloVer
+            document.querySelectorAll('#formArticulo input, #formArticulo select').forEach(el => {
+                el.disabled = soloVer;
+            });
+        }
+
+        const modal = new bootstrap.Modal(document.getElementById('modalArticulo'));
+        modal.show();
+    }
+
+    function abrirModalEliminar(id, nombre) {
+        document.getElementById('articuloEliminarNombre').innerText = nombre;
+        document.getElementById('btnConfirmarEliminar').onclick = function() {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '@Url.Action("EliminarArticulo", "Articulos")';
+
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'id';
+            input.value = id;
+
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+        };
+    }
+</script>

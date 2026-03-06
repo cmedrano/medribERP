@@ -37,7 +37,6 @@ namespace PresupuestoMVC.Services
 
         public async Task<ArticuloResponseDTO> CrearAsync(ArticuloCreateDTO createDto)
         {
-            throw new Exception("Prueba de error");
             if (createDto == null)
                 throw new Exception("Los datos del artículo no pueden ser nulos");
 
