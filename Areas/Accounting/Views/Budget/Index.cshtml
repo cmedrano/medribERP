@@ -242,7 +242,7 @@
                         <a class="page-link" 
                            href="@Url.Action("Index", new { 
                                rubroTypeId = ViewBag.FiltroRubroId, 
-                               meses = ViewBag.FiltroMes,
+                               mes = ViewBag.FiltroMes,
                                anio = ViewBag.FiltroAnio, 
                                pagina = i, 
                                tamañoPagina = ViewBag.TamañoPagina 
@@ -427,7 +427,7 @@
                                 {
                                     <option value="@mes.Numero"
                                             selected="@(ViewBag.FiltroMes?.ToString() == mes.Numero.ToString())">
-                                        @mes.Nombre
+                                        @mes.num
                                     </option>
                                 }
                             }
