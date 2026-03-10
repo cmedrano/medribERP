@@ -41,7 +41,19 @@
                                     <button type="button"
                                             class="btn btn-sm btn-light rounded-circle me-2"
                                             title="Editar"
-                                            onclick="abrirModalArticulo(false, '@item.Id', '@item.Codigo', '@item.Nombre', '@item.UnidadMedida', false)">
+                                            onclick="abrirModalArticulo(
+                                            false,
+                                            '@item.Id',
+                                            '@item.Codigo',
+                                            '@item.Nombre', 
+                                            '@item.UnidadMedida', 
+                                            '@item.ProductCategoryId',
+                                            '@item.BrendId',
+                                            '@item.ProviderId',
+                                            '@item.PurchasePrice',
+                                            '@item.SalePrice',
+                                            '@item.Margin',
+                                            false)">
                                         <i class="bi bi-pencil" style="color: #fd7e14;"></i>
                                     </button>
                                     <button type="button"
