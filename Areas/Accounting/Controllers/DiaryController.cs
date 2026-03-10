@@ -4,7 +4,7 @@ using PresupuestoMVC.Models.ViewModels;
 using PresupuestoMVC.Services.Interfaces;
 using PresupuestoMVC.Services;
 
-namespace PresupuestoMVC.Controllers
+namespace PresupuestoMVC.Areas.Accounting.Controllers
 {
     [Area("Accounting")]
     public class DiaryController : Controller

@@ -6,7 +6,7 @@ using PresupuestoMVC.Services;
 using PresupuestoMVC.Services.Interfaces;
 using System.Security.Claims;
 
-namespace PresupuestoMVC.Controllers
+namespace PresupuestoMVC.Areas.Accounting.Controllers
 {
     [Area("Accounting")]
     public class GastoController : Controller

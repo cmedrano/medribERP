@@ -32,5 +32,23 @@ namespace PresupuestoMVC.Models.Entities
 
         [Column("updated_at")]
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+        [Column("rubroId")]
+        public int ProductCategoryId { get; set; }
+
+        [Column("marcaId")]
+        public int BrendId { get; set; }
+
+        [Column("proveedorId")]
+        public int ProviderId { get; set; }
+
+        [Column("precio_compra")]
+        public decimal? PurchasePrice { get; set; }
+
+        [Column("precio_venta")]
+        public decimal? SalePrice { get; set; }
+
+        [Column("margen")]
+        public decimal? Margin { get; set; }
     }
 }

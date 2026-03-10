@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PresupuestoMVC.Areas.Ventas.ViewModels;
 using PresupuestoMVC.Models.ViewModels;
+using PresupuestoMVC.Services;
 using PresupuestoMVC.Services.Interfaces;
 
 namespace PresupuestoMVC.Areas.Ventas.Controllers
@@ -11,11 +12,22 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
     public class ArticulosController : Controller
     {
         private readonly IArticuloService _articuloService;
+        private readonly IProviderService _providerService;
+        private readonly IBrandService _brandService;
+        private readonly IProductCategoryService _productCategoryService;
         private readonly ILogger<ArticulosController> _logger;
 
-        public ArticulosController(IArticuloService articuloService, ILogger<ArticulosController> logger)
+        public ArticulosController(
+            IArticuloService articuloService,
+            IProviderService providerService,
+            IBrandService brandService,
+            IProductCategoryService productCategory,
+            ILogger<ArticulosController> logger)
         {
             _articuloService = articuloService;
+            _providerService = providerService;
+            _brandService = brandService;
+            _productCategoryService = productCategory;
             _logger = logger;
         }
 
@@ -25,9 +37,15 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
             {
                 var articulos = await _articuloService.ObtenerTodosActivosAsync();
                 var total = await _articuloService.ObtenerTotalAsync();
+                var providers = await _providerService.GetAllProviderAsync();
+                var brands = await _brandService.GetAllBrandAsync();
+                var productCategories = await _productCategoryService.GetAllProductCategoryAsync();
 
                 ViewData["TotalArticulos"] = total;
 
+                ViewBag.ProductCategories = productCategories;
+                ViewBag.Brands = brands;
+                ViewBag.Providers = providers;
                 return View(articulos);
             }
             catch (Exception ex)

@@ -16,10 +16,17 @@ namespace PresupuestoMVC.Repository
 
         public async Task<IEnumerable<Articulo>> ObtenerTodosActivosAsync()
         {
-            return await _context.Articulos
-                .Where(a => a.Activo)
-                .OrderBy(a => a.Nombre)
-                .ToListAsync();
+            try
+            {     
+                return await _context.Articulos
+                    .Where(a => a.Activo)
+                    .OrderBy(a => a.Nombre)
+                    .ToListAsync();
+                }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public async Task<Articulo> ObtenerPorIdAsync(int id)
