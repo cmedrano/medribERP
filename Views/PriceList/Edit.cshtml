@@ -1,0 +1,45 @@
+﻿@model PresupuestoMVC.Models.Entities.PriceList
+
+<div class="container mt-5">
+
+    <div class="card shadow border-0">
+
+        <!-- Header -->
+        <div class="card-header text-white"
+             style="background-color: #0d6efd;">
+            <h5 class="mb-0">Editar Lista de Precio</h5>
+        </div>
+
+        <!-- Body -->
+        <div class="card-body">
+
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-4">
+                    <label asp-for="Nombre" class="form-label fw-bold text-primary"></label>
+                    <input asp-for="Nombre" class="form-control border-primary" />
+                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                </div>
+
+                <div class="form-check mb-4">
+                    <input asp-for="Activo" class="form-check-input" />
+                    <label asp-for="Activo" class="form-check-label fw-bold text-primary"></label>
+                </div>
+
+                <div class="text-end">
+                    <a asp-action="Index" class="btn btn-outline-primary me-2">
+                        ← Volver
+                    </a>
+
+                    <button type="submit" class="btn btn-primary">
+                        💾 Guardar Cambios
+                    </button>
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+
+</div>

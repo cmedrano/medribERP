@@ -40,13 +40,13 @@ namespace PresupuestoMVC.Services
 
                 // Verificar si el usuario existe
                 if (user == null)
-                    throw new UnauthorizedAccessException("Usuario incorrectos");
+                    throw new UnauthorizedAccessException("Usuario incorrecto");
 
                 // Verifico contraseña
                 bool isPasswordValid = VerifyPassword(loginRequest.Password, user.UserPasswordHash);
 
                 if (!isPasswordValid)
-                    throw new UnauthorizedAccessException("Contraseña incorrectos");
+                    throw new UnauthorizedAccessException("Contraseña incorrecta");
 
                 // Generar token JWT y RefreshToken para el usuario autenticado
                 var token = GenerateJwtToken(user);

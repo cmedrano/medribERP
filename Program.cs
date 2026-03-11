@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PresupuestoMVC.Data;
+using PresupuestoMVC.Repositories;
 using PresupuestoMVC.Repository;
 using PresupuestoMVC.Repository.Interfaces;
 using PresupuestoMVC.Services;
@@ -37,12 +38,17 @@ namespace PresupuestoMVC
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<IDiaryService, DiaryService>();
             builder.Services.AddScoped<IDiaryRepository, DiaryRepository>();
+<<<<<<< Updated upstream
             builder.Services.AddScoped<IClienteService, ClienteService>();
             builder.Services.AddScoped<ILocalidadPostalService, LocalidadPostalService>();
             builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
             builder.Services.AddScoped<ILocalidadPostalRepository, LocalidadPostalRepository>();
             builder.Services.AddScoped<IArticuloService, ArticuloService>();
             builder.Services.AddScoped<IArticuloRepository, ArticuloRepository>();
+=======
+            builder.Services.AddScoped<IPriceListService, PriceListService>();
+            builder.Services.AddScoped<IPriceListRepository, PriceListRepository>();
+>>>>>>> Stashed changes
 
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
