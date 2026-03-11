@@ -37,25 +37,32 @@ namespace PresupuestoMVC.Services
 
         public async Task<ArticuloResponseDTO> CrearAsync(ArticuloCreateDTO createDto)
         {
-            if (createDto == null)
-                throw new Exception("Los datos del artículo no pueden ser nulos");
+            try
+            {
+                if (createDto == null)
+                    throw new Exception("Los datos del artículo no pueden ser nulos");
 
-            if (string.IsNullOrWhiteSpace(createDto.Codigo))
-                throw new Exception("El código del artículo es obligatorio");
+                if (string.IsNullOrWhiteSpace(createDto.Codigo))
+                    throw new Exception("El código del artículo es obligatorio");
 
-            if (string.IsNullOrWhiteSpace(createDto.Nombre))
-                throw new Exception("El nombre del artículo es obligatorio");
+                if (string.IsNullOrWhiteSpace(createDto.Nombre))
+                    throw new Exception("El nombre del artículo es obligatorio");
 
-            var articuloExistente = await _articuloRepository.ObtenerPorCodigoAsync(createDto.Codigo);
-            if (articuloExistente != null && articuloExistente.Activo)
-                throw new Exception("Ya existe un artículo con este código");
+                var articuloExistente = await _articuloRepository.ObtenerPorCodigoAsync(createDto.Codigo);
+                if (articuloExistente != null && articuloExistente.Activo)
+                    throw new Exception("Ya existe un artículo con este código");
 
-            var articulo = _mapper.Map<Articulo>(createDto);
-            articulo.Activo = true;
+                var articulo = _mapper.Map<Articulo>(createDto);
+                articulo.Activo = true;
 
-            await _articuloRepository.GuardarAsync(articulo);
+                await _articuloRepository.GuardarAsync(articulo);
 
-            return _mapper.Map<ArticuloResponseDTO>(articulo);
+                return _mapper.Map<ArticuloResponseDTO>(articulo);
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public async Task<ArticuloResponseDTO> ActualizarAsync(ArticuloUpdateDTO updateDto)
