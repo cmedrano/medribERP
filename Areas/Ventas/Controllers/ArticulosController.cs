@@ -7,8 +7,8 @@ using PresupuestoMVC.Services.Interfaces;
 
 namespace PresupuestoMVC.Areas.Ventas.Controllers
 {
-    [Authorize]
     [Area("Ventas")]
+    [Authorize]
     public class ArticulosController : Controller
     {
         private readonly IArticuloService _articuloService;
