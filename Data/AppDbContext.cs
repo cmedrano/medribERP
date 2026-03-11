@@ -23,6 +23,9 @@ namespace PresupuestoMVC.Data
         public DbSet<LocalidadPostal> localidades_postales { get; set; }
         public DbSet<Articulo> Articulos { get; set; }
         public DbSet<PriceList> PriceLists { get; set; }
+        public DbSet<Provider> Provider { get; set; }
+        public DbSet<Brand> Brand { get; set; }
+        public DbSet<ProductCategory> Product_Category { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

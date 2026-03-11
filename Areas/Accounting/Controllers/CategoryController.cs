@@ -3,7 +3,8 @@ using PresupuestoMVC.Models.ViewModels;
 using PresupuestoMVC.Services;
 using PresupuestoMVC.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-namespace PresupuestoMVC.Controllers
+
+namespace PresupuestoMVC.Areas.Accounting.Controllers
 {
     [Area("Accounting")]
     public class CategoryController : Controller

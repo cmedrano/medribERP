@@ -46,11 +46,17 @@ namespace PresupuestoMVC
             builder.Services.AddScoped<IArticuloRepository, ArticuloRepository>();
             builder.Services.AddScoped<IPriceListService, PriceListService>();
             builder.Services.AddScoped<IPriceListRepository, PriceListRepository>();
+            builder.Services.AddScoped<IProviderService, ProviderService>();
+            builder.Services.AddScoped<IProviderRepository, ProviderRepository>();
+            builder.Services.AddScoped<IBrandService, BrandService>();
+            builder.Services.AddScoped<IBrandRepository, BrandRepository>();
+            builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
+            builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();
 
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
-            // Configurar autenticaciÛn JWT
+            // Configurar autenticaci√≥n JWT
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -62,10 +68,10 @@ namespace PresupuestoMVC
                 {
                     ValidateIssuer = true, // Validar el emisor del token
                     ValidateAudience = true, // Validar el destinatario del token
-                    ValidateLifetime = true, // Validar la expiraciÛn del token
+                    ValidateLifetime = true, // Validar la expiraci√≥n del token
                     ValidateIssuerSigningKey = true, // Validar la firma del token
 
-                    // Valores v·lidos para el token (deben coincidir con los usados al generar el token)
+                    // Valores v√°lidos para el token (deben coincidir con los usados al generar el token)
                     ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
                     ValidAudience = builder.Configuration["JwtSettings:Audience"],
 
