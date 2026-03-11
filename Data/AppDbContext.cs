@@ -22,6 +22,7 @@ namespace PresupuestoMVC.Data
         public DbSet<Provincia> Provincias { get; set; }
         public DbSet<LocalidadPostal> localidades_postales { get; set; }
         public DbSet<Articulo> Articulos { get; set; }
+        public DbSet<PriceList> PriceLists { get; set; }
         public DbSet<Provider> Provider { get; set; }
         public DbSet<Brand> Brand { get; set; }
         public DbSet<ProductCategory> Product_Category { get; set; }
@@ -36,12 +37,25 @@ namespace PresupuestoMVC.Data
                 .HasForeignKey(r => r.RubroPadreId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+
             // Configuración para LocalidadPostal
             //modelBuilder.Entity<LocalidadPostal>()
             //    //.HasOne(l => l.Provincia)
             //    .WithMany()
             //    .HasForeignKey(l => l.IdProvincia)
             //    .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<PriceList>(entity =>
+            {
+                entity.ToTable("listas_precios"); 
+
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Nombre).HasColumnName("nombre");
+                entity.Property(e => e.Activo).HasColumnName("activo");
+                entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+                entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+            });
         }
+
     }
 }
