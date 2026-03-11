@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var modules = User.Claims
+        .Where(c => c.Type == "Module")
+        .Select(c => c.Value)
+        .ToList();
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -33,66 +39,123 @@
                         currentController == "Diary" ||
                         currentController == "Category" ||
                         currentController == "Account";
+                        var isSalesSection =
+                        currentController == "Articulos" ||
+                        currentController == "Clientes";
                     }
-                    <!-- Presupuesto -->
-                    <li>
-                        <a class="nav-link px-0 align-middle d-flex justify-content-between align-items-center"
-                           data-bs-toggle="collapse"
-                           href="#budgetSubmenu"
-                           role="button"
-                           aria-expanded="false"
-                           aria-controls="budgetSubmenu">
+                    <!-- Areas Accounting-->
+                    @if (modules.Contains("accounting"))
+                    {
+                        <!-- Presupuesto -->
+                        <li>
+                            <a class="nav-link px-0 align-middle d-flex justify-content-between align-items-center"
+                               data-bs-toggle="collapse"
+                               href="#budgetSubmenu"
+                               role="button"
+                               aria-expanded="false"
+                               aria-controls="budgetSubmenu">
 
-                            <span>
-                                <i class="bi bi-wallet2 fs-4 text-muted"></i>
-                                <span class="ms-1 d-none d-sm-inline text-muted">Presupuesto</span>
-                            </span>
+                                <span>
+                                    <i class="bi bi-wallet2 fs-4 text-muted"></i>
+                                    <span class="ms-1 d-none d-sm-inline text-muted">Presupuesto</span>
+                                </span>
 
-                            <i class="bi bi-chevron-down small"></i>
-                        </a>
+                                <i class="bi bi-chevron-down small"></i>
+                            </a>
 
-                        <div class="collapse @(isBudgetSection ? "show" : "")"
-                             id="budgetSubmenu">
+                            <div class="collapse @(isBudgetSection ? "show" : "")"
+                                 id="budgetSubmenu">
 
-                            <ul class="nav flex-column ms-4">
+                                <ul class="nav flex-column ms-4">
 
-                                <li>
-                                    <a asp-area="Accounting" asp-controller="Budget" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Budget")">
-                                        @* <i class="bi bi-list-ul me-1"></i> *@
-                                        <span class="ms-1 d-none d-sm-inline text-muted">Listado</span>
-                                    </a>
-                                </li>
+                                    <li>
+                                        <a asp-area="Accounting" asp-controller="Budget" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Budget")">
+                                            @* <i class="bi bi-list-ul me-1"></i> *@
+                                            <span class="ms-1 d-none d-sm-inline text-muted">Listado</span>
+                                        </a>
+                                    </li>
 
-                                <li>
-                                    <a asp-area="Accounting" asp-controller="Diary" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Diary")">
-                                        @* <i class="fs-4 bi-cash-stack"></i>  *@
-                                        <span class="ms-1 d-none d-sm-inline text-muted">Diario</span>
-                                    </a>
-                                </li>
+                                    <li>
+                                        <a asp-area="Accounting" asp-controller="Diary" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Diary")">
+                                            @* <i class="fs-4 bi-cash-stack"></i>  *@
+                                            <span class="ms-1 d-none d-sm-inline text-muted">Diario</span>
+                                        </a>
+                                    </li>
 
-                                <li>
-                                    <a asp-area="Accounting" asp-controller="Category" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Category")">
-                                        @* <i class="fs-4 bi-file-earmark-text"></i> *@
-                                        <span class="ms-1 d-none d-sm-inline text-muted">Rubros</span>
-                                    </a>
-                                </li>
+                                    <li>
+                                        <a asp-area="Accounting" asp-controller="Category" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Category")">
+                                            @* <i class="fs-4 bi-file-earmark-text"></i> *@
+                                            <span class="ms-1 d-none d-sm-inline text-muted">Rubros</span>
+                                        </a>
+                                    </li>
 
-                                <li>
-                                    <a asp-area="Accounting" asp-controller="Account" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Account")">
-                                        @* <i class="fs-4 bi-building"></i>  *@
-                                        <span class="ms-1 d-none d-sm-inline text-muted">Cuentas</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <!-- Usuarios -->
-                    <li>
-                        <a asp-area="" asp-controller="User" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "User")">
-                            <i class="fs-4 bi-person text-muted"></i>
-                            <span class="ms-1 d-none d-sm-inline text-muted">Usuarios</span>
-                        </a>
-                    </li>
+                                    <li>
+                                        <a asp-area="Accounting" asp-controller="Account" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Account")">
+                                            @* <i class="fs-4 bi-building"></i>  *@
+                                            <span class="ms-1 d-none d-sm-inline text-muted">Cuentas</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    }
+           
+                    <!-- Areas Ventas -->
+                    @if (modules.Contains("sales"))
+                    {
+                        <!-- Ventas -->
+                        <li>
+                            <a class="nav-link px-0 align-middle d-flex justify-content-between align-items-center"
+                               data-bs-toggle="collapse"
+                               href="#salesSubmenu"
+                               role="button"
+                               aria-expanded="false"
+                               aria-controls="salesSubmenu">
+
+                                <span>
+                                    <i class="bi bi-box-seam fs-4 text-muted"></i>
+                                    <span class="ms-1 d-none d-sm-inline text-muted">Ventas</span>
+                                </span>
+
+                                <i class="bi bi-chevron-down small"></i>
+                            </a>
+
+                            <div class="collapse @(isSalesSection ? "show" : "")"
+                                 id="salesSubmenu">
+
+                                <ul class="nav flex-column ms-4">
+
+                                    <li>
+                                        <a asp-area="Ventas" asp-controller="Articulos" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Budget")">
+                                            @* <i class="bi bi-list-ul me-1"></i> *@
+                                            <span class="ms-1 d-none d-sm-inline text-muted">Articulos</span>
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a asp-area="Ventas" asp-controller="Clientes" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Diary")">
+                                            @* <i class="fs-4 bi-cash-stack"></i>  *@
+                                            <span class="ms-1 d-none d-sm-inline text-muted">Clientes</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    }
+          
+
+                    <!-- Areas Users-->
+                    @if (modules.Contains("users"))
+                    {
+                        <!-- Usuarios -->
+                        <li>
+                            <a asp-area="Users" asp-controller="User" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "User")">
+                                <i class="fs-4 bi-person text-muted"></i>
+                                <span class="ms-1 d-none d-sm-inline text-muted">Usuarios</span>
+                            </a>
+                        </li>
+                    }
+           
 
                     <hr>
                     <div class="dropdown pb-4 mt-auto">
@@ -116,7 +179,7 @@
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <form asp-controller="Login" asp-action="Logout" method="post" class="d-inline">
+                            <form asp-area="" asp-controller="Login" asp-action="Logout" method="post" class="d-inline">
                                 <button type="submit" class="dropdown-item">
                                     <i class="bi bi-box-arrow-right me-2"></i>
                                     <span>Cerrar Sesión</span>

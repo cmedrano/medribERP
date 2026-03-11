@@ -113,29 +113,37 @@ namespace PresupuestoMVC.Services
             // Obtener la clave secreta desde configuración y convertirla a bytes
             var key = Encoding.ASCII.GetBytes(_jwtKey);
 
-            // Configurar las propiedades del token JWT
+            // Obtener módulos del usuario
+            var modules = _context.AreasPerUser
+            .Where(x => x.UserId == user.Id)
+            .Select(x => x.Module.Name)
+            .ToList();
+
+            // Crear lista de claims
+            var claims = new List<Claim>
+            {
+               new Claim(ClaimTypes.Name, user.UserName), // Claim con el nombre de usuario
+               new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), // Claim con el ID del usuario
+               new Claim(ClaimTypes.Role, user.Role.ToString()),
+               new Claim("CompanyId", user.CompanyId.ToString())
+            };
+
+            // Agregar módulos
+            foreach (var module in modules)
+            {
+                claims.Add(new Claim("Module", module));
+            }
+
+            // Crear token
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                // Definir los claims (información) que contendrá el token
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.Name, user.UserName), // Claim con el nombre de usuario
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), // Claim con el ID del usuario
-                    new Claim(ClaimTypes.Role, user.Role.ToString()),
-                    new Claim("CompanyId", user.CompanyId.ToString())
-                }),
-
-                // Tiempo de expiración del token
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddMinutes(_jwtExpiryMinutes),
-
-                // Quién emite el token (tu aplicación)
                 Issuer = _jwtIssuer,
-
-                // Para quién es válido el token
                 Audience = _jwtAudience,
-
-                // Credenciales de firma usando algoritmo HMAC SHA256
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha256Signature)
             };
 
             // Crear el token JWT basado en la configuración

@@ -6,6 +6,7 @@ using System.Security.Claims;
 
 namespace PresupuestoMVC.Controllers
 {
+    [Area("Ventas")]
     [Authorize]
     public class ClientesController : Controller
     {

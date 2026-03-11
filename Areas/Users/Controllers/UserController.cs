@@ -9,6 +9,7 @@ using System.Security.Claims;
 
 namespace PresupuestoMVC.Controllers
 {
+    [Area("Users")]
     public class UserController : Controller
     {
         private readonly IUserService _userService;
@@ -32,7 +33,7 @@ namespace PresupuestoMVC.Controllers
                      })
                      .ToList();
 
-                return View("Views/Users/Users.cshtml");
+                return View();
             }
             catch (Exception ex)
             {
@@ -51,7 +52,7 @@ namespace PresupuestoMVC.Controllers
                 if (!ModelState.IsValid)
                 {
                     TempData["Error"] = "Datos inválidos";
-                    return RedirectToAction("Index");
+                    return RedirectToAction();
                 }
 
                 int companyId = int.Parse(User.FindFirst("CompanyId").Value);
@@ -61,19 +62,19 @@ namespace PresupuestoMVC.Controllers
                 if (result != null)
                 {
                     TempData["Success"] = "Usuario creado correctamente";
-                    return RedirectToAction("Index");
+                    return RedirectToAction();
                 }
                 else
                 {
                     TempData["Error"] = "Usuario no fue creado";
-                    return RedirectToAction("Index");
+                    return RedirectToAction();
                 }
             }
 
             catch (Exception ex)
             {
                 TempData["Error"] = "Error: " + ex.Message;
-                return RedirectToAction("Index");
+                return RedirectToAction();
             }
         }
 
@@ -88,11 +89,11 @@ namespace PresupuestoMVC.Controllers
                  );
 
                 var result = await _userService.ResetPassword(email, userId);
-                return RedirectToAction("Index");
+                return RedirectToAction();
             }
             catch(Exception ex)
             {
-                return RedirectToAction("Index");
+                return RedirectToAction();
             }
         }
     }
