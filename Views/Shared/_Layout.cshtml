@@ -18,7 +18,7 @@
                     <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
                         <span class="fs-3 d-none d-sm-inline sidebar-type-color fw-bold border-bottom pb-1">Presupuesto</span>
                     </a>
-<<<<<<< Updated upstream
+
                     <!-- Dashboard -->
                     <li class="nav-item">
                         <a asp-area="" asp-controller="Home" asp-action="Index" class="nav-link align-middle px-0 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home")">
@@ -93,52 +93,6 @@
                             <span class="ms-1 d-none d-sm-inline text-muted">Usuarios</span>
                         </a>
                     </li>
-=======
-                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
-                        <li class="nav-item">
-                            <a asp-controller="Home" asp-action="Index" class="nav-link align-middle px-0 @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home")">
-                                <i class="fs-4 bi bi-house"></i> <span class="ms-1 d-none d-sm-inline">Home</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a asp-controller="Budget" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Budget")">
-                                 <i class="bi bi-wallet2 fs-4"></i>
-                                <span class="ms-1 d-none d-sm-inline">Presupuesto</span>
-                            </a>
-                        </li>
-@*                         <li>
-                            <a asp-controller="Gasto" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Gasto")">
-                                <i class="fs-4 bi-cash-stack"></i> <span class="ms-1 d-none d-sm-inline">Gastos</span>
-                            </a>
-                        </li> *@
-                        <li>
-                            <a asp-controller="Diary" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Diary")">
-                                <i class="fs-4 bi-cash-stack"></i> <span class="ms-1 d-none d-sm-inline">Diario</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a asp-controller="Category" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Category")">
-                                <i class="fs-4 bi-file-earmark-text"></i> <span class="ms-1 d-none d-sm-inline">Rubros</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a asp-controller="Account" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Account")">
-                                <i class="fs-4 bi-building"></i> <span class="ms-1 d-none d-sm-inline">Cuentas</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a asp-controller="User" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "User")">
-                                <i class="fs-4 bi-person"></i> <span class="ms-1 d-none d-sm-inline">Usuarios</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a asp-controller="PriceList" asp-action="Index"
-                               class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "PriceList" ? "active" : "")">
-                                <i class="fs-4 bi bi-tags"></i>
-                                <span class="ms-1 d-none d-sm-inline">Lista de Precios</span>
-                            </a>
-                        </li>
->>>>>>> Stashed changes
 
                     <hr>
                     <div class="dropdown pb-4 mt-auto">

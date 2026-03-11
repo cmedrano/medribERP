@@ -18,14 +18,11 @@ namespace PresupuestoMVC.Data
         public DbSet<Diary> Diary { get; set; }
         public DbSet<Cuenta> Cuentas { get; set; }
         public DbSet<Income> Income { get; set; }
-<<<<<<< Updated upstream
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Provincia> Provincias { get; set; }
         public DbSet<LocalidadPostal> localidades_postales { get; set; }
         public DbSet<Articulo> Articulos { get; set; }
-=======
         public DbSet<PriceList> PriceLists { get; set; }
->>>>>>> Stashed changes
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -37,14 +34,14 @@ namespace PresupuestoMVC.Data
                 .HasForeignKey(r => r.RubroPadreId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-<<<<<<< Updated upstream
+
             // Configuración para LocalidadPostal
             //modelBuilder.Entity<LocalidadPostal>()
             //    //.HasOne(l => l.Provincia)
             //    .WithMany()
             //    .HasForeignKey(l => l.IdProvincia)
             //    .OnDelete(DeleteBehavior.Restrict);
-=======
+
             modelBuilder.Entity<PriceList>(entity =>
             {
                 entity.ToTable("listas_precios"); 
@@ -55,7 +52,6 @@ namespace PresupuestoMVC.Data
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at");
                 entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
             });
->>>>>>> Stashed changes
         }
 
     }
