@@ -22,7 +22,7 @@ namespace PresupuestoMVC.Data
         public DbSet<Provincia> Provincias { get; set; }
         public DbSet<LocalidadPostal> localidades_postales { get; set; }
         public DbSet<Articulo> Articulos { get; set; }
-        public DbSet<PriceList> PriceLists { get; set; }
+        public DbSet<PriceList> PriceList { get; set; }
         public DbSet<Provider> Provider { get; set; }
         public DbSet<Brand> Brand { get; set; }
         public DbSet<ProductCategory> Product_Category { get; set; }

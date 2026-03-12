@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using PresupuestoMVC.Data;
 using PresupuestoMVC.Models.Entities;
+using PresupuestoMVC.Models.ViewModels;
 using PresupuestoMVC.Repository.Interfaces;
+using System;
 
 namespace PresupuestoMVC.Repositories
 {
@@ -17,35 +20,57 @@ namespace PresupuestoMVC.Repositories
             _mapper = mapper;
         }
 
-
         public async Task<List<PriceList>> GetAllAsync()
         {
-            return await _context.PriceLists.ToListAsync();
+            return await _context.PriceList.ToListAsync();
         }
 
         public async Task<PriceList?> GetByIdAsync(int id)
         {
-            return await _context.PriceLists.FindAsync(id);
+            return await _context.PriceList.FindAsync(id);
         }
 
-        public async Task AddAsync(PriceList entity)
+        public async Task AddListAsync(PriceList priceList)
         {
-            _context.PriceLists.Add(entity);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.PriceList.Add(priceList);
+                await _context.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public async Task UpdateAsync(PriceList entity)
+        public async Task UpdateAsync(UpdatePriceListViewRequest dto)
         {
-            _context.PriceLists.Update(entity);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var entity = await _context.PriceList
+                .FirstOrDefaultAsync(x => x.Id == dto.Id);
+
+                if (entity == null)
+                    throw new Exception("No encontrado");
+
+                entity.Nombre = dto.Nombre;
+                entity.Descripcion = dto.Descripcion;
+                entity.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("error al actualizar la lista");
+            }
         }
 
         public async Task DeleteAsync(int id)
         {
-            var entity = await _context.PriceLists.FindAsync(id);
-            if (entity != null)
+            var lista = await _context.PriceList.FindAsync(id);
+            if (lista != null)
             {
-                _context.PriceLists.Remove(entity);
+                lista.Activo = false;
                 await _context.SaveChangesAsync();
             }
         }
