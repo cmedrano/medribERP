@@ -1,4 +1,6 @@
-﻿using PresupuestoMVC.Models.Entities;
+﻿using Humanizer;
+using PresupuestoMVC.Models.Entities;
+using PresupuestoMVC.Models.ViewModels;
 using PresupuestoMVC.Repository.Interfaces;
 using PresupuestoMVC.Services.Interfaces;
 
@@ -6,36 +8,44 @@ namespace PresupuestoMVC.Services
 {
     public class PriceListService : IPriceListService
     {
-        private readonly IPriceListRepository _repository;
+        private readonly IPriceListRepository _priceListRepository;
 
-        public PriceListService(IPriceListRepository repository)
+        public PriceListService(IPriceListRepository priceListRepository)
         {
-            _repository = repository;
+            _priceListRepository = priceListRepository;
         }
 
         public async Task<List<PriceList>> GetAllAsync()
         {
-            return await _repository.GetAllAsync();
+            return await _priceListRepository.GetAllAsync();
         }
 
         public async Task<PriceList?> GetByIdAsync(int id)
         {
-            return await _repository.GetByIdAsync(id);
+            return await _priceListRepository.GetByIdAsync(id);
         }
 
-        public async Task CreateAsync(PriceList model)
+        public async Task CreateListAsync(CreatePriceListViewRequest dto)
         {
-            await _repository.AddAsync(model);
+            PriceList priceList = new PriceList()
+            {
+                Nombre = dto.Nombre,
+                Descripcion = dto.Descripcion,
+                Activo = true,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+            await _priceListRepository.AddListAsync(priceList);
         }
 
-        public async Task UpdateAsync(PriceList model)
+        public async Task UpdateAsync(UpdatePriceListViewRequest dto)
         {
-            await _repository.UpdateAsync(model);
+            await _priceListRepository.UpdateAsync(dto);
         }
 
         public async Task DeleteAsync(int id)
         {
-            await _repository.DeleteAsync(id);
+            await _priceListRepository.DeleteAsync(id);
         }
     }
 }

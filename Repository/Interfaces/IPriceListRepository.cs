@@ -1,4 +1,5 @@
 ﻿using PresupuestoMVC.Models.Entities;
+using PresupuestoMVC.Models.ViewModels;
 
 namespace PresupuestoMVC.Repository.Interfaces
 {
@@ -6,8 +7,8 @@ namespace PresupuestoMVC.Repository.Interfaces
     {
         Task<List<PriceList>> GetAllAsync();
         Task<PriceList?> GetByIdAsync(int id);
-        Task AddAsync(PriceList entity);
-        Task UpdateAsync(PriceList entity);
+        Task AddListAsync(PriceList priceList);
+        Task UpdateAsync(UpdatePriceListViewRequest dto);
         Task DeleteAsync(int id);
     }
 }

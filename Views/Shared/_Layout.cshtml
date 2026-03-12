@@ -41,7 +41,8 @@
                         currentController == "Account";
                         var isSalesSection =
                         currentController == "Articulos" ||
-                        currentController == "Clientes";
+                        currentController == "Clientes" ||
+                        currentController == "PriceList";
                     }
                     <!-- Areas Accounting-->
                     @if (modules.Contains("accounting"))
@@ -67,28 +68,28 @@
                                  id="budgetSubmenu">
 
                                 <ul class="nav flex-column ms-4">
-
+                                    <!-- Listado -->
                                     <li>
                                         <a asp-area="Accounting" asp-controller="Budget" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Budget")">
                                             @* <i class="bi bi-list-ul me-1"></i> *@
                                             <span class="ms-1 d-none d-sm-inline text-muted">Listado</span>
                                         </a>
                                     </li>
-
+                                    <!-- Diario -->
                                     <li>
                                         <a asp-area="Accounting" asp-controller="Diary" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Diary")">
                                             @* <i class="fs-4 bi-cash-stack"></i>  *@
                                             <span class="ms-1 d-none d-sm-inline text-muted">Diario</span>
                                         </a>
                                     </li>
-
+                                    <!-- Rubro -->
                                     <li>
                                         <a asp-area="Accounting" asp-controller="Category" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Category")">
                                             @* <i class="fs-4 bi-file-earmark-text"></i> *@
                                             <span class="ms-1 d-none d-sm-inline text-muted">Rubros</span>
                                         </a>
                                     </li>
-
+                                    <!-- Cuentas -->
                                     <li>
                                         <a asp-area="Accounting" asp-controller="Account" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Account")">
                                             @* <i class="fs-4 bi-building"></i>  *@
@@ -124,18 +125,25 @@
                                  id="salesSubmenu">
 
                                 <ul class="nav flex-column ms-4">
-
+                                    <!-- Articulos -->
                                     <li>
                                         <a asp-area="Ventas" asp-controller="Articulos" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Budget")">
                                             @* <i class="bi bi-list-ul me-1"></i> *@
                                             <span class="ms-1 d-none d-sm-inline text-muted">Articulos</span>
                                         </a>
                                     </li>
-
+                                    <!-- Clientes -->
                                     <li>
                                         <a asp-area="Ventas" asp-controller="Clientes" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Diary")">
                                             @* <i class="fs-4 bi-cash-stack"></i>  *@
                                             <span class="ms-1 d-none d-sm-inline text-muted">Clientes</span>
+                                        </a>
+                                    </li>
+                                    <!-- Clientes -->
+                                    <li>
+                                        <a asp-area="Ventas" asp-controller="PriceList" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Diary")">
+                                            @* <i class="fs-4 bi-cash-stack"></i>  *@
+                                            <span class="ms-1 d-none d-sm-inline text-muted">Lista de precios</span>
                                         </a>
                                     </li>
                                 </ul>
