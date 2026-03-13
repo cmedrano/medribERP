@@ -16,19 +16,22 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
         private readonly IBrandService _brandService;
         private readonly IProductCategoryService _productCategoryService;
         private readonly ILogger<ArticulosController> _logger;
+        private readonly IPriceListService _priceListService;
 
         public ArticulosController(
             IArticuloService articuloService,
             IProviderService providerService,
             IBrandService brandService,
             IProductCategoryService productCategory,
-            ILogger<ArticulosController> logger)
+            ILogger<ArticulosController> logger,
+            IPriceListService priceListService)
         {
             _articuloService = articuloService;
             _providerService = providerService;
             _brandService = brandService;
             _productCategoryService = productCategory;
             _logger = logger;
+            _priceListService = priceListService;
         }
 
         public async Task<IActionResult> Index()
@@ -40,12 +43,14 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
                 var providers = await _providerService.GetAllProviderAsync();
                 var brands = await _brandService.GetAllBrandAsync();
                 var productCategories = await _productCategoryService.GetAllProductCategoryAsync();
+                var priceList = await _priceListService.GetAllAsync();
 
                 ViewData["TotalArticulos"] = total;
 
                 ViewBag.ProductCategories = productCategories;
                 ViewBag.Brands = brands;
                 ViewBag.Providers = providers;
+                ViewBag.PriceList = priceList;
                 return View(articulos);
             }
             catch (Exception ex)

@@ -35,7 +35,18 @@
                                     <button type="button"
                                             class="btn btn-sm btn-light rounded-circle me-2"
                                             title="Ver"
-                                            onclick="abrirModalArticulo(false, '@item.Id', '@item.Codigo', '@item.Nombre', '@item.UnidadMedida', true)">
+                                            onclick="abrirModalArticulo(
+                                            false,
+                                            '@item.Id',
+                                            '@item.Codigo',
+                                            '@item.Nombre',
+                                            '@item.UnidadMedida',
+                                            '@item.ProductCategoryId',
+                                            '@item.BrendId',
+                                            '@item.ProviderId',
+                                            '@item.PurchasePrice',
+                                            '@item.SalePrice',
+                                            true)">
                                         <i class="bi bi-eye" style="color: #fd7e14;"></i>
                                     </button>
                                     <button type="button"
@@ -52,7 +63,6 @@
                                             '@item.ProviderId',
                                             '@item.PurchasePrice',
                                             '@item.SalePrice',
-                                            '@item.Margin',
                                             false)">
                                         <i class="bi bi-pencil" style="color: #fd7e14;"></i>
                                     </button>
