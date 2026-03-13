@@ -7,6 +7,7 @@
     var productCategories = ViewBag.ProductCategories as IEnumerable<ProductCategoryResponseDto>;
     var brands = ViewBag.Brands;
     var providers = ViewBag.Providers;
+    var priceList = ViewBag.PriceList;
 }
 <div style="background-color: #f8f9fa; padding: 30px 0; margin-bottom: 30px;">
     <div class="container">
@@ -48,7 +49,8 @@
             <form id="formArticulo" method="post">
                 <div class="modal-body p-4 bg-white">
                     <input type="hidden" name="Id" id="articuloId">
-
+                       <!-- tabla donde se guardarán los precios -->
+                       <div id="priceContainer"></div>
                     <div class="row g-4">
                         <!-- COLUMNA IZQUIERDA -->
                         <div class="col">
@@ -146,9 +148,15 @@
                                     </div>
                                 </div>
                                 <!-- Margen -->
+                                 
+                                <!-- lista -->
                                 <div class="col-md-4">
-                                    <label class="form-label small fw-bold text-secondary">MARGEN</label>
-                                    <input type="number" name="Margin" id="margin" class="form-control bg-light border-0 rounded-3 py-2" required>
+                                    <button type="button"
+                                            class="btn fw-bold rounded-pill px-4"
+                                            title="Ver"
+                                            style="background-color: #fd7e14; color: white;"
+                                            onclick="abrirModalLista()">abrir lista
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -182,7 +190,70 @@
     </div>
 </div>
 
+<!-- Sub modal lista de precios-->
+<div class="modal fade" id="subModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-body p-5 text-center">
+                <div class="mb-4">
+                    @* <i class="bi bi-exclamation-circle-fill text-danger" style="font-size: 3rem;"></i> *@
+                </div>
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-body p-0">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="custom-header text-white">
+                                <tr>
+                                    <th class="form-label text-black small">NOMBRE LISTA</th>
+                                    <th class="form-label text-black small">PRECIO</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                             @if (priceList != null)
+                            {
+                                for (int i = 0; i < priceList.Count; i++)
+                                {
+                                    <tr>
+                                        <td class="fw-semibold ListName">
+                                            @priceList[i].Nombre
+                                        </td>
+                            
+                                        <td>
+                                            <input type="hidden" 
+                                                   name="Items[@i].ListId" 
+                                                   value="@priceList[i].Id" />
+                            
+                                            <input type="number"
+                                                   name="Items[@i].Price"
+                                                   class="form-control bg-light border-0 rounded-3 py-2"
+                                                   required>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center py-4">
+                                        No hay listas cargadas.
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 bg-light d-flex justify-content-center gap-2">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger rounded-pill px-4" id="btnLista" onclick="savedSubModal()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+    let itemsSubModal = [];
+    // let currentRow = null;
 
     function abrirModalArticulo(
         crear,
@@ -195,7 +266,6 @@
         providerId,
         purchasePrice,
         salePrice,
-        margin,
         soloVer = false) {
         isCreating = crear;
         const btnSubmit = document.getElementById('btnSubmitForm');
@@ -223,7 +293,7 @@
             document.getElementById('providerId').value = providerId || '';
             document.getElementById('PurchasePrice').value = purchasePrice || '';
             document.getElementById('salePrice').value = salePrice || '';
-            document.getElementById('margin').value = margin || '';
+            // document.getElementById('margin').value = margin || '';
 
             if (soloVer) {
                 document.getElementById('modalArticuloTitle').innerHTML = '<i class="bi bi-eye me-2"></i>Detalles del Articulo';
@@ -261,5 +331,36 @@
             document.body.appendChild(form);
             form.submit();
         };
+    }
+
+
+    function abrirModalLista(){
+       $('#subModal').modal('show');
+    }
+
+    function savedSubModal() {
+    
+        let rows = document.querySelectorAll("#subModal tbody tr");
+        let container = document.getElementById("priceContainer");
+    
+        container.innerHTML = "";
+    
+        rows.forEach((row, i) => {
+    
+            let listId = row.querySelector("input[type='hidden']").value;
+            let price = row.querySelector("input[type='number']").value;
+    
+            if(price){
+    
+                container.innerHTML += `
+                    <input type="hidden" name="Items[${i}].ListId" value="${listId}">
+                    <input type="hidden" name="Items[${i}].Price" value="${price}">
+                `;
+            }
+    
+        });
+    
+        $('#subModal').modal('hide');
+        console.log(container);
     }
 </script>

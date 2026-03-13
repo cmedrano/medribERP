@@ -22,9 +22,12 @@ namespace PresupuestoMVC.Repositories
 
         public async Task<List<PriceList>> GetAllAsync()
         {
-            return await _context.PriceList.ToListAsync();
+            var priceListActivos = await _context.PriceList
+                    .Where(a => a.Activo)
+                    .OrderBy(a => a.Nombre)
+                    .ToListAsync();
+            return priceListActivos;
         }
-
         public async Task<PriceList?> GetByIdAsync(int id)
         {
             return await _context.PriceList.FindAsync(id);
@@ -71,6 +74,8 @@ namespace PresupuestoMVC.Repositories
             if (lista != null)
             {
                 lista.Activo = false;
+                lista.UpdatedAt = DateTime.UtcNow;
+                _context.PriceList.Update(lista);
                 await _context.SaveChangesAsync();
             }
         }
