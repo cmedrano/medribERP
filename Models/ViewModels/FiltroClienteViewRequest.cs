@@ -5,6 +5,6 @@ namespace PresupuestoMVC.Models.ViewModels
         public string? SearchNombre { get; set; }
         public string? SearchFantasia { get; set; }
         public int Pagina { get; set; } = 1;
-        public int TamañoPagina { get; set; } = 10;
+        public int TamanioPagina { get; set; } = 10;
     }
 }

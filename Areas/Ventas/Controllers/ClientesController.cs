@@ -34,7 +34,7 @@ namespace PresupuestoMVC.Controllers
                     SearchNombre = searchNombre,
                     SearchFantasia = searchFantasia,
                     Pagina = page,
-                    TamañoPagina = PageSize
+                    TamanioPagina = PageSize
                 };
 
                 var resultado = await _clienteService.ObtenerPaginadosAsync(filtro, page, PageSize);
