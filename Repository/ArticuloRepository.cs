@@ -1,14 +1,18 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using PresupuestoMVC.Areas.Ventas.ViewModels;
+using PresupuestoMVC.Areas.Ventas.ViewModels.DTOs;
 using PresupuestoMVC.Data;
 using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Repository.Interfaces;
+using System;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PresupuestoMVC.Repository
 {
     public class ArticuloRepository : IArticuloRepository
     {
         private readonly AppDbContext _context;
-
         public ArticuloRepository(AppDbContext context)
         {
             _context = context;
@@ -39,12 +43,32 @@ namespace PresupuestoMVC.Repository
             return await _context.Articulos.FirstOrDefaultAsync(a => a.Codigo == codigo);
         }
 
-        public async Task GuardarAsync(Articulo articulo)
+        public async Task GuardarAsync(Articulo articulo, List<ArticulosPrecios> articulosPrecios)
         {
-            articulo.CreatedAt = DateTime.UtcNow;
-            articulo.UpdatedAt = DateTime.UtcNow;
-            _context.Articulos.Add(articulo);
-            await _context.SaveChangesAsync();
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                _context.Articulos.Add(articulo);
+                await _context.SaveChangesAsync();
+
+                if (articulosPrecios != null && articulosPrecios.Any())
+                {
+                    foreach (var item in articulosPrecios)
+                    {
+                        item.ArticuloId = articulo.Id;
+                    }
+                    _context.ArticulosPrecios.AddRange(articulosPrecios);
+                    await _context.SaveChangesAsync();
+                }
+                            
+                await transaction.CommitAsync();
+            }
+            catch(Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task ActualizarAsync(Articulo articulo)

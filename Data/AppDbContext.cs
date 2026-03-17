@@ -27,6 +27,7 @@ namespace PresupuestoMVC.Data
         public DbSet<Brand> Brand { get; set; }
         public DbSet<ProductCategory> Product_Category { get; set; }
         public DbSet<AreasPerUser> AreasPerUser { get; set; }
+        public DbSet<ArticulosPrecios> ArticulosPrecios { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

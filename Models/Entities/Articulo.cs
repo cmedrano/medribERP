@@ -13,7 +13,7 @@ namespace PresupuestoMVC.Models.Entities
         [Required]
         [StringLength(50)] // El DB es VARCHAR(50)
         [Column("codigo")]
-        public string Codigo { get; set; }
+        public string? Codigo { get; set; }
 
         [Required]
         [StringLength(200)] // El DB es VARCHAR(200)
@@ -22,16 +22,16 @@ namespace PresupuestoMVC.Models.Entities
 
         [StringLength(20)] // El DB es VARCHAR(20)
         [Column("unidad_medida")]
-        public string UnidadMedida { get; set; }
+        public string? UnidadMedida { get; set; }
 
         [Column("activo")]
-        public bool Activo { get; set; } = true;
+        public bool Activo { get; set; }
 
         [Column("created_at")] // Mapeo a snake_case
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; }
 
         [Column("updated_at")]
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; }
 
         [Column("rubroId")]
         public int ProductCategoryId { get; set; }

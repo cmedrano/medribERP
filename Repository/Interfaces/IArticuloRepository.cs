@@ -1,3 +1,4 @@
+using PresupuestoMVC.Areas.Ventas.ViewModels;
 using PresupuestoMVC.Models.Entities;
 
 namespace PresupuestoMVC.Repository.Interfaces
@@ -7,7 +8,7 @@ namespace PresupuestoMVC.Repository.Interfaces
         Task<IEnumerable<Articulo>> ObtenerTodosActivosAsync();
         Task<Articulo> ObtenerPorIdAsync(int id);
         Task<Articulo> ObtenerPorCodigoAsync(string codigo);
-        Task GuardarAsync(Articulo articulo);
+        Task GuardarAsync(Articulo articulo, List<ArticulosPrecios> articulosPrecios);
         Task ActualizarAsync(Articulo articulo);
         Task EliminarAsync(int id);
         Task<int> ObtenerTotalAsync();
