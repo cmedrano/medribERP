@@ -147,8 +147,7 @@
                                                required>
                                     </div>
                                 </div>
-                                <!-- Margen -->
-                                 
+                                
                                 <!-- lista -->
                                 <div class="col-md-4">
                                     <button type="button"
@@ -222,10 +221,15 @@
                                                    name="Items[@i].ListId" 
                                                    value="@priceList[i].Id" />
                             
-                                            <input type="number"
-                                                   name="Items[@i].Price"
-                                                   class="form-control bg-light border-0 rounded-3 py-2"
-                                                   required>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light border-0">
+                                                    <i class="bi bi-currency-dollar"></i>
+                                                </span>
+                                                <input type="number"
+                                                       name="Items[@i].Price"
+                                                       class="form-control bg-light border-0 rounded-3 py-2"
+                                                       required>
+                                            </div>
                                         </td>
                                     </tr>
                                 }
@@ -357,7 +361,7 @@
                     <input type="hidden" name="Items[${i}].Price" value="${price}">
                 `;
             }
-    
+
         });
     
         $('#subModal').modal('hide');

@@ -32,5 +32,7 @@ namespace PresupuestoMVC.Areas.Ventas.ViewModels
 
         [Required(ErrorMessage = "El margen es obligatorio")]
         public decimal Margin { get; set; }
+
+        public List<PriceItemDto>? Items { get; set; }
     }
 }

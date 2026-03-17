@@ -4,6 +4,7 @@ using PresupuestoMVC.Areas.Ventas.ViewModels.DTOs;
 using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Repository.Interfaces;
 using PresupuestoMVC.Services.Interfaces;
+using System.Collections.Generic;
 
 namespace PresupuestoMVC.Services
 {
@@ -52,10 +53,35 @@ namespace PresupuestoMVC.Services
                 if (articuloExistente != null && articuloExistente.Activo)
                     throw new Exception("Ya existe un artículo con este código");
 
-                var articulo = _mapper.Map<Articulo>(createDto);
-                articulo.Activo = true;
+                //var articulo = _mapper.Map<Articulo>(createDto);
+                //articulo.Activo = true;
+                //articulo.CreatedAt = DateTime.UtcNow;
+                //articulo.UpdatedAt = DateTime.UtcNow;
 
-                await _articuloRepository.GuardarAsync(articulo);
+                Articulo articulo = new Articulo()
+                {
+                    Codigo = createDto.Codigo,
+                    Nombre = createDto.Nombre,
+                    UnidadMedida = createDto.UnidadMedida,
+                    ProductCategoryId = createDto.ProductCategoryId,
+                    BrendId = createDto.BrendId,
+                    ProviderId = createDto.ProviderId,
+                    PurchasePrice = createDto.PurchasePrice,
+                    SalePrice = createDto.SalePrice,
+                    Activo = true,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+
+                var articulosPrecios = createDto.Items?
+                    .Select(item => new ArticulosPrecios
+                    {
+                        ListaPrecioId = item.ListId,
+                        Precio = item.Price,
+                        UpdatedAt = DateTime.UtcNow
+                    }).ToList() ?? new List<ArticulosPrecios>();
+
+                await _articuloRepository.GuardarAsync(articulo, articulosPrecios);
 
                 return _mapper.Map<ArticuloResponseDTO>(articulo);
             }

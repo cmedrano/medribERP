@@ -65,7 +65,7 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return RedirectToAction("Index");
             }
 
             try
