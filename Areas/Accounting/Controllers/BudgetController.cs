@@ -26,6 +26,7 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
         {
             try
             {
+                int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
                 bool esPrimeraCarga = !Request.QueryString.HasValue;
                 var today = DateTime.Now;
                 int? mesFiltro = null;
@@ -73,7 +74,7 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
 
 
                 // Obtener datos paginados y filtrados
-                var resultadoPaginado = await _budgetService.GetFiltradosAsync(filtro, pagina, tamañoPagina);
+                var resultadoPaginado = await _budgetService.GetFiltradosAsync(filtro, pagina, tamañoPagina, companyId);
 
                 // Pasar datos a la vista
                 ViewBag.Rubros = rubros;

@@ -253,7 +253,7 @@ namespace PresupuestoMVC.Services
             return totalGastos;
         }
 
-        public async Task<PaginacionRespuestaDto<GastoResponseDto>> GetFiltradosAsync(FiltroGastoViewRequest filtro, int pagina, int tamañoPagina)
+        public async Task<PaginacionRespuestaDto<GastoResponseDto>> GetFiltradosAsync(FiltroGastoViewRequest filtro, int pagina, int tamañoPagina, int companyId)
         {
             try
             {
@@ -274,6 +274,9 @@ namespace PresupuestoMVC.Services
 
                 // Obtener datos filtrados y paginados
                 var queryGasto = _context.Gastos
+                    .Where(g => g.CompanyId == companyId)
+                    .OrderByDescending(g => g.Fecha)
+                    .ThenByDescending(g => g.CreateDate)
                     .Include(g => g.RubroType)
                     .Include(g => g.Cuenta)
                     .Include(g => g.CreateByUser)

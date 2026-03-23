@@ -25,6 +25,7 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
         {
             try
             {
+                int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
                 // Cargar datos para los dropdowns
                 var rubros = await _categoryService.GetAllCategoriesAsync();
                 var cuentas = await _accountService.GetAllAccountAsync();
@@ -41,7 +42,7 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                 };
 
                 // Obtener datos paginados y filtrados
-                var resultadoPaginado = await _gastoService.GetFiltradosAsync(filtro, pagina, tamañoPagina);
+                var resultadoPaginado = await _gastoService.GetFiltradosAsync(filtro, pagina, tamañoPagina, companyId);
 
                 // Pasar datos a la vista
                 ViewBag.Rubros = rubros;

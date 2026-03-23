@@ -52,6 +52,8 @@ namespace PresupuestoMVC
             builder.Services.AddScoped<IBrandRepository, BrandRepository>();
             builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
             builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();
+            builder.Services.AddScoped<IArticulosPreciosService, ArticulosPreciosService>();
+            builder.Services.AddScoped<IArticulosPreciosRepository, ArticulosPreciosRepository>();
 
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));

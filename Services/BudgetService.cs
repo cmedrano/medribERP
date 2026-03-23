@@ -140,7 +140,7 @@ namespace PresupuestoMVC.Services
             return _mapper.Map<List<RubroType>>(tipos);
         }
 
-        public async Task<PaginacionRespuestaDto<BudgetResponseDTO>> GetFiltradosAsync(FiltroBudgetViewRequest filtro, int pagina, int tamañoPagina)
+        public async Task<PaginacionRespuestaDto<BudgetResponseDTO>> GetFiltradosAsync(FiltroBudgetViewRequest filtro, int pagina, int tamañoPagina, int companyId)
         {
             try
             {
@@ -161,6 +161,7 @@ namespace PresupuestoMVC.Services
 
             // Obtener datos filtrados y paginados
             var query = _context.Budget
+                .Where(r => r.CompanyId == companyId)
                 .Include(r => r.tipoRubro)
                 .AsQueryable();
 

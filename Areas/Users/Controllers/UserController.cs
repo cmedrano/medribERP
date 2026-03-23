@@ -62,7 +62,7 @@ namespace PresupuestoMVC.Controllers
                 if (result != null)
                 {
                     TempData["Success"] = "Usuario creado correctamente";
-                    return RedirectToAction();
+                    return RedirectToAction("Index");
                 }
                 else
                 {
