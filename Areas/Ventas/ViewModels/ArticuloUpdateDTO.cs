@@ -33,7 +33,8 @@ namespace PresupuestoMVC.Areas.Ventas.ViewModels
         [Required(ErrorMessage = "El precio de venta es obligatorio")]
         public decimal SalePrice { get; set; }
 
-        [Required(ErrorMessage = "El margen es obligatorio")]
-        public decimal Margin { get; set; }
+        //public decimal Margin { get; set; }
+
+        public List<PriceItemDto>? Items { get; set; }
     }
 }

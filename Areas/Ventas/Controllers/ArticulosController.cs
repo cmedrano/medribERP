@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PresupuestoMVC.Areas.Ventas.ViewModels;
 using PresupuestoMVC.Models.ViewModels;
 using PresupuestoMVC.Services;
@@ -17,6 +18,7 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
         private readonly IProductCategoryService _productCategoryService;
         private readonly ILogger<ArticulosController> _logger;
         private readonly IPriceListService _priceListService;
+        private readonly IArticulosPreciosService _articulosPreciosService;
 
         public ArticulosController(
             IArticuloService articuloService,
@@ -24,7 +26,8 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
             IBrandService brandService,
             IProductCategoryService productCategory,
             ILogger<ArticulosController> logger,
-            IPriceListService priceListService)
+            IPriceListService priceListService,
+            IArticulosPreciosService articulosPreciosService)
         {
             _articuloService = articuloService;
             _providerService = providerService;
@@ -32,6 +35,7 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
             _productCategoryService = productCategory;
             _logger = logger;
             _priceListService = priceListService;
+            _articulosPreciosService = articulosPreciosService;
         }
 
         public async Task<IActionResult> Index()
@@ -91,7 +95,7 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return RedirectToAction("Index");
             }
 
             try
@@ -121,6 +125,13 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPreciosByArticulo(int articuloId)
+        {
+            var precios = await _articulosPreciosService.GetPreciosByArticuloAsync(articuloId);
+            return Json(precios);
         }
     }
 }

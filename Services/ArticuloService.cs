@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using PresupuestoMVC.Areas.Ventas.ViewModels;
 using PresupuestoMVC.Areas.Ventas.ViewModels.DTOs;
 using PresupuestoMVC.Models.Entities;
@@ -77,7 +78,7 @@ namespace PresupuestoMVC.Services
                     .Select(item => new ArticulosPrecios
                     {
                         ListaPrecioId = item.ListId,
-                        Precio = item.Price,
+                        Precio = item.Price ?? 0,
                         UpdatedAt = DateTime.UtcNow
                     }).ToList() ?? new List<ArticulosPrecios>();
 
@@ -116,7 +117,15 @@ namespace PresupuestoMVC.Services
             _mapper.Map(updateDto, articulo);
             articulo.UpdatedAt = DateTime.UtcNow;
 
-            await _articuloRepository.ActualizarAsync(articulo);
+            var articulosPrecios = updateDto.Items?
+               .Select(item => new ArticulosPrecios
+               {
+                   ListaPrecioId = item.ListId,
+                   Precio = item.Price ?? 0,
+                   UpdatedAt = DateTime.UtcNow
+               }).ToList() ?? new List<ArticulosPrecios>();
+
+            await _articuloRepository.ActualizarAsync(articulo, articulosPrecios);
 
             return _mapper.Map<ArticuloResponseDTO>(articulo);
         }

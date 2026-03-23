@@ -9,7 +9,7 @@ namespace PresupuestoMVC.Repository.Interfaces
         Task<Articulo> ObtenerPorIdAsync(int id);
         Task<Articulo> ObtenerPorCodigoAsync(string codigo);
         Task GuardarAsync(Articulo articulo, List<ArticulosPrecios> articulosPrecios);
-        Task ActualizarAsync(Articulo articulo);
+        Task ActualizarAsync(Articulo articulo, List<ArticulosPrecios> articulosPrecios);
         Task EliminarAsync(int id);
         Task<int> ObtenerTotalAsync();
     }
