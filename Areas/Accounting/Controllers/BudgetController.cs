@@ -22,7 +22,7 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
             _categoryService = categoryService;
         }
 
-        public async Task<IActionResult> Index(int? rubroTypeId = null, int? mes = null, int? anio = null, int pagina = 1, int tamañoPagina = 10)
+        public async Task<IActionResult> Index(int? rubroTypeId = null, int? mes = null, int? anio = null, bool deficit = false, int pagina = 1, int tamañoPagina = 10)
         {
             try
             {
@@ -67,6 +67,7 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                 {
                     Mes = mesFiltro,
                     Anio = anioFiltro,
+                    Deficit = deficit,
                     RubroTypeId = rubroTypeId,
                     Pagina = pagina,
                     TamañoPagina = tamañoPagina
@@ -80,6 +81,7 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                 ViewBag.Rubros = rubros;
                 ViewBag.Meses = meses;
                 ViewBag.Anios = anios;
+                ViewBag.Deficit = deficit;
 
                 ViewBag.FiltroRubroId = rubroTypeId;
                 ViewBag.FiltroMes = mesFiltro ?? -1;

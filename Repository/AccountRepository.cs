@@ -67,14 +67,13 @@ namespace PresupuestoMVC.Repository
 
                 account.SaldoActual += income.Amount;
 
-                const int RUBRO_INGRESO_ID = 34;
-
                 Income incomeDto = new Income()
                 {
                     Amount = income.Amount,
                     Date = DateTime.UtcNow,
-                    CuentaId = income.Id,
+                    ToAccountId = income.Id,
                     Note = income.Note,
+                    TypeId = 1
                 };
 
                 _context.Income.Add(incomeDto);
@@ -97,32 +96,56 @@ namespace PresupuestoMVC.Repository
         
         public async Task<CuentaResponseDto> CreateTransferAsync(CreateTransferViewRequest transfer)
         {
-            var accounts = await _context.Cuentas
-            .Where(c => c.Id == transfer.AccountOriginId || c.Id == transfer.AccountDestinationId)
-            .ToListAsync();
+            using var transaction = await _context.Database.BeginTransactionAsync();
 
-            var accountOrigin = accounts.FirstOrDefault(a => a.Id == transfer.AccountOriginId)
-                ?? throw new Exception("Cuenta origen no encontrada");
-
-            var accountDestination = accounts.FirstOrDefault(a => a.Id == transfer.AccountDestinationId)
-                ?? throw new Exception("Cuenta destino no encontrada");
-
-            if(accountOrigin.SaldoActual < transfer.Amount)
+            try
             {
-                throw new Exception("Saldo insuficiente para realizar la operacion");
+                var accounts = await _context.Cuentas
+                .Where(c => c.Id == transfer.AccountOriginId || c.Id == transfer.AccountDestinationId)
+                .ToListAsync();
+
+                var accountOrigin = accounts.FirstOrDefault(a => a.Id == transfer.AccountOriginId)
+                    ?? throw new Exception("Cuenta origen no encontrada");
+
+                var accountDestination = accounts.FirstOrDefault(a => a.Id == transfer.AccountDestinationId)
+                    ?? throw new Exception("Cuenta destino no encontrada");
+
+                if (accountOrigin.SaldoActual < transfer.Amount)
+                {
+                    throw new Exception("Saldo insuficiente para realizar la operacion");
+                }
+
+                accountOrigin.SaldoActual -= transfer.Amount;
+                accountDestination.SaldoActual += transfer.Amount;
+
+                Income transferDto = new Income()
+                {
+                    Amount = transfer.Amount,
+                    Date = DateTime.UtcNow,
+                    FromAccountId = transfer.AccountOriginId,
+                    ToAccountId = transfer.AccountDestinationId,
+                    Note = transfer.Note,
+                    TypeId = 2
+                };
+
+                _context.Income.Add(transferDto);
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return new CuentaResponseDto
+                {
+                    Id = accountOrigin.Id,
+                    nombreCuenta = accountOrigin.nombreCuenta,
+                    SaldoActual = accountOrigin.SaldoActual
+                };
             }
-
-            accountOrigin.SaldoActual -= transfer.Amount;
-            accountDestination.SaldoActual += transfer.Amount;
-
-            await _context.SaveChangesAsync();
-
-            return new CuentaResponseDto
+            catch(Exception ex)
             {
-                Id = accountOrigin.Id,
-                nombreCuenta = accountOrigin.nombreCuenta,
-                SaldoActual = accountOrigin.SaldoActual
-            };
+                await transaction.RollbackAsync();
+                throw ex;
+            }
+   
         }
         public async Task<int> GetAccountsCountAsync()
         {

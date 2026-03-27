@@ -1,7 +1,8 @@
 ﻿namespace PresupuestoMVC.Enums
 {
-    public enum Categories
+    public enum TransactionType
     {
-        Ingreso = 1
+        Income = 1,
+        Transfer = 2
     }
 }
