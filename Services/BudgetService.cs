@@ -183,19 +183,24 @@ namespace PresupuestoMVC.Services
                 query = query.Where(r => r.RubroTypeId == filtro.RubroTypeId.Value);
             }
 
-            // Obtener total de registros
-            var totalRegistros = await query.CountAsync();
+             if (filtro.Deficit)
+             {
+                 query = query.Where(x => x.ValorGastado > x.valorInicial);
+             }
+
+             // Obtener total de registros
+             var totalRegistros = await query.CountAsync();
 
     
-                // Aplicar paginación
-                var rubros = await query
-                    .OrderBy(r => r.Id)
-                    .ThenBy(r => r.Anio)
-                    .ThenBy(r => r.Mes)
-                    .ThenBy(r => r.tipoRubro.nombreRubro)
-                    .Skip((pagina - 1) * tamañoPagina)
-                    .Take(tamañoPagina)
-                    .ToListAsync();
+             // Aplicar paginación
+             var rubros = await query
+                 .OrderBy(r => r.Id)
+                 .ThenBy(r => r.Anio)
+                 .ThenBy(r => r.Mes)
+                 .ThenBy(r => r.tipoRubro.nombreRubro)
+                 .Skip((pagina - 1) * tamañoPagina)
+                 .Take(tamañoPagina)
+                 .ToListAsync();
       
             var respuesta = new PaginacionRespuestaDto<BudgetResponseDTO>
             {

@@ -39,6 +39,17 @@ namespace PresupuestoMVC.Data
                 .HasForeignKey(r => r.RubroPadreId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Income>()
+                .HasOne(t => t.FromAccount)
+                .WithMany()
+                .HasForeignKey(t => t.FromAccountId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Income>()
+                .HasOne(t => t.ToAccount)
+                .WithMany()
+                .HasForeignKey(t => t.ToAccountId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Configuración para LocalidadPostal
             //modelBuilder.Entity<LocalidadPostal>()

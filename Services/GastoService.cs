@@ -285,20 +285,25 @@ namespace PresupuestoMVC.Services
                     .AsQueryable();
 
                 var queryIncome = _context.Income
-                        .Include(g => g.Cuenta)
+                        .Include(g => g.ToAccount)
                 .AsQueryable();
 
                 // Aplicar filtros
                 if (filtro.RubroTypeId.HasValue && filtro.RubroTypeId.Value > 0)
                 {
                     queryGasto = queryGasto.Where(g => g.RubroTypeId == filtro.RubroTypeId.Value);
-                    //queryIncome = queryIncome.Where(g => g.RubroTypeId == filtro.RubroTypeId.Value);
+
+                    // 34 = ingresos
+                    if(filtro.RubroTypeId == 34)
+                    {
+                        queryIncome = queryIncome.Where(g => g.TypeId == 1);
+                    }
                 }
 
                 if (filtro.CuentaId.HasValue && filtro.CuentaId.Value > 0)
                 {
                     queryGasto = queryGasto.Where(g => g.CuentaId == filtro.CuentaId.Value);
-                    queryIncome = queryIncome.Where(g => g.CuentaId == filtro.CuentaId.Value);
+                    queryIncome = queryIncome.Where(g => g.ToAccountId == filtro.CuentaId.Value);
                 }
 
                 if (filtro.FechaDesde.HasValue)
@@ -323,11 +328,10 @@ namespace PresupuestoMVC.Services
                 }
 
                 var gastoDto = _mapper.Map<List<GastoResponseDto>>(queryGasto);
-                //var incomeDto = _mapper.Map<List<GastoResponseDto>>(queryIncome);
-
+                var incomeDto = _mapper.Map<List<GastoResponseDto>>(queryIncome);
 
                 var datosUnificados = gastoDto
-                    //.Concat(incomeDto)
+                    .Concat(incomeDto)
                     .OrderByDescending(x => x.Fecha)
                     .ToList();
 

@@ -142,7 +142,11 @@
                 {
                     foreach (var gasto in paginacion.Datos)
                     {
-                        <tr class="@(gasto.RubroTypeId == 34 ? "table-primary fw-semibold" : "")">
+                        <tr class="@(gasto.Tipo == "Transferencia"
+                        ? "table-warning fw-semibold"
+                            : gasto.Tipo == "Ingreso"
+                            ? "table-success fw-semibold"
+                            : "")">
                             <td data-fecha="@gasto.Fecha.ToString("yyyy-MM-dd")">
                                 @gasto.Fecha.ToString("dd/MM/yyyy")
                             </td>
@@ -150,7 +154,7 @@
                                 @gasto.Monto.ToString("C0", new CultureInfo("es-AR"))
                             </td>
                             <td data-rubroid="@gasto.RubroTypeId">
-                                @gasto.RubroTypeNombre
+                                @(gasto.RubroTypeNombre ?? gasto.Tipo)
                             </td>
                             <td data-cuentaid="@gasto.CuentaId">
                                 @gasto.CuentaNombre

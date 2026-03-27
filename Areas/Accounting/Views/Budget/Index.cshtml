@@ -10,6 +10,7 @@
     var rubros = ViewBag.Rubros as IEnumerable<CategoryResponseDto>;
     var meses = ViewBag.Meses as IEnumerable<int>;
     var anios = ViewBag.Anios as IEnumerable<int>;
+    bool deficit = ViewBag.Deficit;
     var paginacion = ViewBag.Paginacion as PaginacionRespuestaDto<BudgetResponseDTO>;
 
     int totalPaginas = (int)Math.Ceiling((double)paginacion.TotalRegistros / ViewBag.TamañoPagina);
@@ -37,6 +38,7 @@
     <section class="filter-section">
         <div class="row align-items-end">
 
+           <!-- Filtrar por Rubro -->
             <div class="col-md-3">
                 <label for="rubroFilter" class="form-label fw-semibold">
                     <i class="bi bi-tags me-1"></i>Filtrar por Rubro
@@ -56,6 +58,7 @@
                 </select>
             </div>
 
+            <!-- Filtrar por Meses -->
             <div class="col-md-3">
                 <label for="mesFilter" class="form-label fw-semibold">
                     <i class="bi bi-wallet2 me-1"></i>Filtrar por Meses
@@ -72,6 +75,7 @@
                 </select>
             </div>
 
+            <!-- Filtrar por Años -->
             <div class="col-md-2">
                 <label for="aniosFilter" class="form-label fw-semibold">
                     <i class="bi bi-wallet2 me-1"></i>Filtrar por Años
@@ -88,12 +92,22 @@
                 </select>
             </div>
 
+            <!-- Deficit Limpiar y Crear -->
             <div class="col-md-4">
                 <div class="d-flex gap-2 align-items-end">
+                    <!-- Filtro Deficit -->
+                    <div>
+                        <label>Deficit</label>
+                        <input onchange="aplicarFiltros()"
+                            id="checkboxDeficit" type="checkbox" name="name" value=""
+                               class="form-check-input" @(ViewBag.Deficit ? "checked" : "") />
+                    </div>
+                    <!-- Botón Limpiar -->
                     <button class="btn btn-outline-secondary" id="btnLimpiarFiltros"
                             onclick="limpiarFiltros()">
                         <i class="bi bi-arrow-clockwise"></i>Limpiar
                     </button>
+                    <!-- Botón Crear -->
                     <button class="btn btn-outline-success" id="btnNuevoRubro"
                             onclick="abrirModalCrear()">
                         <i class="bi bi-plus-circle"></i>Nuevo Presupuesto
@@ -112,7 +126,7 @@
         <p class="mt-2 text-muted">Cargando gastos...</p>
     </div> *@
 
-    <!-- Grilla de Gastos -->
+    <!-- Grilla presupuesto -->
     <div class="table-responsive">
         <table class="table table-striped table-hover table-oca">
             <thead>
@@ -575,7 +589,11 @@
         const rubroId = document.getElementById('rubroFilter').value;
         const mes = document.getElementById('mesFilter').value;
         const anio = document.getElementById('aniosFilter').value;
-
+        const deficit = document.getElementById('checkboxDeficit').checked;
+        console.log("rubroId:", rubroId)
+        console.log("mes:", mes)
+        console.log("anio:", anio)
+        console.log("deficit:",deficit)
 
         // Construir URL con parámetros
         let url = '@Url.Action("Index", "Budget")';
@@ -584,6 +602,7 @@
         if (rubroId) params.append('rubroTypeId', rubroId);
         if (mes) params.append('mes', mes);
         if (anio) params.append('anio', anio);
+        params.append('deficit', deficit);
 
 
         // Mantener página actual
