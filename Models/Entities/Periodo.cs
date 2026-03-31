@@ -2,7 +2,7 @@
 
 namespace PresupuestoMVC.Models.Entities
 {
-    [Table("periodo")]
+    [Table("periods")]
     public class Periodo
     {
         [Column("id")]
