@@ -13,13 +13,15 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IAccountService _accountService;
         private readonly IGastoService _gastoService;
+        private readonly IPeriodoService _periodoService;
 
-        public DiaryController(IDiaryService diaryService, ICategoryService categodyService, IAccountService accountService, IGastoService gastoService)
+        public DiaryController(IDiaryService diaryService, ICategoryService categodyService, IAccountService accountService, IGastoService gastoService, IPeriodoService periodoService)
         {
             _diaryService = diaryService;
             _categoryService = categodyService;
             _accountService = accountService;
             _gastoService = gastoService;
+            _periodoService = periodoService;
         }
         public async Task<IActionResult> Index(int? rubroTypeId = null, int? cuentaId = null, int pagina = 1, int tamañoPagina = 10, DateTime? fechaDesde = null, DateTime? fechaHasta = null)
         {
@@ -29,6 +31,7 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                 // Cargar datos para los dropdowns
                 var rubros = await _categoryService.GetAllCategoriesAsync();
                 var cuentas = await _accountService.GetAllAccountAsync();
+                var periodos = await _periodoService.GetAllPeriodosAsync();
 
                 // Crear filtro para el servicio
                 var filtro = new FiltroGastoViewRequest
@@ -47,6 +50,7 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                 // Pasar datos a la vista
                 ViewBag.Rubros = rubros;
                 ViewBag.Cuentas = cuentas;
+                ViewBag.Periodos = periodos;
                 ViewBag.FechaDesde = fechaDesde?.ToString("yyyy-MM-dd");
                 ViewBag.FechaHasta = fechaHasta?.ToString("yyyy-MM-dd");
                 ViewBag.Data = resultadoPaginado.Datos;
