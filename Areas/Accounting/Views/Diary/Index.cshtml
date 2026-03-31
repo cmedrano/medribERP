@@ -5,15 +5,25 @@
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
+
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     var rubros = ViewBag.Rubros as IEnumerable<CategoryResponseDto>;
+    var periodos = ViewBag.Periodos as IEnumerable<Periodo>;
     var cuentas = ViewBag.Cuentas as IEnumerable<CuentaResponseDto>;
     var paginacion = ViewBag.Paginacion as PaginacionRespuestaDto<GastoResponseDto>;
 
     int totalPaginas = (int)Math.Ceiling((double)paginacion.TotalRegistros / ViewBag.TamañoPagina);
     int inicio = Math.Max(1, ViewBag.PaginaActual - 2);
     int fin = Math.Min(totalPaginas, ViewBag.PaginaActual + 2);
+
+    Func<DateTime, string> FormatPeriodo = (fecha) =>
+    {
+        var cultureInfo = new CultureInfo("es-ES");
+        string monthName = cultureInfo.DateTimeFormat.GetMonthName(fecha.Month);
+        string capitalizedMonth = string.Concat(monthName[0].ToString().ToUpper(), monthName.AsSpan(1));
+        return $"{capitalizedMonth} {fecha.Year}";
+    };
 }
 <!-- Header -->
 <header class="oca-header">
@@ -279,6 +289,21 @@
                                value="@DateTime.Now.ToString("yyyy-MM-dd")" />
                     </div>
 
+                    <!-- Periodo de Imputación -->
+                    <div class="mb-3">
+                        <label for="crearPeriodoId" class="form-label">Período de Imputación</label>
+                        <select id="crearPeriodoId" name="PeriodoId" class="form-select">
+                            <option value="">Seleccionar período...</option>
+                            @if (periodos != null)
+                            {
+                                foreach (var periodo in periodos)
+                                {
+                                    <option value="@periodo.Id">@FormatPeriodo(periodo.Fecha)</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
                     <!-- Monto -->
                     <div class="mb-3">
                         <label for="crearMonto" class="form-label">Monto</label>
@@ -534,6 +559,7 @@
         document.getElementById('crearMonto').value = "";
         document.getElementById('crearNota').value = "";
         document.getElementById('crearRubroId').value = "";
+        document.getElementById('crearPeriodoId').value = "";
         document.getElementById('crearCuentaId').value = "";
 
         const modal = new bootstrap.Modal(document.getElementById('modalCrearGastoId'));
