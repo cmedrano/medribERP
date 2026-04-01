@@ -9,5 +9,8 @@ namespace PresupuestoMVC.Models.Entities
         public int Id { get; set; }
         [Column("fecha")]
         public DateTime Fecha { get; set; }
+
+        [Column("ValorPresupuestado")]
+        public int ValorPresupuestado { get; set; }
     }
 }

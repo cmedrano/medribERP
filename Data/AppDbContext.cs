@@ -29,6 +29,8 @@ namespace PresupuestoMVC.Data
         public DbSet<AreasPerUser> AreasPerUser { get; set; }
         public DbSet<ArticulosPrecios> ArticulosPrecios { get; set; }
         public DbSet<Periodo> Periodos { get; set; }
+        public DbSet<Year> Year { get; set; }
+        public DbSet<Month> Months { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
