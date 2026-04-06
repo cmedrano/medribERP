@@ -122,68 +122,6 @@
 
         </table>
     </div>
-
-    <!-- Paginación -->
-    @*     <nav aria-label="Paginación de rubro">
-    <ul class="pagination justify-content-center">
-    <!-- Botón Anterior -->
-    <li class="page-item @(ViewBag.PaginaActual == 1 ? "disabled" : "")">
-    @if (ViewBag.PaginaActual > 1)
-    {
-    <a class="page-link"
-    href="@Url.Action("Index", new {
-    rubroTypeId = ViewBag.FiltroRubroId,
-    meses = ViewBag.FiltroMes,
-    anio = ViewBag.FiltroAnio,
-    pagina = ViewBag.PaginaActual - 1,
-    tamañoPagina = ViewBag.TamañoPagina
-    })">
-    Anterior
-    </a>
-    }
-    else
-    {
-    <span class="page-link">Anterior</span>
-    }
-    </li>
-
-    @for (int i = inicio; i <= fin; i++)
-    {
-    <li class="page-item @(i == ViewBag.PaginaActual ? "active" : "")">
-    <a class="page-link"
-    href="@Url.Action("Index", new {
-    rubroTypeId = ViewBag.FiltroRubroId,
-    meses = ViewBag.FiltroMes,
-    anio = ViewBag.FiltroAnio,
-    pagina = i,
-    tamañoPagina = ViewBag.TamañoPagina
-    })">
-    @i
-    </a>
-    </li>
-    }
-    <!-- Botón Siguiente -->
-    <li class="page-item @(ViewBag.PaginaActual >= totalPaginas ? "disabled" : "")">
-    @if (ViewBag.PaginaActual < totalPaginas)
-    {
-    <a class="page-link"
-    href="@Url.Action("Index", new {
-    rubroTypeId = ViewBag.FiltroRubroId,
-    meses = ViewBag.FiltroMes,
-    anio = ViewBag.FiltroAnio,
-    pagina = ViewBag.PaginaActual + 1,
-    tamañoPagina = ViewBag.TamañoPagina
-    })">
-    Siguiente
-    </a>
-    }
-    else
-    {
-    <span class="page-link">Siguiente</span>
-    }
-    </li>
-    </ul>
-    </nav> *@
 </div>
 
 <!-- Modal de Creación -->
@@ -243,50 +181,6 @@
         </div>
     </div>
 </div>
-
-<!-- Modal de Edición -->
-@* <div class="modal fade" id="modalEditar" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <form asp-controller="User" asp-action="Edit" method="post">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">
-                        <i class="bi bi-pencil-square me-2"></i>Editar Usuario
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white"
-                            data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body">
-                    <!-- Campo oculto para el ID -->
-                    <input type="hidden" id="editUserId" name="Id" value="" />
-
-                    <!-- Cuenta -->
-                    <div class="mb-3">
-                        <label for="editUsernameId" class="form-label">Nombre de usuario</label>
-                        <div class="input-group">
-                            <input type="string" id="editUsernameId" name="Username"
-                                   class="form-control"
-                                   min="0"
-                                   step="1"
-                                   placeholder="Ryoma"
-                                   required />
-                        </div>
-                    </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary"
-                            data-bs-dismiss="modal">
-                        Cancelar
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-check-circle me-1"></i>Guardar Cambios
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div> *@
 
 <!-- Modal de Eliminación -->
 <div class="modal fade" id="modalEliminar" tabindex="-1">
@@ -490,17 +384,6 @@
 </div>
 
 <script>
-
-    // function abrirModalEditar(id, user, rol) {
-    //     // Llenar formulario
-    //     document.getElementById('editUserId').value = id;
-    //     document.getElementById('editUsernameId').value = user;
-    //     document.getElementById('editRolId').value = rol;
-
-    //     // Mostrar modal
-    //     const modal = new bootstrap.Modal(document.getElementById('modalEditar'));
-    //     modal.show();
-    // }
 
     function abrirModalCrear() {
         document.getElementById('createAccountId');

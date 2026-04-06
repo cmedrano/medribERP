@@ -11,5 +11,6 @@
         public int CreateByUserId { get; set; }
         public int CompanyId { get; set; }
         public DateTime CreateDate { get; set; }
+        public int? PeriodoId { get; set; }
     }
 }

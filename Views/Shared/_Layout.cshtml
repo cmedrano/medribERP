@@ -96,6 +96,13 @@
                                             <span class="ms-1 d-none d-sm-inline text-muted">Cuentas</span>
                                         </a>
                                     </li>
+                                    <!-- Periodos -->
+                                    <li>
+                                        <a asp-area="Accounting" asp-controller="Period" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Period")">
+                                            @* <i class="fs-4 bi-building"></i>  *@
+                                            <span class="ms-1 d-none d-sm-inline text-muted">Periodos</span>
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                         </li>

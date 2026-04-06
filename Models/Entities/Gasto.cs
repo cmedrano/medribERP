@@ -1,4 +1,6 @@
-﻿namespace PresupuestoMVC.Models.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace PresupuestoMVC.Models.Entities
 {
     public class Gasto
     {
@@ -22,5 +24,6 @@
         public DateTime? UpdateDate { get; set; }
         public DateTime? DeleteDate { get; set; }
         public int CompanyId { get; set; }
+        public int? PeriodoId { get; set; }
     }
 }
