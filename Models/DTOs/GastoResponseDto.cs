@@ -12,6 +12,7 @@ namespace PresupuestoMVC.Models.DTOs
         public int ToAccountId { get; set; }
 
         // relaciones
+        public int PeriodoId { get; set; }
         public int RubroTypeId { get; set; }
         public string RubroTypeNombre { get; set; }
         public string Tipo { get; set; } // "Ingreso" | "Transferencia"

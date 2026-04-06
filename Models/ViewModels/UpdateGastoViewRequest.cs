@@ -8,5 +8,6 @@
         public DateTime Fecha { get; set; }
         public decimal Monto { get; set; }
         public string? Nota { get; set; }
+        public int? PeriodoId { get; set; }
     }
 }

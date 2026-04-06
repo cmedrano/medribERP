@@ -4,7 +4,7 @@
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var periodos = ViewBag.Periodos as IEnumerable<Periodo>;
+    var periodos = ViewBag.Periodos as IEnumerable<PeriodResponseDto>;
     var years = ViewBag.Years as IEnumerable<Year>;
     var months = ViewBag.Months as IEnumerable<Month>;
 
@@ -49,6 +49,7 @@
                 <tr>
                     <th scope="col">Periodo de imputación</th>
                     <th scope="col">Valor Presupuestado</th>
+                    <th scope="col">Total Gastos</th>
                     <th scope="col" class="text-center">Acciones</th>
                 </tr>
             </thead>
@@ -60,6 +61,7 @@
                         <tr>
                             <td class="text-capitalize">@FormatPeriodo(periodo.Fecha)</td>
                             <td>@periodo.ValorPresupuestado.ToString("C2")</td>
+                            <td>@periodo.TotalGastos.ToString("C2")</td>
                             <td class="text-center">
                                 <button class="btn btn-sm btn-link text-success p-0"
                                         onclick="abrirModalEditar('@periodo.Id', '@periodo.Fecha.Year', '@periodo.Fecha.Month', '@periodo.ValorPresupuestado')">
