@@ -15,6 +15,8 @@ namespace PresupuestoMVC.Data
             // Mapeo inverso
             CreateMap<LoginResponseDto, User>().ReverseMap();
 
+            CreateMap<PeriodoResumen, PeriodResponseDto>();
+
             // Rubro
             CreateMap<Budget, BudgetResponseDTO>()
                     // Mapear el ID del tipo de rubro

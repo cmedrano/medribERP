@@ -31,6 +31,7 @@ namespace PresupuestoMVC.Data
         public DbSet<Periodo> Periodos { get; set; }
         public DbSet<Year> Year { get; set; }
         public DbSet<Month> Months { get; set; }
+        public DbSet<PeriodoResumen> PeriodoResumenes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -70,6 +71,12 @@ namespace PresupuestoMVC.Data
                 entity.Property(e => e.Activo).HasColumnName("activo");
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at");
                 entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+            });
+
+            modelBuilder.Entity<PeriodoResumen>(eb =>
+            {
+                eb.HasNoKey(); // Las vistas no tienen PK física, aunque usaremos el Id
+                eb.ToView("vw_periodo_resumen"); // Nombre exacto que pusiste en SQL
             });
         }
 

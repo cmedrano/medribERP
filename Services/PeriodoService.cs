@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using PresupuestoMVC.Data;
 using PresupuestoMVC.Models.DTOs;
@@ -12,19 +13,32 @@ namespace PresupuestoMVC.Services
     {
         private readonly AppDbContext _context;
         private readonly IPeriodRepository _periodRepository;
+        private readonly IMapper _mapper;
 
-        public PeriodoService(AppDbContext context, IPeriodRepository periodRepository)
+        public PeriodoService(AppDbContext context, IPeriodRepository periodRepository, IMapper mapper)
         {
             _context = context;
             _periodRepository = periodRepository;
+            _mapper = mapper;
         }
 
-        public async Task<List<Periodo>> GetAllPeriodosAsync()
+        //public async Task<List<Periodo>> GetAllPeriodosAsync()
+        //{
+        //    return await _context.Periodos
+        //        .OrderByDescending(p => p.Fecha)
+        //        .ToListAsync();
+        //}
+        public async Task<List<PeriodResponseDto>> GetAllPeriodosAsync()
         {
-            return await _context.Periodos
+            // Consultamos directamente la vista
+            var datosDeVista = await _context.PeriodoResumenes
                 .OrderByDescending(p => p.Fecha)
                 .ToListAsync();
+
+            // Mapeamos a DTO para devolver a la capa superior
+            return _mapper.Map<List<PeriodResponseDto>>(datosDeVista);
         }
+
         public async Task<List<Year>> GetAllYearsAsync()
         {
             return await _context.Year.ToListAsync();

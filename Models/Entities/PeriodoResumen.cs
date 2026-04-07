@@ -1,14 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace PresupuestoMVC.Models.DTOs
+﻿namespace PresupuestoMVC.Models.Entities
 {
-    public class PeriodResponseDto
+    public class PeriodoResumen
     {
         public int Id { get; set; }
         public DateTime Fecha { get; set; }
-
         public int ValorPresupuestado { get; set; }
-
         public int TotalGastos { get; set; }
     }
 }

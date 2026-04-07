@@ -9,7 +9,7 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     var rubros = ViewBag.Rubros as IEnumerable<CategoryResponseDto>;
-    var periodos = ViewBag.Periodos as IEnumerable<Periodo>;
+    var periodos = ViewBag.Periodos as IEnumerable<PeriodResponseDto>;
     var cuentas = ViewBag.Cuentas as IEnumerable<CuentaResponseDto>;
     var paginacion = ViewBag.Paginacion as PaginacionRespuestaDto<GastoResponseDto>;
 
@@ -178,7 +178,8 @@
                                         @gasto.Monto.ToString().Replace(",", "."),
                                         '@Html.Raw(gasto.Nota?.Replace("'", "\\'") ?? "")',
                                         @gasto.RubroTypeId,
-                                        @gasto.CuentaId
+                                        @gasto.CuentaId,
+                                        @gasto.PeriodoId
                                     )">
                                     <i class="bi bi-pencil-square"></i>
                                 </button>
@@ -292,7 +293,7 @@
                     <!-- Periodo de Imputación -->
                     <div class="mb-3">
                         <label for="crearPeriodoId" class="form-label">Período de Imputación</label>
-                        <select id="crearPeriodoId" name="PeriodoId" class="form-select">
+                        <select id="crearPeriodoId" name="PeriodoId" class="form-select" required>
                             <option value="">Seleccionar período...</option>
                             @if (periodos != null)
                             {
@@ -396,6 +397,21 @@
                         <label for="editFecha" class="form-label">Fecha</label>
                         <input type="date" id="editFecha" name="Fecha"
                                class="form-control" required />
+                    </div>
+
+                    <!-- Periodo de Imputación -->
+                    <div class="mb-3">
+                        <label for="editPeriodoId" class="form-label">Periodo de Imputación</label>
+                        <select id="editPeriodoId" name="PeriodoId" class="form-select" required>
+                            <option value="">Seleccionar Periodo...</option>
+                            @if (ViewBag.Periodos != null)
+                            {
+                                foreach (var periodo in ViewBag.Periodos)
+                                {
+                                    <option value="@periodo.Id">@FormatPeriodo(periodo.Fecha)</option>
+                                }
+                            }
+                        </select>
                     </div>
 
                     <!-- Monto -->
@@ -552,8 +568,29 @@
 </div>
 
 
-
 <script>
+   
+    function actualizarRubrosPorFecha(fechaInputId, rubroSelectId, rubroSeleccionadoId = null) {
+        const date = document.getElementById(fechaInputId).value;
+        if (!date) return;
+
+        fetch('@Url.Action("GetCategoriesbyDate", "Budget", new { area = "Accounting" })?date=' + date)
+            .then(res => res.json())
+            .then(data => {
+                const select = document.getElementById(rubroSelectId);
+                select.innerHTML = '<option value="">Seleccionar rubro...</option>';
+
+                data.forEach(r => {
+                    // Verificamos si este es el rubro que debe estar seleccionado
+                    const isSelected = (rubroSeleccionadoId && r.id == rubroSeleccionadoId) ? 'selected' : '';
+                    select.innerHTML += `<option value="${r.id}" ${isSelected}>${r.nombreRubro}</option>`;
+                });
+            })
+            .catch(err => console.error("Error cargando rubros:", err));
+    }
+
+    // --- MODAL CREACIÓN ---
+
     function AbrirModalCrearGasto() {
         document.getElementById('crearFecha').value = new Date().toISOString().split('T')[0];
         document.getElementById('crearMonto').value = "";
@@ -562,21 +599,41 @@
         document.getElementById('crearPeriodoId').value = "";
         document.getElementById('crearCuentaId').value = "";
 
+        // Al abrir, cargamos los rubros para la fecha por defecto (hoy)
+        actualizarRubrosPorFecha("crearFecha", "crearRubroId");
+
         const modal = new bootstrap.Modal(document.getElementById('modalCrearGastoId'));
         modal.show();
     }
 
-    function AbrirModalEditarGasto(id, fecha, monto, nota, rubroId, cuentaId) {
+    // Listener para cambios de fecha en creación
+    document.getElementById("crearFecha").addEventListener("change", () => {
+        actualizarRubrosPorFecha("crearFecha", "crearRubroId");
+    });
+
+    // --- MODAL EDICIÓN ---
+
+    function AbrirModalEditarGasto(id, fecha, monto, nota, rubroId, cuentaId, periodoId) {
         document.getElementById('editGastoId').value = id;
         document.getElementById('editFecha').value = fecha;
         document.getElementById('editMonto').value = monto;
         document.getElementById('editNota').value = nota;
-        document.getElementById('editRubroId').value = rubroId;
         document.getElementById('editCuentaId').value = cuentaId;
+        document.getElementById('editPeriodoId').value = periodoId;
+
+        // Cargamos rubros específicos de esa fecha y seleccionamos el actual
+        actualizarRubrosPorFecha("editFecha", "editRubroId", rubroId);
 
         const modal = new bootstrap.Modal(document.getElementById('modalEditarGastoId'));
         modal.show();
     }
+
+    // Listener para cambios de fecha en edición
+    document.getElementById("editFecha").addEventListener("change", () => {
+        actualizarRubrosPorFecha("editFecha", "editRubroId");
+    });
+
+    // --- ELIMINACIÓN Y FILTROS ---
 
     function AbrirModalEliminarGasto(id, fecha, monto, rubro, cuenta) {
         document.getElementById('deleteGastoId').value = id;
@@ -599,7 +656,6 @@
         const fechaDesde = document.getElementById('fechaDesde')?.value;
         const fechaHasta = document.getElementById('fechaHasta')?.value;
 
-        // Construir URL con parámetros
         let url = '@Url.Action("Index", "Diary")';
         const params = new URLSearchParams();
 
@@ -608,7 +664,6 @@
         if (fechaDesde) params.append('fechaDesde', fechaDesde);
         if (fechaHasta) params.append('fechaHasta', fechaHasta);
 
-        // Mantener página actual
         params.append('pagina', 1);
         params.append('tamañoPagina', @ViewBag.TamañoPagina);
 
@@ -619,6 +674,8 @@
         window.location.href = url;
     }
 
+    // --- LÓGICA DE PERSISTENCIA (AJAX CREAR) ---
+
     function crearGasto() {
         const form = document.querySelector('#modalCrearGastoId form');
 
@@ -628,7 +685,6 @@
         }
 
         const formData = new FormData(form);
-        console.log(formData.get("RubroTypeId"));
         fetch('@Url.Action("Create", "Gasto", new { area = "Accounting" })', {
             method: 'POST',
             body: formData,
@@ -636,121 +692,49 @@
                 'X-Requested-With': 'XMLHttpRequest'
             }
         })
-            .then(res => res.json())
-            .then(data => {
-                if (data.confirmationRequired) {
-                    mostrarModalSaldo(data.mensaje);
-                    return;
-                }
-                if (data.redirectUrl) {
-                    window.location.href = data.redirectUrl;
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                alert('Error al crear gasto');
-            });
+        .then(res => res.json())
+        .then(data => {
+            if (data.confirmationRequired) {
+                mostrarModalSaldo(data.mensaje);
+                return;
+            }
+            if (data.redirectUrl) {
+                window.location.href = data.redirectUrl;
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Error al crear gasto');
+        });
     }
 
     function mostrarModalSaldo(mensaje) {
         document.getElementById('mensajeSaldo').innerText = mensaje;
-
-        const modal = new bootstrap.Modal(
-            document.getElementById('modalSaldoInsuficiente')
-        );
-
+        const modal = new bootstrap.Modal(document.getElementById('modalSaldoInsuficiente'));
         modal.show();
     }
 
     function confirmarGastoConSaldoNegativo() {
-        // Setear flag
         document.getElementById('forzarSaldoNegativo').value = "true";
-
-        // Cerrar modal de advertencia
-        const modal = bootstrap.Modal.getInstance(
-            document.getElementById('modalSaldoInsuficiente')
-        );
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modalSaldoInsuficiente'));
         modal.hide();
-
-        // Enviar formulario original
         crearGasto();
     }
 
-    document.getElementById("crearFecha")
-        .addEventListener("change", loadCategoriesByDate);
-
-    function loadCategoriesByDate() {
-
-        const date = document.getElementById("crearFecha").value;
-
-        if (!date) return;
-
-        fetch('@Url.Action("GetCategoriesbyDate", "Budget", new { area = "Accounting" })?date=' + date)
-            .then(res => res.json())
-            .then(data => {
-
-                const select = document.getElementById("crearRubroId");
-
-                select.innerHTML = '<option value="">Seleccionar rubro...</option>';
-
-                // data.forEach(rubro => {
-
-                //     const option = document.createElement("option");
-                //     option.value = rubro.Id;
-                //     option.text = rubro.nombreRubro;
-
-                //     select.appendChild(option);
-                // });
-                data.forEach(r => {
-                    select.innerHTML += `<option value="${r.id}">${r.nombreRubro}</option>`;
-                });
-            })
-            .catch(err => console.error(err));
-    }
+    // --- INICIALIZACIÓN ---
 
     document.addEventListener("DOMContentLoaded", () => {
-        loadCategoriesByDate();
+        // Carga inicial para el campo de creación si hay una fecha por defecto
+        actualizarRubrosPorFecha("crearFecha", "crearRubroId");
     });
 
     const modalCrear = document.getElementById('modalCrearGastoId');
-
     modalCrear.addEventListener('shown.bs.modal', function () {
-
         const fechaInput = document.getElementById('crearFecha');
-
         fechaInput.focus();
-
-        // Abre el calendario automáticamente
         if (fechaInput.showPicker) {
             fechaInput.showPicker();
         }
     });
 
-    // document.addEventListener('DOMContentLoaded', () => {
-
-    //     const fechaDesde = document.getElementById('fechaDesde');
-    //     const fechaHasta = document.getElementById('fechaHasta');
-
-    //     function aplicarFiltrosAutomatico() {
-    //         const params = new URLSearchParams(window.location.search);
-
-    //         if (fechaDesde.value)
-    //             params.set('FechaDesde', fechaDesde.value);
-    //         else
-    //             params.delete('FechaDesde');
-
-    //         if (fechaHasta.value)
-    //             params.set('FechaHasta', fechaHasta.value);
-    //         else
-    //             params.delete('FechaHasta');
-
-    //         // Reiniciar paginación si existe
-    //         params.delete('Pagina');
-
-    //         window.location.search = params.toString();
-    //     }
-
-    //     fechaDesde.addEventListener('change', aplicarFiltrosAutomatico);
-    //     fechaHasta.addEventListener('change', aplicarFiltrosAutomatico);
-    // });
 </script>
