@@ -5,6 +5,7 @@ using PresupuestoMVC.Models.DTOs;
 using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Models.ViewModels;
 using PresupuestoMVC.Repository.Interfaces;
+using System.ComponentModel.Design;
 using System.Security.Cryptography.Xml;
 
 namespace PresupuestoMVC.Repository
@@ -18,10 +19,11 @@ namespace PresupuestoMVC.Repository
             _mapper = mapper;
             _context = context;
         }
-        public async Task<IEnumerable<CuentaResponseDto>> GetAllAccountAsync()
+        public async Task<IEnumerable<CuentaResponseDto>> GetAllAccountAsync(int companyId)
         {
             var accounts = await _context.Cuentas
-                .AsNoTracking()
+            .AsNoTracking()
+                .Where(c => c.CompanyId == companyId)
                 .OrderBy(c => c.nombreCuenta)
                 .ToListAsync();
 
@@ -147,9 +149,11 @@ namespace PresupuestoMVC.Repository
             }
    
         }
-        public async Task<int> GetAccountsCountAsync()
+        public async Task<int> GetAccountsCountAsync(int companyId)
         {
-            var totalAccounts = await _context.Cuentas.CountAsync();
+            var totalAccounts = await _context.Cuentas
+                .Where(a => a.CompanyId == companyId)
+                .CountAsync();
             return totalAccounts;
         }
     }

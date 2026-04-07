@@ -21,8 +21,9 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
 
             try
             {
-                var accounts = await _accountService.GetAllAccountAsync();
-                var totalAccounts = await _accountService.GetAccountsCountAsync();
+                int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
+                var accounts = await _accountService.GetAllAccountAsync(companyId);
+                var totalAccounts = await _accountService.GetAccountsCountAsync(companyId);
 
                 ViewBag.Accounts = accounts;
                 ViewBag.TotalAccounts = totalAccounts;
