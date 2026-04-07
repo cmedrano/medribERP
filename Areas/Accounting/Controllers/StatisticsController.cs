@@ -14,7 +14,8 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var rubros = await _categoryService.GetAllCategoriesAsync();
+            int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
+            var rubros = await _categoryService.GetAllCategoriesAsync(companyId);
 
             ViewBag.Rubros = rubros;
             return View();

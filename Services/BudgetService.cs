@@ -320,9 +320,11 @@ namespace PresupuestoMVC.Services
 
             return categories;
         }
-        public async Task<int> GetBudgetCountAsync()
+        public async Task<int> GetBudgetCountAsync(int companyId)
         {
-            var totalBudget = await _context.Budget.CountAsync();
+            var totalBudget = await _context.Budget
+                .Where(b => b.CompanyId == companyId)
+                .CountAsync();
             return totalBudget;
         }
     }
