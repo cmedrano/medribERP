@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using PresupuestoMVC.Data;
 using PresupuestoMVC.Models.DTOs;
 using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Models.ViewModels;
 using PresupuestoMVC.Services.Interfaces;
+using System.ComponentModel.Design;
 
 namespace PresupuestoMVC.Services
 {
@@ -53,6 +55,19 @@ namespace PresupuestoMVC.Services
             {
                 // Validaciones
                 var tipoExiste = await _context.RubroType.AnyAsync(rt => rt.Id == createDto.rubroTypeId);
+                var subRubroExiste = await _context.RubroType.AnyAsync(rt => rt.Id == createDto.SubRubroId);
+
+                var budgetExiste = await _context.Budget.Where(
+                    r => r.Mes == createDto.Mes &&
+                    r.Anio == createDto.Anio &&
+                    r.RubroTypeId == createDto.rubroTypeId)
+                    .FirstOrDefaultAsync();
+
+                var budgetWithSubRubro = await _context.Budget.Where(
+                    r => r.Mes == createDto.Mes &&
+                    r.Anio == createDto.Anio &&
+                    r.RubroTypeId == createDto.SubRubroId)
+                    .FirstOrDefaultAsync();
 
                 if (!tipoExiste)
                     throw new Exception($"Tipo de rubro con ID {createDto.rubroTypeId} no existe.");
@@ -64,14 +79,45 @@ namespace PresupuestoMVC.Services
                     throw new Exception("El mes debe estar entre 1 y 12.");
 
                 createDto.CreateDate = DateTime.UtcNow;
-                var rubro = _mapper.Map<Budget>(createDto);
 
-                _context.Budget.Add(rubro);
+                if (budgetExiste == null)
+                {
+                    var budget = new Budget()
+                    {
+                        RubroTypeId = createDto.rubroTypeId,
+                        valorInicial = createDto.valorInicial,
+                        Mes = createDto.Mes,
+                        Anio = createDto.Anio,
+                        CreateByUserId = createDto.CreateByUserId,
+                        CompanyId = createDto.CompanyId,
+                        CreateDate = DateTime.UtcNow
+                    };
+                    _context.Budget.Add(budget);
+                }
+
+                if (budgetWithSubRubro == null && createDto.SubRubroId != null)
+                {
+                    var budgetWithSubCategory = new Budget()
+                    {
+                        RubroTypeId = createDto.SubRubroId,
+                        valorInicial = createDto.valorInicial,
+                        Mes = createDto.Mes,
+                        Anio = createDto.Anio,
+                        CreateByUserId = createDto.CreateByUserId,
+                        CompanyId = createDto.CompanyId,
+                        CreateDate = DateTime.UtcNow
+                    };
+                    _context.Budget.Add(budgetWithSubCategory);
+
+                    if (budgetExiste != null)
+                        budgetExiste.valorInicial += budgetWithSubCategory.valorInicial;   
+                }
+
                 await _context.SaveChangesAsync();
 
                 var result = await _context.Budget
                     .Include(r => r.tipoRubro)
-                    .FirstOrDefaultAsync(r => r.Id == rubro.Id);
+                    .FirstOrDefaultAsync(r => r.Id == 4);
 
                 return _mapper.Map<BudgetResponseDTO>(result);
             }
@@ -140,77 +186,117 @@ namespace PresupuestoMVC.Services
             return _mapper.Map<List<RubroType>>(tipos);
         }
 
-        public async Task<PaginacionRespuestaDto<BudgetResponseDTO>> GetFiltradosAsync(FiltroBudgetViewRequest filtro, int pagina, int tamañoPagina, int companyId)
+        public async Task<PaginacionRespuestaDto<BudgetGroupedDto>> GetFiltradosAsync(FiltroBudgetViewRequest filtro, int pagina, int tamañoPagina, int companyId)
         {
             try
             {
                 // Validar parámetros de paginación
                 if (filtro.Pagina < 1)
-                throw new Exception("La página debe ser mayor a 0.");
+                    throw new Exception("La página debe ser mayor a 0.");
 
-            if (filtro.TamañoPagina < 1 || filtro.TamañoPagina > 100)
-                throw new Exception("El tamaño de página debe estar entre 1 y 100.");
+                if (filtro.TamañoPagina < 1 || filtro.TamañoPagina > 100)
+                    throw new Exception("El tamaño de página debe estar entre 1 y 100.");
 
-            // Validar que el RubroTypeId existe
-            if (filtro.RubroTypeId.HasValue && filtro.RubroTypeId.Value > 0)
-            {
-                var tipoExiste = await _context.RubroType.AnyAsync(rt => rt.Id == filtro.RubroTypeId.Value);
-                if (!tipoExiste)
-                    throw new Exception($"Tipo de rubro con ID {filtro.RubroTypeId} no existe.");
-            }
+                // Validar que el RubroTypeId existe
+                if (filtro.RubroTypeId.HasValue && filtro.RubroTypeId.Value > 0)
+                {
+                    var tipoExiste = await _context.RubroType.AnyAsync(rt => rt.Id == filtro.RubroTypeId.Value);
+                    if (!tipoExiste)
+                        throw new Exception($"Tipo de rubro con ID {filtro.RubroTypeId} no existe.");
+                }
 
-            // Obtener datos filtrados y paginados
-            var query = _context.Budget
-                .Where(r => r.CompanyId == companyId)
-                .Include(r => r.tipoRubro)
-                .AsQueryable();
+                // Obtener datos filtrados y paginados
+                var query = _context.Budget
+                    .Where(r => r.CompanyId == companyId)
+                    .Include(r => r.tipoRubro)
+                    .AsQueryable();
 
-            var cont = await query.CountAsync();
+                var padresQuery = _context.Budget
+                    .Where(b => b.CompanyId == companyId &&
+                                b.tipoRubro.RubroPadreId == null)
+                    .Include(b => b.tipoRubro)
+                    .AsQueryable();
 
-            // Aplicar filtros
-            if (filtro.Mes.HasValue && filtro.Mes.Value > 0)
-            {
-                query = query.Where(r => r.Mes == filtro.Mes.Value);
-            }
+                //var cont = await query.CountAsync();
 
-            if (filtro.Anio.HasValue && filtro.Anio.Value > 0)
-            {
-                query = query.Where(r => r.Anio == filtro.Anio.Value);
-            }
+                // Aplicar filtros
+                if (filtro.Mes.HasValue && filtro.Mes.Value > 0)
+                {
+                    padresQuery = padresQuery.Where(r => r.Mes == filtro.Mes.Value);
+                }
 
-            if (filtro.RubroTypeId.HasValue && filtro.RubroTypeId.Value > 0)
-            {
-                query = query.Where(r => r.RubroTypeId == filtro.RubroTypeId.Value);
-            }
+                if (filtro.Anio.HasValue && filtro.Anio.Value > 0)
+                {
+                    padresQuery = padresQuery.Where(r => r.Anio == filtro.Anio.Value);
+                }
 
-             if (filtro.Deficit)
-             {
-                 query = query.Where(x => x.ValorGastado > x.valorInicial);
-             }
+                if (filtro.RubroTypeId.HasValue && filtro.RubroTypeId.Value > 0)
+                {
+                    padresQuery = padresQuery.Where(r => r.RubroTypeId == filtro.RubroTypeId.Value);
+                }
 
-             // Obtener total de registros
-             var totalRegistros = await query.CountAsync();
+                if (filtro.Deficit)
+                {
+                    padresQuery = padresQuery.Where(x => x.ValorGastado > x.valorInicial);
+                }
 
-    
-             // Aplicar paginación
-             var rubros = await query
-                 .OrderBy(r => r.Id)
-                 .ThenBy(r => r.Anio)
-                 .ThenBy(r => r.Mes)
-                 .ThenBy(r => r.tipoRubro.nombreRubro)
-                 .Skip((pagina - 1) * tamañoPagina)
-                 .Take(tamañoPagina)
-                 .ToListAsync();
-      
-            var respuesta = new PaginacionRespuestaDto<BudgetResponseDTO>
-            {
-                Datos = _mapper.Map<List<BudgetResponseDTO>>(rubros),
-                PaginaActual = filtro.Pagina,
-                TamañoPagina = filtro.TamañoPagina,
-                TotalRegistros = totalRegistros
-            };
+                // Aplicar paginación
+                var rubros = await padresQuery
+                    .OrderBy(r => r.Id)
+                    .ThenBy(r => r.Anio)
+                    .ThenBy(r => r.Mes)
+                    .ThenBy(r => r.tipoRubro.nombreRubro)
+                    .Skip((pagina - 1) * tamañoPagina)
+                    .Take(tamañoPagina)
+                    .ToListAsync();
 
-            return respuesta;
+                var parentIds = rubros.Select(p => p.RubroTypeId).ToList();
+
+                var subRubrosQuery = _context.Budget
+                    .Where(b => b.CompanyId == companyId &&
+                     b.tipoRubro.RubroPadreId != null &&
+                     parentIds.Contains(b.tipoRubro.RubroPadreId.Value));
+
+                if (filtro.Mes.HasValue && filtro.Mes > 0)
+                    subRubrosQuery = subRubrosQuery.Where(x => x.Mes == filtro.Mes);
+
+                if (filtro.Anio.HasValue && filtro.Anio > 0)
+                    subRubrosQuery = subRubrosQuery.Where(x => x.Anio == filtro.Anio);
+
+                if (filtro.Deficit)
+                    subRubrosQuery = subRubrosQuery.Where(x => x.ValorGastado > x.valorInicial);
+
+                //var subRubros = await _context.Budget
+                //    .Where(b => b.CompanyId == companyId &&
+                //                b.tipoRubro.RubroPadreId != null &&
+                //                parentIds.Contains(b.tipoRubro.RubroPadreId.Value))
+                //    .Include(b => b.tipoRubro)
+                //    .ToListAsync();
+
+                var subRubros = await subRubrosQuery
+                    .Include(b => b.tipoRubro)
+                    .ToListAsync();
+
+                var grouped = rubros.Select(p => new BudgetGroupedDto
+                {
+                    Budget = p,
+                    SubBudget = subRubros
+                        .Where(s => s.tipoRubro.RubroPadreId == p.RubroTypeId)
+                        .ToList()
+                }).ToList();
+
+                // Obtener total de registros
+                var totalRegistros = await query.CountAsync();
+
+                var respuesta = new PaginacionRespuestaDto<BudgetGroupedDto>
+                {
+                    Datos = grouped,
+                    PaginaActual = filtro.Pagina,
+                    TamañoPagina = filtro.TamañoPagina,
+                    TotalRegistros = totalRegistros
+                };
+
+                return respuesta;
             }
             catch (Exception ex)
             {

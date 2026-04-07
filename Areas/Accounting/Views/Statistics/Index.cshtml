@@ -1,0 +1,112 @@
+﻿@using PresupuestoMVC.Models.DTOs
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var rubros = ViewBag.Rubros as IEnumerable<CategoryResponseDto>;
+}
+<header class="oca-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-5 fw-bold">
+                    <i class="bi bi-bar-chart"></i>
+                    Estadisticas
+                </h1>
+                <p class="lead mb-0">representacion grafica</p>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div class="container">
+
+    <!-- Filtros -->
+    <section class="filter-section" style="margin:10px 0px;">
+        <div class="row align-items-end">
+
+            <!-- Filtrar por Rubro -->
+            <div class="col-md-3">
+                <label for="rubroFilter" class="form-label fw-semibold">
+                    <i class="bi bi-tags me-1"></i>Filtrar por Rubro
+                </label>
+                <select class="form-select" id="rubroFilter" onchange="aplicarFiltros()">
+                    <option value="">Todos los rubros</option>
+                    @if (rubros != null)
+                    {
+                        foreach (var rubro in rubros)
+                        {
+                            <option value="@rubro.Id"
+                                    selected="@(ViewBag.FiltroRubroId?.ToString() == rubro.Id.ToString())">
+                                @rubro.nombreRubro
+                            </option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <!-- Filtrar por Meses -->
+@*             <div class="col-md-3">
+                <label for="mesFilter" class="form-label fw-semibold">
+                    <i class="bi bi-wallet2 me-1"></i>Filtrar por Meses
+                </label>
+                <select class="form-select" id="mesFilter" onchange="aplicarFiltros()">
+                    <option value="">Todos los Meses</option>
+                    @foreach (var mesItem in ViewBag.Meses)
+                    {
+                        <option value="@mesItem.Numero"
+                                selected="@(ViewBag.FiltroMes?.ToString() == mesItem.Numero.ToString())">
+                            @mesItem.Nombre
+                        </option>
+                    }
+                </select>
+            </div> *@
+
+            <!-- Filtrar por Años -->
+@*             <div class="col-md-2">
+                <label for="aniosFilter" class="form-label fw-semibold">
+                    <i class="bi bi-wallet2 me-1"></i>Filtrar por Años
+                </label>
+                <select class="form-select" id="aniosFilter" onchange="aplicarFiltros()">
+                    <option value="">Todos los Años</option>
+                    @foreach (var anio in ViewBag.Anios)
+                    {
+                        <option value="@anio"
+                                selected="@(ViewBag.FiltroAnio?.ToString() == anio.ToString())">
+                            @anio
+                        </option>
+                    }
+                </select>
+            </div> *@
+
+            <!-- Deficit Limpiar y Crear -->
+@*             <div class="col-md-4">
+                <div class="d-flex gap-2 align-items-end">
+                    <!-- Filtro Deficit -->
+                    <div>
+                        <label>Deficit</label>
+                        <input onchange="aplicarFiltros()"
+                               id="checkboxDeficit" type="checkbox" name="name" value=""
+                               class="form-check-input" @(ViewBag.Deficit ? "checked" : "") />
+                    </div>
+                    <!-- Botón Limpiar -->
+                    <button class="btn btn-outline-secondary" id="btnLimpiarFiltros"
+                            onclick="limpiarFiltros()">
+                        <i class="bi bi-arrow-clockwise"></i>Limpiar
+                    </button>
+                    <!-- Botón Crear -->
+                    <button class="btn btn-outline-success" id="btnNuevoRubro"
+                            onclick="abrirModalCrear()">
+                        <i class="bi bi-plus-circle"></i>Nuevo Presupuesto
+                    </button>
+                </div>
+            </div> *@
+
+        </div>
+    </section>
+
+    <!--estadistica-->
+    <section>
+
+    </section>
+
+</div>

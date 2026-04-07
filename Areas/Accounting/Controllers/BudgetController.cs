@@ -31,6 +31,8 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                 var today = DateTime.Now;
                 int? mesFiltro = null;
                 int? anioFiltro = null;
+
+                var totalBudgets = await _budgetService.GetBudgetCountAsync();
                 if (esPrimeraCarga)
                 {
                     mesFiltro = today.Month;
@@ -89,8 +91,10 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
 
                 ViewBag.Data = resultadoPaginado.Datos;
                 ViewBag.Paginacion = resultadoPaginado;
+                ViewBag.ItemCounter = resultadoPaginado.Datos.Count();
                 ViewBag.PaginaActual = pagina;
                 ViewBag.TamañoPagina = tamañoPagina;
+                ViewBag.totalBudgets = totalBudgets;
 
                 return View();
             }

@@ -19,7 +19,10 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
             try
             {
                 var categories = await _categoryService.GetAllCategoriesAsync();
+                var totalCategories = await _categoryService.GetCategoriesCountAsync();
+
                 ViewBag.Categories = categories;
+                ViewBag.TotalCategories = totalCategories;
 
                 return View();
             }

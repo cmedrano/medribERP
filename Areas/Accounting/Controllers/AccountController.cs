@@ -11,18 +11,21 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
     [Area("Accounting")]
     public class AccountController : Controller
     {
-        private readonly IAccountService _AccountService;
+        private readonly IAccountService _accountService;
         public AccountController(IAccountService accountService)
         {
-            _AccountService = accountService;
+            _accountService = accountService;
         }
         public async Task<IActionResult> Index()
         {
 
             try
             {
-                var accounts = await _AccountService.GetAllAccountAsync();
+                var accounts = await _accountService.GetAllAccountAsync();
+                var totalAccounts = await _accountService.GetAccountsCountAsync();
+
                 ViewBag.Accounts = accounts;
+                ViewBag.TotalAccounts = totalAccounts;
 
                 return View();
             }
@@ -48,7 +51,7 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                 int companyId = int.Parse(User.FindFirst("CompanyId").Value);
                 accountRequest.CompanyId = companyId;
 
-                await _AccountService.CreateAccountAsync(accountRequest);
+                await _accountService.CreateAccountAsync(accountRequest);
 
                 TempData["Success"] = "Cuenta creado correctamente";
                 return RedirectToAction("Index");
@@ -70,7 +73,7 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                     return RedirectToAction("Index");
                 }
 
-                await _AccountService.CreateIncomeAsync(incomeRequest);
+                await _accountService.CreateIncomeAsync(incomeRequest);
 
                 TempData["Success"] = "se ingreso correctamente";
                 return RedirectToAction("Index");
@@ -93,7 +96,7 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                     return RedirectToAction("Index");
                 }
 
-                await _AccountService.CreateTransferAsync(transferRequest);
+                await _accountService.CreateTransferAsync(transferRequest);
 
                 TempData["Success"] = "la transferencia se hizo correctamente";
                 return RedirectToAction("Index");

@@ -31,6 +31,7 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                 // Cargar datos para los dropdowns
                 var rubros = await _categoryService.GetAllCategoriesAsync();
                 var cuentas = await _accountService.GetAllAccountAsync();
+                var totalGsstos = await _gastoService.GetGastosCountAsync();
                 var periodos = await _periodoService.GetAllPeriodosAsync();
 
                 // Crear filtro para el servicio
@@ -59,6 +60,8 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                 ViewBag.FiltroCuentaId = cuentaId;
                 ViewBag.PaginaActual = pagina;
                 ViewBag.TamañoPagina = tamañoPagina;
+                ViewBag.TotalGastos = totalGsstos;
+                ViewBag.itemsCount = resultadoPaginado.Datos.Count();
 
                 return View();
             }

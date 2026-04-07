@@ -60,7 +60,9 @@ namespace PresupuestoMVC.Repository
 
         public async Task<int> GetCategoriesCountAsync()
         {
-            var totalCategories = await _context.RubroType.CountAsync();
+            var totalCategories = await _context.RubroType
+            .Where(r => r.EsSistema == false)
+            .CountAsync();
             return totalCategories;
         }
     }

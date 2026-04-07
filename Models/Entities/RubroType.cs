@@ -8,6 +8,7 @@
         public int? RubroPadreId { get; set; }
         public RubroType? RubroPadre { get; set; }
         public int CompanyId { get; set; }
+        public bool EsSistema { get; set; }
         public ICollection<RubroType> SubRubros { get; set; } = new List<RubroType>();
     }
 }
