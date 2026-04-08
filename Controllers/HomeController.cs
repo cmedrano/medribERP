@@ -36,11 +36,12 @@ namespace PresupuestoMVC.Controllers
 
         public async Task<IActionResult> Index()
         {
+            int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
             var totalUsers = await _userService.GetUsersCountAsync();
-            var totalBudgets = await _budgetService.GetBudgetCountAsync();
-            var totalGsstos = await _gastoService.GetGastosCountAsync();
-            var totalCategories = await _categoryService.GetCategoriesCountAsync();
-            var totalAccounts = await _accountService.GetAccountsCountAsync();
+            var totalBudgets = await _budgetService.GetBudgetCountAsync(companyId);
+            var totalGsstos = await _gastoService.GetGastosCountAsync(companyId);
+            var totalCategories = await _categoryService.GetCategoriesCountAsync(companyId);
+            var totalAccounts = await _accountService.GetAccountsCountAsync(companyId);
 
             ViewBag.TotalUsers = totalUsers;
             ViewBag.TotalBudgets = totalBudgets;

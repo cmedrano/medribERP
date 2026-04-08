@@ -8,6 +8,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     var users = ViewBag.Users as IEnumerable<UserResponseDTO>;
     var roles = ViewBag.Roles;
+    var totalUsers = ViewBag.TotalUsers;
     // var paginacion = ViewBag.Paginacion as PaginacionRespuestaDto<RubroResponseDto>;
 
     // int totalPaginas = (int)Math.Ceiling((double)paginacion.TotalRegistros / ViewBag.TamañoPagina);
@@ -32,7 +33,7 @@
 <div class="container">
 
     <!-- Filtros -->
-     <section class="filter-section"> 
+    <section class="filter-section" style="margin:10px 0px;">
         <div class="row align-items-end">
 
 @*             <div class="col-md-3">
@@ -101,6 +102,12 @@
 
         </div>
     </section>
+
+    <div>
+        <h5>
+            Items: @totalUsers
+        </h5>
+    </div>
 
     <!-- Loading Spinner -->
     @* <div class="loading-spinner" id="loadingSpinner">

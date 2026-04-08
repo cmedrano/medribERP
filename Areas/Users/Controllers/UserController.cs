@@ -22,6 +22,7 @@ namespace PresupuestoMVC.Controllers
             try
             {
                 var users = await _userService.GetAllUsersAsync();
+                var totalUsers = await _userService.GetUsersCountAsync();
 
                 ViewBag.Users = users;
                 ViewBag.Roles = Enum.GetValues(typeof(UserRol))
@@ -32,6 +33,7 @@ namespace PresupuestoMVC.Controllers
                          Text = r.ToString()
                      })
                      .ToList();
+                ViewBag.TotalUsers = totalUsers;
 
                 return View();
             }

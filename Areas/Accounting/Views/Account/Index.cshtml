@@ -8,6 +8,7 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     var accounts = ViewBag.Accounts as IEnumerable<CuentaResponseDto>;
+    var totalAccounts = ViewBag.TotalAccounts;
     // var roles = ViewBag.Roles;
     // var meses = ViewBag.Meses as IEnumerable<int>;
     // var anios = ViewBag.Anios as IEnumerable<int>;
@@ -35,7 +36,7 @@
 <div class="container">
 
     <!-- Filtros -->
-    <section class="filter-section">
+    <section class="filter-section" style="margin:10px 0px;">
         <div class="row align-items-end">
 
             <div class="col-md-2">
@@ -67,6 +68,13 @@
 
         </div>
     </section>
+
+
+    <div>
+        <h5>
+            Items: @totalAccounts
+        </h5>
+    </div>
 
     <!-- Grilla de Cuenta -->
     <div class="table-responsive">

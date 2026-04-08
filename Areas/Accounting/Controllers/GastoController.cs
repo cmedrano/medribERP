@@ -28,7 +28,7 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
             {
                 int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
                 // Cargar datos para los dropdowns
-                var rubros = await _categoryService.GetAllCategoriesAsync();
+                var rubros = await _categoryService.GetAllCategoriesAsync(companyId);
                 var cuentas = await _gastoService.GetAllCuentasAsync();
 
                 // Crear filtro para el servicio

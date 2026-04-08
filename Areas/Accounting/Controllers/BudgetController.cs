@@ -31,6 +31,8 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                 var today = DateTime.Now;
                 int? mesFiltro = null;
                 int? anioFiltro = null;
+
+                var totalBudgets = await _budgetService.GetBudgetCountAsync(companyId);
                 if (esPrimeraCarga)
                 {
                     mesFiltro = today.Month;
@@ -45,7 +47,7 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                         anioFiltro = anio;
                 }
                 // Cargar datos para los dropdowns
-                var rubros = await _categoryService.GetAllCategoriesAsync();
+                var rubros = await _categoryService.GetAllCategoriesAsync(companyId);
 
                 // Años: 2025 + 5 años 2025-2030
                 var anios = Enumerable.Range(2025, 6).ToList();
@@ -89,8 +91,10 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
 
                 ViewBag.Data = resultadoPaginado.Datos;
                 ViewBag.Paginacion = resultadoPaginado;
+                ViewBag.ItemCounter = resultadoPaginado.Datos.Count();
                 ViewBag.PaginaActual = pagina;
                 ViewBag.TamañoPagina = tamañoPagina;
+                ViewBag.totalBudgets = totalBudgets;
 
                 return View();
             }

@@ -6,8 +6,8 @@ namespace PresupuestoMVC.Repository.Interfaces
 {
     public interface ICategoryRepository
     {
-        Task<IEnumerable<CategoryResponseDto>> GetAllCategoriesAsync();
+        Task<IEnumerable<CategoryResponseDto>> GetAllCategoriesAsync(int companyId);
         Task<CategoryResponseDto> CreateAsync(RubroType rubroTypeDto);
-        Task<int> GetCategoriesCountAsync();
+        Task<int> GetCategoriesCountAsync(int companyId);
     }
 }

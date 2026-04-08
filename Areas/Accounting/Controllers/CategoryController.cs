@@ -18,8 +18,12 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
         {
             try
             {
-                var categories = await _categoryService.GetAllCategoriesAsync();
+                int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
+                var categories = await _categoryService.GetAllCategoriesAsync(companyId);
+                var totalCategories = await _categoryService.GetCategoriesCountAsync(companyId);
+
                 ViewBag.Categories = categories;
+                ViewBag.TotalCategories = totalCategories;
 
                 return View();
             }

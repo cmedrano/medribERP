@@ -17,9 +17,9 @@ namespace PresupuestoMVC.Services
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<IEnumerable<CategoryResponseDto>> GetAllCategoriesAsync()
+        public async Task<IEnumerable<CategoryResponseDto>> GetAllCategoriesAsync(int companyId)
         {
-            return await _categoryRepository.GetAllCategoriesAsync();
+            return await _categoryRepository.GetAllCategoriesAsync(companyId);
         }
         public async Task<CategoryResponseDto> CreateAsync(CreateCategoryViewRequest CreateDto)
         {
@@ -35,9 +35,9 @@ namespace PresupuestoMVC.Services
             };
             return await _categoryRepository.CreateAsync(CategoryDto);
         }
-        public async Task<int> GetCategoriesCountAsync()
+        public async Task<int> GetCategoriesCountAsync(int companyId)
         {
-            var totalCategories = await _categoryRepository.GetCategoriesCountAsync();
+            var totalCategories = await _categoryRepository.GetCategoriesCountAsync(companyId);
             return totalCategories;
         }
     }

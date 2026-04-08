@@ -5,6 +5,7 @@ using PresupuestoMVC.Models.DTOs;
 using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Models.ViewModels;
 using PresupuestoMVC.Repository.Interfaces;
+using System.ComponentModel.Design;
 
 namespace PresupuestoMVC.Repository
 {
@@ -17,10 +18,10 @@ namespace PresupuestoMVC.Repository
             _mapper = mapper;
             _context = context;
         }
-        public async Task<IEnumerable<CategoryResponseDto>> GetAllCategoriesAsync()
+        public async Task<IEnumerable<CategoryResponseDto>> GetAllCategoriesAsync(int companyId)
         {
             var categories = await _context.RubroType
-                .Where(r => r.RubroPadreId == null)
+                .Where(r => r.RubroPadreId == null && r.CompanyId == companyId)
                 .Include(r => r.SubRubros)
                 .OrderBy(r => r.nombreRubro.ToLower())
                 .ToListAsync();
@@ -58,9 +59,11 @@ namespace PresupuestoMVC.Repository
             };
         }
 
-        public async Task<int> GetCategoriesCountAsync()
+        public async Task<int> GetCategoriesCountAsync(int companyId)
         {
-            var totalCategories = await _context.RubroType.CountAsync();
+            var totalCategories = await _context.RubroType
+            .Where(r => r.EsSistema == false && r.CompanyId == companyId)
+            .CountAsync();
             return totalCategories;
         }
     }

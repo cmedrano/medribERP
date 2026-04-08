@@ -11,7 +11,9 @@
     var meses = ViewBag.Meses as IEnumerable<int>;
     var anios = ViewBag.Anios as IEnumerable<int>;
     bool deficit = ViewBag.Deficit;
-    var paginacion = ViewBag.Paginacion as PaginacionRespuestaDto<BudgetResponseDTO>;
+    var paginacion = ViewBag.Paginacion as PaginacionRespuestaDto<BudgetGroupedDto>;
+    var items = ViewBag.ItemCounter;
+    var totalBudgets = ViewBag.totalBudgets;
 
     int totalPaginas = (int)Math.Ceiling((double)paginacion.TotalRegistros / ViewBag.TamañoPagina);
     int inicio = Math.Max(1, ViewBag.PaginaActual - 2);
@@ -35,7 +37,7 @@
 <div class="container">
 
     <!-- Filtros -->
-    <section class="filter-section">
+    <section class="filter-section" style="margin:10px 0px;">
         <div class="row align-items-end">
 
            <!-- Filtrar por Rubro -->
@@ -118,6 +120,12 @@
         </div>
     </section>
 
+    <div>
+        <h5>
+            Items: @items
+        </h5>
+    </div>
+
     <!-- Loading Spinner -->
     @* <div class="loading-spinner" id="loadingSpinner">
         <div class="spinner-border text-primary" role="status">
@@ -144,34 +152,42 @@
             <tbody id="rubroTableBody">
                 @if (paginacion.Datos != null && paginacion.Datos.Any())
                 {
-                    foreach (var rubro in paginacion.Datos)
+                    @foreach (var item in paginacion.Datos)
                     {
-                        <tr>
-                            @{
-                                var total = rubro.valorInicial;
-                                var gastado = rubro.valorGastado;
-                                var disponible = total - gastado;
+                        var budget = item.Budget;
+                        var subBudget = item.SubBudget;
 
-                                var porcentajeGastado = total > 0
-                                ? Math.Min((gastado / total) * 100, 100)
-                                : 0;
+                        var collapseId = "collapse_" + budget.Id;
 
-                                var porcentajeDisponible = 100 - porcentajeGastado;
+                        // 👉 Totales del padre + hijos
+                        @* var total = budget.valorInicial + subBudget.Sum(x => x.valorInicial); *@
+                        var total = budget.valorInicial;
+                        @* var gastado = budget.ValorGastado + subBudget.Sum(x => x.ValorGastado); *@
+                        var gastado = subBudget.Sum(x => x.ValorGastado);
+                        var disponible = total - gastado;
 
-                                var barraColor = disponible < 0 ? "bg-danger" : "bg-primary";
-                            }
-                            <td data-rubroTypeId="@rubro.tipoRubroNombre.ToString()">
-                                @rubro.tipoRubroNombre.ToString()
-                            </td>
-                            <td data-valorInicial="@rubro.valorInicial">
-                                @total.ToString("C0", new CultureInfo("es-AR"))
-                            </td>
-                            <td data-valorGastado="@rubro.valorGastado">
-                                @gastado.ToString("C0", new CultureInfo("es-AR"))
-                            </td>
-                            <td>
-                                @disponible.ToString("C0", new CultureInfo("es-AR"))
-                            </td>
+                        var porcentajeGastado = total > 0
+                        ? Math.Min((gastado / total) * 100, 100)
+                        : 0;
+
+                        var porcentajeDisponible = 100 - porcentajeGastado;
+
+                        var barraColor = disponible < 0 ? "bg-danger" : "bg-primary";
+
+                        <!-- 🔵 FILA PADRE -->
+                        <tr data-bs-toggle="collapse"
+                            data-bs-target="#@collapseId"
+                            style="cursor:pointer;"
+                            class="table-light fw-bold">
+
+                            <td>@budget.tipoRubro.nombreRubro</td>
+
+                            <td>@total.ToString("C0", new CultureInfo("es-AR"))</td>
+
+                            <td>@gastado.ToString("C0", new CultureInfo("es-AR"))</td>
+
+                            <td>@disponible.ToString("C0", new CultureInfo("es-AR"))</td>
+
                             <td style="min-width:70px;">
                                 <div class="progress border border-secondary mb-1" style="height: 16px;">
                                     <div class="progress-bar @barraColor"
@@ -189,41 +205,80 @@
                                 </div>
                             </td>
 
-                            <td data-mes="@rubro.Mes">
-                                @MonthHelper.MonthName(rubro.Mes)
-                            </td>
-                            <td data-anio="@rubro.Anio">
-                                @rubro.Anio
-                            </td>
-                            <td>
-                                <button class="btn btn-sm btn-primary me-1 btn-editar-rubro" 
-                                    onclick="abrirModalEditar(
-                                        '@rubro.Id', 
-                                        '@rubro.RubroTypeId',
-                                        '@rubro.valorInicial',
-                                        '@rubro.valorGastado',
-                                        '@rubro.Mes',
-                                        '@rubro.Anio'
-                                    )">
-                                    <i class="bi bi-pencil-square"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger btn-eliminar-rubro" 
-                                    onclick="abrirModalEliminar(
-                                        '@rubro.Id', 
-                                        '@rubro.tipoRubroNombre',
-                                        '@rubro.valorInicial',
-                                        '@rubro.valorGastado',
-                                        '@rubro.Mes',
-                                        '@rubro.Anio'
-                                    )">
-                                    <i class="bi bi-trash"></i>
-                                </button>
+                            <td>@MonthHelper.MonthName(budget.Mes)</td>
+                            <td>@budget.Anio</td>
+
+                            <td></td> <!-- padre sin acciones -->
+                        </tr>
+
+                        <!-- 🔽 FILA HIJOS -->
+                        <tr class="collapse" id="@collapseId">
+                            <td colspan="8" class="p-0">
+
+                                <table class="table mb-0">
+                                    @foreach (var sub in subBudget)
+                                    {
+                                        var subTotal = sub.valorInicial;
+                                        var subGastado = sub.ValorGastado;
+                                        var subDisponible = subTotal - subGastado;
+
+                                        <tr>
+                                            <td class="ps-4">
+                                                - @sub.tipoRubro.nombreRubro
+                                            </td>
+
+                                            <td>@subTotal.ToString("C0", new CultureInfo("es-AR"))</td>
+
+                                            <td>@subGastado.ToString("C0", new CultureInfo("es-AR"))</td>
+
+                                            <td>@subDisponible.ToString("C0", new CultureInfo("es-AR"))</td>
+
+                                            <td></td>
+
+                                            <td>@MonthHelper.MonthName(sub.Mes)</td>
+                                            <td>@sub.Anio</td>
+
+                                            <td>
+                                                <button class="btn btn-sm btn-primary me-1"
+                                                        onclick="abrirModalEditar(
+                                                        '@sub.Id',
+                                                        '@sub.RubroTypeId',
+                                                        '@sub.valorInicial',
+                                                        '@sub.ValorGastado',
+                                                        '@sub.Mes',
+                                                        '@sub.Anio'
+                                                    )">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
+
+                                                <button class="btn btn-sm btn-danger"
+                                                        onclick="abrirModalEliminar(
+                                                        '@sub.Id',
+                                                        '@sub.tipoRubro.nombreRubro',
+                                                        '@sub.valorInicial',
+                                                        '@sub.ValorGastado',
+                                                        '@sub.Mes',
+                                                        '@sub.Anio'
+                                                    )">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+
                             </td>
                         </tr>
                     }
                 }
             </tbody>
         </table>
+    </div>
+
+    <div>
+        <h5>
+            Total: @totalBudgets
+        </h5>
     </div>
 
     <!-- Paginación -->
@@ -316,6 +371,28 @@
                                 foreach (var rubro in ViewBag.Rubros)
                                 {
                                     <option value="@rubro.Id">@rubro.nombreRubro</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Sub rubro -->
+                    <div class="mb-3 d-none" id="subRubroContainer">
+                        <label for="crearSubRubroId" class="form-label">Sub rubro</label>
+                        <select id="crearSubRubroId" name="SubRubroId"
+                                class="form-select">
+                            <option value="">Seleccionar sub rubro...</option>
+                            @if (rubros != null)
+                            {
+                                foreach (var rubro in rubros)
+                                {
+                                    if (rubro.SubCategories.Any())
+                                    {
+                                        foreach(var sub in rubro.SubCategories)
+                                        {
+                                            <option value="@sub.Id">@sub.nombreRubro</option>                                         
+                                        }
+                                    }
                                 }
                             }
                         </select>
@@ -616,4 +693,56 @@
         window.location.href = url;
     }
 
+    const rubrosData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.Rubros));
+
+    document.getElementById("crearRubroId").addEventListener("change", function () {
+
+        const rubroId = parseInt(this.value);
+        const subRubroSelect = document.getElementById("crearSubRubroId");
+
+        // limpiar opciones
+        subRubroSelect.innerHTML = '<option value="">Seleccionar sub rubro...</option>';
+
+        if (!rubroId) return;
+
+        const rubro = rubrosData.find(r => r.Id === rubroId);
+
+        if (rubro && rubro.SubCategories) {
+            rubro.SubCategories.forEach(sub => {
+                const option = document.createElement("option");
+                console.log(option)
+                option.value = sub.Id;
+                option.text = sub.nombreRubro;
+                subRubroSelect.appendChild(option);
+            });
+        }
+    });
+
+    document.getElementById("crearRubroId").addEventListener("change", function () {
+
+        const rubroId = parseInt(this.value);
+        const subSelect = document.getElementById("crearSubRubroId");
+        const container = document.getElementById("subRubroContainer");
+
+        // reset
+        subSelect.innerHTML = '<option value="">Seleccionar sub rubro...</option>';
+        container.classList.add("d-none");
+
+        if (!rubroId) return;
+
+        const rubro = rubrosData.find(r => r.Id === rubroId);
+
+        if (rubro && rubro.SubCategories && rubro.SubCategories.length > 0) {
+
+            rubro.SubCategories.forEach(sub => {
+                const option = document.createElement("option");
+                option.value = sub.Id;
+                option.text = sub.nombreRubro;
+                subSelect.appendChild(option);
+            });
+
+            // mostrar solo si tiene subrubros
+            container.classList.remove("d-none");
+        }
+    });
 </script>
