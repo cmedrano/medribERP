@@ -28,15 +28,30 @@ namespace PresupuestoMVC.Services
         //        .OrderByDescending(p => p.Fecha)
         //        .ToListAsync();
         //}
+        //public async Task<List<PeriodResponseDto>> GetAllPeriodosAsync()
+        //{
+        //    // Consultamos directamente la vista
+        //    var datosDeVista = await _context.PeriodoResumenes
+        //        .OrderByDescending(p => p.Fecha)
+        //        .ToListAsync();
+
+        //    // Mapeamos a DTO para devolver a la capa superior
+        //    return _mapper.Map<List<PeriodResponseDto>>(datosDeVista);
+        //}
         public async Task<List<PeriodResponseDto>> GetAllPeriodosAsync()
         {
-            // Consultamos directamente la vista
-            var datosDeVista = await _context.PeriodoResumenes
+            return await _context.Periodos
                 .OrderByDescending(p => p.Fecha)
+                .Select(p => new PeriodResponseDto
+                {
+                    Id = p.Id,
+                    Fecha = p.Fecha,
+                    ValorPresupuestado = p.ValorPresupuestado,
+                    TotalGastos = _context.Gastos
+                        .Where(g => g.PeriodoId == p.Id)
+                        .Sum(g => (int?)g.Monto) ?? 0
+                })
                 .ToListAsync();
-
-            // Mapeamos a DTO para devolver a la capa superior
-            return _mapper.Map<List<PeriodResponseDto>>(datosDeVista);
         }
 
         public async Task<List<Year>> GetAllYearsAsync()
