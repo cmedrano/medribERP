@@ -28,6 +28,16 @@ namespace PresupuestoMVC.Services
         //        .OrderByDescending(p => p.Fecha)
         //        .ToListAsync();
         //}
+        //public async Task<List<PeriodResponseDto>> GetAllPeriodosAsync()
+        //{
+        //    // Consultamos directamente la vista
+        //    var datosDeVista = await _context.PeriodoResumenes
+        //        .OrderByDescending(p => p.Fecha)
+        //        .ToListAsync();
+
+        //    // Mapeamos a DTO para devolver a la capa superior
+        //    return _mapper.Map<List<PeriodResponseDto>>(datosDeVista);
+        //}
         public async Task<List<PeriodResponseDto>> GetAllPeriodosAsync()
         {
             // Consultamos directamente la vista
@@ -60,11 +70,11 @@ namespace PresupuestoMVC.Services
 
         public async Task<PeriodResponseDto> CreatePeriodAsync(CreatePeriodViewRequest periodRequest)
         {
-            // 1. Verificamos si ya existe (reutilizando el mÈtodo ExistsAsync)
+            // 1. Verificamos si ya existe (reutilizando el m√©todo ExistsAsync)
             bool existe = await ExistsAsync(periodRequest.YearId, periodRequest.MonthId);
             if (existe)
             {
-                // Lanzamos esta excepciÛn especÌfica para que el Controller la atrape
+                // Lanzamos esta excepci√≥n espec√≠fica para que el Controller la atrape
                 throw new InvalidOperationException("DUPLICADO");
             }
 
@@ -72,7 +82,7 @@ namespace PresupuestoMVC.Services
             var monthEntity = await _context.Months.FindAsync(periodRequest.MonthId);
 
             if (yearEntity == null || monthEntity == null)
-                throw new Exception("Referencia de AÒo o Mes no encontrada.");
+                throw new Exception("Referencia de A√±o o Mes no encontrada.");
 
             DateTime fechaCalculada = new DateTime(yearEntity.YearValue, monthEntity.MonthNumber, 1, 0, 0, 0, DateTimeKind.Utc);
 
@@ -94,7 +104,7 @@ namespace PresupuestoMVC.Services
             var monthEntity = await _context.Months.FindAsync(periodRequest.MonthId);
 
             if (yearEntity == null || monthEntity == null)
-                throw new Exception("Referencia de AÒo o Mes no v·lida.");
+                throw new Exception("Referencia de A√±o o Mes no v√°lida.");
 
             DateTime nuevaFecha = new DateTime(yearEntity.YearValue, monthEntity.MonthNumber, 1, 0, 0, 0, DateTimeKind.Utc);
 

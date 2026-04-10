@@ -10,7 +10,7 @@ namespace PresupuestoMVC.Models.Entities
         [Column("fecha")]
         public DateTime Fecha { get; set; }
 
-        [Column("ValorPresupuestado")]
+        [Column("valor_presupuestado")]
         public int ValorPresupuestado { get; set; }
     }
 }
