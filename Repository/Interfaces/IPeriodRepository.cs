@@ -5,7 +5,9 @@ namespace PresupuestoMVC.Repository.Interfaces
 {
     public interface IPeriodRepository
     {
-        Task<PeriodResponseDto> CreatePeriodAsync(Periodo period);
-        Task UpdatePeriodAsync(Periodo periodo);
+        Task<PeriodResponseDto> CreatePeriodAsync(PeriodoResumen period);
+        Task UpdatePeriodAsync(PeriodoResumen periodo);
+
+        Task<List<PeriodoResumen>> GetAllPeriodsAsync();
     }
 }

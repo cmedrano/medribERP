@@ -15,16 +15,16 @@ namespace PresupuestoMVC.Repository
             _context = context;
         }
 
-        public async Task<PeriodResponseDto> CreatePeriodAsync(Periodo period)
+        public async Task<PeriodResponseDto> CreatePeriodAsync(PeriodoResumen period)
         {
             //var accountExiste = await _context.pero.AnyAsync(r => r.nombreCuenta == account.nombreCuenta);
 
             //if (accountExiste)
             //    throw new InvalidOperationException("El nombre de la cuenta ya existe.");
 
-            _context.Periodos.Add(period);
+            _context.PeriodoResumenes.Add(period);
             await _context.SaveChangesAsync();
-            var periodo = await _context.Periodos
+            var periodo = await _context.PeriodoResumenes
                 .FirstOrDefaultAsync(r => r.Fecha == period.Fecha);
 
             return new PeriodResponseDto
@@ -33,10 +33,19 @@ namespace PresupuestoMVC.Repository
                 ValorPresupuestado = periodo.ValorPresupuestado
             };
         }
-        public async Task UpdatePeriodAsync(Periodo periodo)
+        public async Task UpdatePeriodAsync(PeriodoResumen periodo)
         {
-            _context.Periodos.Update(periodo);
+            _context.PeriodoResumenes.Update(periodo);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<PeriodoResumen>> GetAllPeriodsAsync()
+        {
+            var periods = await _context.PeriodoResumenes
+                .OrderByDescending(p => p.Fecha)
+                .ToListAsync();
+
+            return periods;
         }
 
 

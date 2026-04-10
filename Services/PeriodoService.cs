@@ -31,12 +31,10 @@ namespace PresupuestoMVC.Services
         public async Task<List<PeriodResponseDto>> GetAllPeriodosAsync()
         {
             // Consultamos directamente la vista
-            var datosDeVista = await _context.PeriodoResumenes
-                .OrderByDescending(p => p.Fecha)
-                .ToListAsync();
+            var periods = await _periodRepository.GetAllPeriodsAsync();
 
             // Mapeamos a DTO para devolver a la capa superior
-            return _mapper.Map<List<PeriodResponseDto>>(datosDeVista);
+            return _mapper.Map<List<PeriodResponseDto>>(periods);
         }
 
         public async Task<List<Year>> GetAllYearsAsync()
@@ -57,7 +55,7 @@ namespace PresupuestoMVC.Services
             if (year == null || month == null) return false;
 
             DateTime fecha = new DateTime(year.YearValue, month.MonthNumber, 1, 0, 0, 0, DateTimeKind.Utc);
-            return await _context.Periodos.AnyAsync(p => p.Fecha == fecha);
+            return await _context.PeriodoResumenes.AnyAsync(p => p.Fecha == fecha);
         }
 
         public async Task<PeriodResponseDto> CreatePeriodAsync(CreatePeriodViewRequest periodRequest)
@@ -78,7 +76,7 @@ namespace PresupuestoMVC.Services
 
             DateTime fechaCalculada = new DateTime(yearEntity.YearValue, monthEntity.MonthNumber, 1, 0, 0, 0, DateTimeKind.Utc);
 
-            var periodo = new Periodo
+            var periodo = new PeriodoResumen
             {
                 Fecha = fechaCalculada,
                 ValorPresupuestado = periodRequest.ValorPresupuestado
@@ -89,7 +87,7 @@ namespace PresupuestoMVC.Services
 
         public async Task UpdatePeriodAsync(int id, CreatePeriodViewRequest periodRequest)
         {
-            var periodoExistente = await _context.Periodos.FindAsync(id);
+            var periodoExistente = await _context.PeriodoResumenes.FindAsync(id);
             if (periodoExistente == null) throw new Exception("El periodo solicitado no existe.");
 
             var yearEntity = await _context.Year.FindAsync(periodRequest.YearId);
@@ -100,7 +98,7 @@ namespace PresupuestoMVC.Services
 
             DateTime nuevaFecha = new DateTime(yearEntity.YearValue, monthEntity.MonthNumber, 1, 0, 0, 0, DateTimeKind.Utc);
 
-            var esDuplicado = await _context.Periodos.AnyAsync(p => p.Fecha == nuevaFecha && p.Id != id);
+            var esDuplicado = await _context.PeriodoResumenes.AnyAsync(p => p.Fecha == nuevaFecha && p.Id != id);
             if (esDuplicado)
             {
                 throw new InvalidOperationException("DUPLICADO");

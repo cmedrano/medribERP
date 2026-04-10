@@ -36,19 +36,32 @@ namespace PresupuestoMVC.Controllers
 
         public async Task<IActionResult> Index()
         {
-            int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
-            var totalUsers = await _userService.GetUsersCountAsync();
-            var totalBudgets = await _budgetService.GetBudgetCountAsync(companyId);
-            var totalGsstos = await _gastoService.GetGastosCountAsync(companyId);
-            var totalCategories = await _categoryService.GetCategoriesCountAsync(companyId);
-            var totalAccounts = await _accountService.GetAccountsCountAsync(companyId);
+            try
+            {
+                
+                
+                
+                
+                int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
+                var totalUsers = await _userService.GetUsersCountAsync();
+                var totalBudgets = await _budgetService.GetBudgetCountAsync(companyId);
+                var totalGsstos = await _gastoService.GetGastosCountAsync(companyId);
+                var totalCategories = await _categoryService.GetCategoriesCountAsync(companyId);
+                var totalAccounts = await _accountService.GetAccountsCountAsync(companyId);
 
-            ViewBag.TotalUsers = totalUsers;
-            ViewBag.TotalBudgets = totalBudgets;
-            ViewBag.TotalGsstos = totalGsstos;
-            ViewBag.TotalCategories = totalCategories;
-            ViewBag.TotalAccounts = totalAccounts;
-            return View("Views/Home/Home.cshtml");
+                ViewBag.TotalUsers = totalUsers;
+                ViewBag.TotalBudgets = totalBudgets;
+                ViewBag.TotalGsstos = totalGsstos;
+                ViewBag.TotalCategories = totalCategories;
+                ViewBag.TotalAccounts = totalAccounts;
+                return View("Views/Home/Home.cshtml");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return View();
+            }
+            
         }
 
         public IActionResult Privacy()
