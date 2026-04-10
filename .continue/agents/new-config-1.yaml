@@ -1,0 +1,10 @@
+{
+  "models": [
+    {
+      "title": "DeepSeek",
+      "provider": "openrouter",
+      "model": "deepseek/deepseek-chat",
+      "apiKey": "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"
+    }
+  ]
+}

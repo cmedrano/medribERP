@@ -40,18 +40,11 @@ namespace PresupuestoMVC.Services
         //}
         public async Task<List<PeriodResponseDto>> GetAllPeriodosAsync()
         {
-            return await _context.Periodos
-                .OrderByDescending(p => p.Fecha)
-                .Select(p => new PeriodResponseDto
-                {
-                    Id = p.Id,
-                    Fecha = p.Fecha,
-                    ValorPresupuestado = p.ValorPresupuestado,
-                    TotalGastos = _context.Gastos
-                        .Where(g => g.PeriodoId == p.Id)
-                        .Sum(g => (int?)g.Monto) ?? 0
-                })
-                .ToListAsync();
+            // Consultamos directamente la vista
+            var periods = await _periodRepository.GetAllPeriodsAsync();
+
+            // Mapeamos a DTO para devolver a la capa superior
+            return _mapper.Map<List<PeriodResponseDto>>(periods);
         }
 
         public async Task<List<Year>> GetAllYearsAsync()
@@ -72,16 +65,16 @@ namespace PresupuestoMVC.Services
             if (year == null || month == null) return false;
 
             DateTime fecha = new DateTime(year.YearValue, month.MonthNumber, 1, 0, 0, 0, DateTimeKind.Utc);
-            return await _context.Periodos.AnyAsync(p => p.Fecha == fecha);
+            return await _context.PeriodoResumenes.AnyAsync(p => p.Fecha == fecha);
         }
 
         public async Task<PeriodResponseDto> CreatePeriodAsync(CreatePeriodViewRequest periodRequest)
         {
-            // 1. Verificamos si ya existe (reutilizando el método ExistsAsync)
+            // 1. Verificamos si ya existe (reutilizando el mÃ©todo ExistsAsync)
             bool existe = await ExistsAsync(periodRequest.YearId, periodRequest.MonthId);
             if (existe)
             {
-                // Lanzamos esta excepción específica para que el Controller la atrape
+                // Lanzamos esta excepciÃ³n especÃ­fica para que el Controller la atrape
                 throw new InvalidOperationException("DUPLICADO");
             }
 
@@ -89,11 +82,11 @@ namespace PresupuestoMVC.Services
             var monthEntity = await _context.Months.FindAsync(periodRequest.MonthId);
 
             if (yearEntity == null || monthEntity == null)
-                throw new Exception("Referencia de Año o Mes no encontrada.");
+                throw new Exception("Referencia de AÃ±o o Mes no encontrada.");
 
             DateTime fechaCalculada = new DateTime(yearEntity.YearValue, monthEntity.MonthNumber, 1, 0, 0, 0, DateTimeKind.Utc);
 
-            var periodo = new Periodo
+            var periodo = new PeriodoResumen
             {
                 Fecha = fechaCalculada,
                 ValorPresupuestado = periodRequest.ValorPresupuestado
@@ -104,18 +97,18 @@ namespace PresupuestoMVC.Services
 
         public async Task UpdatePeriodAsync(int id, CreatePeriodViewRequest periodRequest)
         {
-            var periodoExistente = await _context.Periodos.FindAsync(id);
+            var periodoExistente = await _context.PeriodoResumenes.FindAsync(id);
             if (periodoExistente == null) throw new Exception("El periodo solicitado no existe.");
 
             var yearEntity = await _context.Year.FindAsync(periodRequest.YearId);
             var monthEntity = await _context.Months.FindAsync(periodRequest.MonthId);
 
             if (yearEntity == null || monthEntity == null)
-                throw new Exception("Referencia de Año o Mes no válida.");
+                throw new Exception("Referencia de AÃ±o o Mes no vÃ¡lida.");
 
             DateTime nuevaFecha = new DateTime(yearEntity.YearValue, monthEntity.MonthNumber, 1, 0, 0, 0, DateTimeKind.Utc);
 
-            var esDuplicado = await _context.Periodos.AnyAsync(p => p.Fecha == nuevaFecha && p.Id != id);
+            var esDuplicado = await _context.PeriodoResumenes.AnyAsync(p => p.Fecha == nuevaFecha && p.Id != id);
             if (esDuplicado)
             {
                 throw new InvalidOperationException("DUPLICADO");

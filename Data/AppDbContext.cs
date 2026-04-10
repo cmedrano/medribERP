@@ -28,7 +28,7 @@ namespace PresupuestoMVC.Data
         public DbSet<ProductCategory> Product_Category { get; set; }
         public DbSet<AreasPerUser> AreasPerUser { get; set; }
         public DbSet<ArticulosPrecios> ArticulosPrecios { get; set; }
-        public DbSet<Periodo> Periodos { get; set; }
+        //public DbSet<Periodo> Periodos { get; set; }
         public DbSet<Year> Year { get; set; }
         public DbSet<Month> Months { get; set; }
         public DbSet<PeriodoResumen> PeriodoResumenes { get; set; }
@@ -73,11 +73,20 @@ namespace PresupuestoMVC.Data
                 entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
             });
 
-            modelBuilder.Entity<PeriodoResumen>(eb =>
+            modelBuilder.Entity<PeriodoResumen>(entity =>
             {
-                eb.HasNoKey(); // Las vistas no tienen PK física, aunque usaremos el Id
-                eb.ToView("vw_periodo_resumen"); // Nombre exacto que pusiste en SQL
-            });
+                entity.ToTable("periods");
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Fecha).HasColumnName("fecha");
+                entity.Property(e => e.ValorPresupuestado).HasColumnName("valor_presupuestado");
+                entity.Property(e => e.TotalGastos)
+                        .HasColumnName("total_gastos")
+                        .HasColumnType("numeric(18,2)")
+                        .HasDefaultValue(0);
+            }); ;
         }
 
     }
