@@ -3,36 +3,153 @@
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Clientes";
     var currentPage = (int)ViewData["CurrentPage"];
     var searchNombre = (string)ViewData["SearchNombre"];
     var searchFantasia = (string)ViewData["SearchFantasia"];
 }
 
 <!-- Header -->
-<div style="background-color: #f8f9fa; padding: 30px 0; margin-bottom: 30px;">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h1 class="display-5 fw-bold">
-                    <i class="bi bi-shop me-3"></i>
-                    Clientes
-                </h1>
-                <p class="lead mb-0">Administración y gestión integral de clientes.</p>
+<main class="flex-grow-1 container-main">
+    <div class="topbar">
+        <div class="searchbox">
+            <i class="bi bi-search"></i>
+            <input class="form-control" type="text" placeholder="Buscar cleinte ó alias..." />
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <button type="button" class="btn btn-success-soft"
+                    onclick="abrirModalCliente(true)">
+                <i class=" bi bi-plus-lg me-2" id="btnNuevoCliente"></i>
+                Nuevo cliente
+            </button>
+        </div>
+    </div>
+    <div class="page-head">
+        <div>
+            <h1 class="page-title">@ViewData["Title"]</h1>
+            <p class="page-subtitle">Administración y gestión integral de clientes</p>
+        </div>
+    </div>
+
+    <!-- informacion util rapida -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-6 col-xl-3">
+            <div class="erp-card metric-card">
+                <div class="metric-icon"><i class="bi bi-journal-text"></i></div>
+                <div class="metric-label">Agregado este mes</div>
+                <div class="metric-value">5</div>
             </div>
-            <div class="col-md-4 text-end">
-                <button type="button" class="btn rounded-pill px-4 fw-bold shadow-sm"
-                        onclick="abrirModalCliente(true)"
-                        style="background-color: #6f42c1; color: white;">
-                    + Crear Nuevo Cliente
-                </button>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="erp-card metric-card">
+                <div class="metric-icon"><i class="bi bi-cash-stack"></i></div>
+                <div class="metric-label">Inactivos</div>
+                <div class="metric-value">1</div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="erp-card metric-card">
+                <div class="metric-icon"><i class="bi bi-credit-card-2-front"></i></div>
+                <div class="metric-label">Categoria mayorista</div>
+                <div class="metric-value">2</div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="erp-card metric-card">
+                <div class="metric-icon"><i class="bi bi-tags"></i></div>
+                <div class="metric-label">Promedio por cliente</div>
+                <div class="metric-value">$152.658</div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="container">
     <!-- Filtros -->
-    <div class="card border-0 shadow-sm rounded-4 mb-4">
+@*     <section class="erp-card filters-card mb-4">
+        <!-- Filtros -->
+        <div class="section-head">
+            <div>
+                <h2 class="section-title">Filtros</h2>
+                <p class="section-subtitle">Aplicá filtros para encontrar movimientos más rápido.</p>
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+                <button class="btn btn-soft" onclick="limpiarFiltrosGasto()">
+                    <i class="bi bi-arrow-clockwise me-2"></i>Limpiar
+                </button>
+            </div>
+        </div>
+
+        <div class="filters-body">
+            <div class="row g-3">
+
+                <!-- Desde -->
+                <div class="col-md-2">
+                    <label class="form-label">Desde</label>
+                    <input type="date" class="form-control"
+                           id="fechaDesde"
+                           value="@ViewBag.FechaDesde"
+                           onchange="aplicarFiltros()" />
+                </div>
+
+                <!-- Hasta -->
+                <div class="col-md-2">
+                    <label class="form-label">Hasta</label>
+                    <input type="date" class="form-control"
+                           id="fechaHasta"
+                           value="@ViewBag.FechaHasta"
+                           onchange="aplicarFiltros()" />
+                </div>
+
+                <!--los nombres de los rubros fijos se muestran primero  -->
+                @{
+                    var rubrosFijos = new[] { 34, 35 };
+
+                    var rubrosOrdenados = rubros
+                    .OrderByDescending(r => rubrosFijos.Contains(r.Id));
+                }
+
+
+                <!-- Rubro -->
+                <div class="col-md-3">
+                    <label class="form-label">Rubro</label>
+                    <select class="form-select" id="rubroFilter" onchange="aplicarFiltros()">
+                        <option value="">Todos</option>
+                        @foreach (var rubro in rubrosOrdenados)
+                        {
+                            <option value="@rubro.Id"
+                                    selected="@(ViewBag.FiltroRubroId?.ToString() == rubro.Id.ToString())">
+                                @rubro.nombreRubro
+                            </option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Cuenta -->
+                <div class="col-md-3">
+                    <label class="form-label">Cuenta</label>
+                    <select class="form-select" id="cuentaFilter" onchange="aplicarFiltros()">
+                        <option value="">Todas</option>
+                        @foreach (var cuenta in cuentas)
+                        {
+                            <option value="@cuenta.Id"
+                                    selected="@(ViewBag.FiltroCuentaId?.ToString() == cuenta.Id.ToString())">
+                                @cuenta.nombreCuenta
+                            </option>
+                        }
+                    </select>
+                </div>
+
+            </div>
+            <div class="quick-filters">
+                <a href="#" class="quick-chip active">Hoy</a>
+                <a href="#" class="quick-chip">Últimos 7 días</a>
+                <a href="#" class="quick-chip">Este mes</a>
+                <a href="#" class="quick-chip">Mes anterior</a>
+                <a href="#" class="quick-chip">Solo Mercado Pago</a>
+            </div>
+        </div>
+    </section> *@
+
+@*     <div class="card border-0 shadow-sm rounded-4 mb-4">
         <div class="card-body p-4">
             <form class="row g-3 align-items-end" id="filtrosForm">
                 <div class="col-md-6">
@@ -56,88 +173,88 @@
                 </div>
             </form>
         </div>
-    </div>
+    </div> *@
 
     <!-- Contenedor de la tabla (se reemplaza por AJAX) -->
     <div id="tablaContainer">
         @await Html.PartialAsync("_TablaClientesPartial", Model)
     </div>
-</div>
+</main>
 
 <!-- Modal Cliente (Crear/Ver/Editar) -->
 <div class="modal fade" id="modalCliente" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-dialog modal-dialog-centered modal-xl erp-modal">
+
         <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header border-0 pb-0 ps-4 pt-4 rounded-top-4" style="background-color: #6f42c1; color: white;">
-                <h5 class="modal-title fw-bold" id="modalClienteTitle">
-                    <i class="bi bi-plus-circle me-2"></i>Crear Nuevo Cliente
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            <div class="erp-modal-header">
+
+                <h2 class="erp-modal-title" id="modalClienteTitle"></h2>
+                <button class="erp-modal-close" type="button" data-bs-dismiss="modal" aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
+
             <form id="formCliente" method="post">
-                <div class="modal-body p-4 bg-white">
+                <div class="modal-body erp-modal-body p-4 bg-white">
                     <input type="hidden" name="Id" id="clienteId">
 
-                    <div class="row g-4">
+                    <div class="erp-form-grid">
                         <!-- COLUMNA IZQUIERDA -->
-                        <div class="col-md-6">
+                        <section class="erp-form-section">
                             <!-- Datos Básicos -->
-                            <h6 class="fw-bold text-secondary mb-3" style="color: #6f42c1;">DATOS BÁSICOS</h6>
-                            <div class="row g-3 mb-3">
-                                <div class="col-6">
-                                    <label class="form-label small fw-bold text-secondary">NOMBRE</label>
-                                    <input type="text" name="Nombre" id="clienteNombre" class="form-control bg-light border-0 rounded-3 py-2" required>
+                            <h3 class="erp-form-section-title">DATOS BÁSICOS</h3>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Nombre</label>
+                                    <input type="text" name="Nombre" id="clienteNombre" class="form-control" placeholder="Ej. Juan Pérez" required>
                                 </div>
-                                <div class="col-6">
-                                    <label class="form-label small fw-bold text-secondary">NOMBRE FANTASÍA</label>
-                                    <input type="text" name="Fantasia" id="clienteFantasia" class="form-control bg-light border-0 rounded-3 py-2">
+                                <div class="col-md-6">
+                                    <label class="form-label">Nombre fantasía</label>
+                                    <input type="text" name="Fantasia" id="clienteFantasia" class="form-control" placeholder="Ej. Distribuidora Centro">
                                 </div>
 
-                             <h6 class="fw-bold text-secondary mb-3" style="color: #6f42c1;">CATEGORIZACIÓN</h6>
-                                <div class="col-6">
-                                    <label class="form-label small fw-bold text-secondary">CATEGORÍA</label>
-                                    <select name="Categoria" id="clienteCategoria" class="form-select bg-light border-0 rounded-3 py-2">
+                                <div class="col-md-6">
+                                    <label class="form-label">Categoría</label>
+                                    <select name="Categoria" id="clienteCategoria" class="form-select">
                                         <option value="">Seleccionar...</option>
                                         <option value="Mayorista">Mayorista</option>
                                         <option value="Minorista">Minorista</option>
                                     </select>
                                 </div>
-                                <div class="col-6">
-                                    <label class="form-label small fw-bold text-secondary">CONDICIÓN DE VENTA</label>
-                                    <select name="CondicionDeVenta" id="clienteCondicionDeVenta" class="form-select bg-light border-0 rounded-3 py-2">
+                                <div class="col-md-6">
+                                    <label class="form-label">Condicíon de venta</label>
+                                    <select name="CondicionDeVenta" id="clienteCondicionDeVenta" class="form-select">
                                         <option value="">Seleccionar...</option>
                                         <option value="Contado">Contado</option>
                                         <option value="Cuenta Corriente">Cuenta Corriente</option>
                                     </select>
                                 </div>
-                            </div>
+ 
 
                             <!-- Documentos -->
-                            <h6 class="fw-bold text-secondary mb-3 mt-4" style="color: #6f42c1;">DOCUMENTOS</h6>
-                            <div class="row g-3 mb-3">
-                                <div class="col-6">
-                                    <label class="form-label small fw-bold text-secondary">DNI</label>
-                                    <input type="text" name="DNI" id="clienteDNI" class="form-control bg-light border-0 rounded-3 py-2">
+                            <div class="col-md-6">
+                                    <label class="form-label">Dni</label>
+                                    <input type="text" name="DNI" id="clienteDNI" class="form-control" placeholder="00.000.000" />
                                 </div>
-                                <div class="col-6">
-                                    <label class="form-label small fw-bold text-secondary">CUIT</label>
-                                    <input type="text" name="CUIT" id="clienteCUIT" class="form-control bg-light border-0 rounded-3 py-2">
+                            <div class="col-md-6">
+                                    <label class="form-label">CUIT</label>
+                                    <input type="text" name="CUIT" id="clienteCUIT" class="form-control" placeholder="00-00000000-0">
                                 </div>
                             </div>
-                        </div>
+                         </section>
 
                         <!-- COLUMNA DERECHA -->
-                        <div class="col-md-6">
+                        <section class="erp-form-section">
                             <!-- Contacto/Ubicación -->
-                            <h6 class="fw-bold text-secondary mb-3" style="color: #6f42c1;">CONTACTO/UBICACIÓN</h6>
-                            <div class="row g-3 mb-3">
-                                <div class="col-6">
-                                    <label class="form-label small fw-bold text-secondary">TELÉFONO</label>
-                                    <input type="tel" name="Telefono" id="clienteTelefono" class="form-control bg-light border-0 rounded-3 py-2">
+                            <h3 class="erp-form-section-title">Contacto y ubicación</h3>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Teléfono</label>
+                                    <input type="tel" name="Telefono" id="clienteTelefono" class="form-control" placeholder="Ej. 11 4567 8901" />
                                 </div>
-                                <div class="col-6">
-                                    <label class="form-label small fw-bold text-secondary">CELULAR</label>
-                                    <input type="tel" name="Celular" id="clienteCelular" class="form-control bg-light border-0 rounded-3 py-2">
+                                <div class="col-md-6">
+                                    <label class="form-label">Celular</label>
+                                    <input type="tel" name="Celular" id="clienteCelular" class="form-control" placeholder="Ej. 11 2345 6789">
                                 </div>
                                 @* <div class="col-12">
                                     <label class="form-label small fw-bold text-secondary">EMAIL</label>
@@ -145,52 +262,57 @@
                                 </div> *@
                                 <!-- En la sección del modal, dentro de la COLUMNA DERECHA, reemplazá el input de EMAIL con este código: -->
                                 <div class="col-12">
-                                    <label class="form-label small fw-bold text-secondary">EMAIL</label>
-                                    <input type="email" name="Email" id="clienteEmail" class="form-control bg-light border-0 rounded-3 py-2">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" name="Email" id="clienteEmail" class="form-control" placeholder="cliente@empresa.com">
                                     <div id="emailErrorContainer" class="invalid-feedback mt-2 d-none" style="color: #dc3545; font-size: 0.875rem;">
                                         <i class="bi bi-exclamation-circle me-1"></i><span id="emailErrorMessage"></span>
                                     </div>
                                 </div>
-                                <div class="col-6">
-                                    <label class="form-label small fw-bold text-secondary">DOMICILIO</label>
-                                    <input type="text" name="Domicilio" id="clienteDomicilio" class="form-control bg-light border-0 rounded-3 py-2">
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-secondary">Domicilio</label>
+                                    <input type="text" name="Domicilio" id="clienteDomicilio" class="form-control" placeholder="Calle 123">
                                 </div>
-                                <div class="col-6">
-                                    <label class="form-label small fw-bold text-secondary">CÓDIGO POSTAL</label>
-                                    <input type="text" name="CodigoPostal" id="clienteCodigoPostal" class="form-control bg-light border-0 rounded-3 py-2">
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-secondary">Codigo postal</label>
+                                    <input type="text" name="CodigoPostal" id="clienteCodigoPostal" class="form-control" placeholder="1888">
                                 </div>
-                                <div class="col-6">
-                                    <label class="form-label small fw-bold text-secondary">LOCALIDAD</label>
-                                    <select name="Localidad" id="clienteLocalidad" class="form-select bg-light border-0 rounded-3 py-2">
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-secondary">Localidad</label>
+                                    <select name="Localidad" id="clienteLocalidad" class="form-select">
                                         <option value="">Seleccionar localidad...</option>
+                                        <option value="Solano">Solano</option>
                                     </select>
                                 </div>
-                                <div class="col-6">
-                                    <label class="form-label small fw-bold text-secondary">PROVINCIA</label>
-                                    <input type="text" name="Provincia" id="clienteProvincia" class="form-control bg-light border-0 rounded-3 py-2">
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-secondary">Provincia</label>
+                                    <input type="text" name="Provincia" id="clienteProvincia" class="form-control" placeholder="Buenos Aires">
                                 </div>
                             </div>
 
                             <!-- Opciones -->
-                            <div class="mt-4">
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" name="OperacionesContado" id="clienteOperacionesContado" value="true">
-                                    <label class="form-check-label text-dark" for="clienteOperacionesContado">Operaciones al contado</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="InhabilitadoFacturar" id="clienteInhabilitadoFacturar" value="true">
-                                    <label class="form-check-label text-dark" for="clienteInhabilitadoFacturar">Inhabilitado para facturar</label>
+                            <div class="col-12">
+                                <div class="erp-check-list">
+                                    <label class="erp-check" for="clienteOperacionesContado">
+                                        <input type="checkbox" name="OperacionesContado" id="clienteOperacionesContado" value="true" />
+                                        Operaciones al contado
+                                    </label>
+
+                                    <label class="erp-check" for="clienteInhabilitadoFacturar">
+                                        <input type="checkbox" name="InhabilitadoFacturar" id="clienteInhabilitadoFacturar" value="true" />
+                                        Inhabilitado para facturar
+                                    </label>
                                 </div>
                             </div>
-                        </div>
+                        </section>
                     </div>
                 </div>
-                <div class="modal-footer border-0 pe-4 pb-4 bg-white rounded-bottom-4">
-                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn fw-bold rounded-pill px-4" id="btnSubmitForm" style="background-color: #6f42c1; color: white;">Guardar</button>
+                <div class="erp-modal-footer">
+                    <button type="button" class="btn btn-soft btn-pill" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary btn-pill" id="btnSubmitForm"></button>
                 </div>
             </form>
         </div>
+        </section>
     </div>
 </div>
 
@@ -380,9 +502,10 @@
 
         if (crear) {
             // Modo crear
-            document.getElementById('modalClienteTitle').innerHTML = '<i class="bi bi-plus-circle me-2"></i>Crear Nuevo Cliente';
+            document.getElementById('modalClienteTitle').innerHTML = `<span class="erp-modal-title-icon"><i class="bi bi-person-plus"></i></span>
+            Crear nuevo cliente`;
             document.getElementById('formCliente').action = '@Url.Action("GuardarCliente", "Clientes")';
-            document.getElementById('btnSubmitForm').innerText = 'Registrar Cliente';
+            document.getElementById('btnSubmitForm').innerHTML = '<i class="bi bi-check2-circle me-2"></i>Registrar cliente';
             document.getElementById('formCliente').reset();
             btnSubmit.style.display = 'block';
 
@@ -422,9 +545,9 @@
                 document.getElementById('modalClienteTitle').innerHTML = '<i class="bi bi-eye me-2"></i>Detalles del Cliente';
                 btnSubmit.style.display = 'none';
             } else {
-                document.getElementById('modalClienteTitle').innerHTML = '<i class="bi bi-pencil-square me-2"></i>Editar Cliente';
+                document.getElementById('modalClienteTitle').innerHTML = '<i class="bi bi-pencil-square erp-modal-title-icon"></i>Editar Cliente';
                 document.getElementById('formCliente').action = '@Url.Action("EditarCliente", "Clientes")';
-                document.getElementById('btnSubmitForm').innerText = 'Actualizar';
+                document.getElementById('btnSubmitForm').innerHTML = '<i class="bi bi-check2-circle me-2"></i>Actualizar cliente';
                 btnSubmit.style.display = 'block';
             }
 
