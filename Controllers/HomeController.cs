@@ -42,6 +42,7 @@ namespace PresupuestoMVC.Controllers
                 
                 
                 
+                
                 int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
                 var totalUsers = await _userService.GetUsersCountAsync();
                 var totalBudgets = await _budgetService.GetBudgetCountAsync(companyId);

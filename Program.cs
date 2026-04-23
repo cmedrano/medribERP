@@ -20,8 +20,19 @@ namespace PresupuestoMVC
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            var connectionString =
-                builder.Configuration.GetConnectionString("DefaultConnection");
+            var useProductionDatabase = builder.Configuration.GetValue<bool>("UseProductionDatabase");
+
+            string connectionString = useProductionDatabase
+                ? builder.Configuration.GetConnectionString("DefaultConnection")
+                : builder.Configuration.GetConnectionString("DevelopmentConnection");
+
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new Exception("No se encontró la connection string configurada.");
+            }
+
+            //var connectionString =
+            //    builder.Configuration.GetConnectionString("DefaultConnection");
 
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(connectionString));
