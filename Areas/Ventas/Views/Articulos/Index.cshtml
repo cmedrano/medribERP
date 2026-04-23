@@ -4,78 +4,113 @@
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Artículos";
     var productCategories = ViewBag.ProductCategories as IEnumerable<ProductCategoryResponseDto>;
     var brands = ViewBag.Brands;
     var providers = ViewBag.Providers;
     var priceList = ViewBag.PriceList;
 }
-<div style="background-color: #f8f9fa; padding: 30px 0; margin-bottom: 30px;">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h1 class="display-5 fw-bold">
-                    <i class="bi bi-box-seam me-3"></i>
-                    Artículos
-                </h1>
-                <p class="lead mb-0">Gestión de artículos y productos.</p>
+<main class="flex-grow-1 container-main">
+    <!-- Header -->
+    <div class="topbar">
+        <div class="searchbox">
+            <i class="bi bi-search"></i>
+            <input class="form-control" type="text" placeholder="Buscar codigo ó articulo..." />
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <button type="button" class="btn btn-success-soft"
+                    onclick="abrirModalArticulo(true)">
+                <i class=" bi bi-plus-lg me-2" id="btnNuevoArticulo"></i>
+                Nuevo articulo
+            </button>
+        </div>
+    </div>
+    <div class="page-head">
+        <div>
+            <h1 class="page-title">@ViewData["Title"]</h1>
+            <p class="page-subtitle">Gestión de artículos y productos.</p>
+        </div>
+    </div>
+
+    <!-- informacion util rapida -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-6 col-xl-3">
+            <div class="erp-card metric-card">
+                <div class="metric-icon"><i class="bi bi-journal-text"></i></div>
+                <div class="metric-label">Articulos agregados este mes</div>
+                <div class="metric-value">215</div>
             </div>
-            <div class="col-md-4 text-end">
-                <button type="button" class="btn rounded-pill px-4 fw-bold shadow-sm"
-                        onclick="abrirModalArticulo(true)"
-                        style="background-color: #fd7e14; color: white;">
-                    + Crear Nuevo Articulo
-                </button>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="erp-card metric-card">
+                <div class="metric-icon"><i class="bi bi-cash-stack"></i></div>
+                <div class="metric-label">Valor total inventario</div>
+                <div class="metric-value">$ 3.945.700</div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="erp-card metric-card">
+                <div class="metric-icon"><i class="bi bi-credit-card-2-front"></i></div>
+                <div class="metric-label">medida mas utilizada</div>
+                <div class="metric-value">KG</div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="erp-card metric-card">
+                <div class="metric-icon"><i class="bi bi-tags"></i></div>
+                <div class="metric-label">Rubro principal</div>
+                <div class="metric-value">Almacen</div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="container">
     <div id="tablaContainer">
         @await Html.PartialAsync("_TablaArticulosPartial", Model)
     </div>
-</div>
+</main>
+
 
 <!-- Modal Articulo (Crear/Ver/Editar) -->
-<div class="modal fade" id="modalArticulo" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
+<div class="modal fade erp-modal-body" id="modalArticulo" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog  modal-xl erp-modal">
         <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header border-0 pb-0 ps-4 pt-3 pb-3 rounded-top-4" style="background-color: #fd7e14; color: white;">
-                <h5 class="modal-title fw-bold" id="modalArticuloTitle">
-                    <i class="bi bi-plus-circle me-2"></i>Crear Nuevo Articulo
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+
+            <div class="erp-modal-header">
+                <h2 class="erp-modal-title" id="modalArticuloTitle"></h2>
+                <button class="erp-modal-close" type="button" data-bs-dismiss="modal" aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
+
             <form id="formArticulo" method="post">
-                <div class="modal-body p-4 bg-white">
+                <div class="modal-body erp-modal-body p-4 bg-white">
                     <input type="hidden" name="Id" id="articuloId">
                        <!-- tabla donde se guardarán los precios -->
                        <div id="priceContainer"></div>
                     <div id="hiddenItemsContainer"></div>
                     <div class="row g-4">
-                        <!-- COLUMNA IZQUIERDA -->
-                        <div class="col">
+                        <section class="erp-form-section">
                             <!-- Datos Básicos -->
-                            @* <h6 class="fw-bold text-secondary mb-3" style="color: #fd7e14;">DATOS BÁSICOS</h6> *@
+                            <h3 class="erp-form-section-title">Datos del artículo</h3>
                             <div class="row g-3 mb-3">
                                 <!-- Codigo -->
                                 <div class="col-md-4">
-                                    <label class="form-label small fw-bold text-secondary">CODIGO</label>
-                                    <input type="text" name="Codigo" id="articuloCodigo" class="form-control bg-light border-0 rounded-3 py-2" required>
+                                    <label class="form-label">Codigo</label>
+                                    <input type="text" name="Codigo" id="articuloCodigo" class="form-control" placeholder="Ej. fda-123" required>
                                 </div>
                                 <!-- Nombre -->
                                 <div class="col-md-4">
-                                    <label class="form-label small fw-bold text-secondary">NOMBRE</label>
-                                    <input type="text" name="Nombre" id="articuloNombre" class="form-control bg-light border-0 rounded-3 py-2" required>
+                                    <label class="form-label">Nombre</label>
+                                    <input type="text" name="Nombre" id="articuloNombre" class="form-control" placeholder="Ej. Richard" required>
                                 </div>
                                 <!-- Unidad de medida -->
                                 <div class="col-md-4">
-                                    <label class="form-label small fw-bold text-secondary">UNIDAD DE MEDIDA</label>
-                                    <input type="text" name="UnidadMedida" id="articuloUnidadMedida" class="form-control bg-light border-0 rounded-3 py-2" required>
+                                    <label class="form-label">Unidad de medida</label>
+                                    <input type="text" name="UnidadMedida" id="articuloUnidadMedida" class="form-control" placeholder="Ej. Kg" required>
                                 </div>
                                 <!-- Rubro -->
                                 <div class="col-md-4">
-                                    <label for="SelectRubroId" class="form-label small fw-bold text-secondary">RUBRO</label>
+                                    <label for="SelectRubroId" class="form-label">Rubro</label>
                                     <select id="SelectRubroId" name="ProductCategoryId"
                                             class="form-select" required>
                                         <option value="">Seleccionar rubro...</option>
@@ -90,7 +125,7 @@
                                 </div>
                                 <!-- Marca -->
                                 <div class="col-md-4">
-                                    <label class="form-label small fw-bold text-secondary">MARCA</label>
+                                    <label class="form-label">Marca</label>
                                     <select id="BrendId" name="BrendId"
                                             class="form-select" required>
                                         <option value="">Seleccionar marca...</option>
@@ -105,7 +140,7 @@
                                 </div>
                                 <!-- Proveedor -->
                                 <div class="col-md-4">
-                                    <label class="form-label small fw-bold text-secondary">PROVEEDOR</label>
+                                    <label class="form-label">Proveedor</label>
                                     <select id="providerId" name="ProviderId"
                                             class="form-select" required>
                                         <option value="">Seleccionar proveedor...</option>
@@ -120,7 +155,7 @@
                                 </div>
                                 <!-- Precio de compra -->
                                 <div class="col-md-4">
-                                    <label class="form-label small fw-bold text-secondary">PRECIO DE COMPRA</label>
+                                    <label class="form-label">Precio de compra</label>
                                     <div class="input-group">
                                         <span class="input-group-text bg-light border-0">
                                             <i class="bi bi-currency-dollar"></i>
@@ -129,13 +164,13 @@
                                                name="purchasePrice"
                                                id="PurchasePrice"
                                                placeholder="0"
-                                               class="form-control bg-light border-0 rounded-3 py-2"
+                                               class="form-control"
                                                required>
                                     </div>
                                 </div>
                                 <!-- Precio de venta -->
                                 <div class="col-md-4">
-                                    <label class="form-label small fw-bold text-secondary">PRECIO DE VENTA</label>
+                                    <label class="form-label">Precio de venta</label>
                                     <div class="input-group">
                                         <span class="input-group-text bg-light border-0">
                                             <i class="bi bi-currency-dollar"></i>
@@ -144,31 +179,31 @@
                                                name="SalePrice"
                                                id="salePrice"
                                                placeholder="0"
-                                               class="form-control bg-light border-0 rounded-end-3 py-2"
+                                               class="form-control"
                                                required>
                                     </div>
                                 </div>
                                 
                                 <!-- lista -->
                                 <div class="col-md-4">
-                                    <label class="form-label small fw-bold text-secondary">LISTA DE PRECIOS</label>
-                                    <div class="input-group">
+                                    <label class="form-label">Lista de precios</label>
+                                    <div class="input-group btn-lista">
                                         <button type="button"
-                                                class="btn fw-bold rounded-pill px-4"
+                                                class="btn-orange-soft"
                                                 title="Ver"
-                                                style="background-color: #fd7e14; color: white;"
                                                 onclick="abrirModalLista()">
+                                            <i class="bi bi-list me-1"></i>
                                             Abrir lista
                                         </button>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </section>
                     </div>
                 </div>
-                <div class="modal-footer border-0 pe-4 pb-4 bg-white rounded-bottom-4">
-                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn fw-bold rounded-pill px-4" id="btnSubmitForm" style="background-color: #fd7e14; color: white;">Guardar</button>
+                <div class="erp-modal-footer">
+                    <button type="button" class="btn btn-soft btn-pill" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary btn-pill" id="btnSubmitForm"></button>
                 </div>
             </form>
         </div>
@@ -195,73 +230,87 @@
 </div>
 
 <!-- Sub modal lista de precios-->
-<div class="modal fade" id="subModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+<div class="modal fade erp-modal-body" id="subModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered erp-modal">
         <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header border-0 pb-0 ps-4 pt-3 pb-3 rounded-top-4" style="background-color: #fd7e14; color: white;">
-                <h5 class="modal-title fw-bold" id="modalArticuloTitle">
-                    <i class="bi bi-box-seam me-3"></i>Lista de precios
+
+            <!-- Header -->
+            <div class="erp-modal-header">
+                <h5 class="erp-modal-title" id="modalArticuloTitle">
+                    <i class="bi bi-box"></i> Lista de precios
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <button class="erp-modal-close" type="button" data-bs-dismiss="modal" aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
-            <div class="modal-body p-5 text-center">
-                <div class="mb-4">
-                    @* <i class="bi bi-exclamation-circle-fill text-danger" style="font-size: 3rem;"></i> *@
-                </div>
-                <div class="card shadow-lg border-0 rounded-4">
-                    <div class="card-body p-0">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="custom-header text-white">
-                                <tr>
-                                    <th class="form-label text-black small">NOMBRE LISTA</th>
-                                    <th class="form-label text-black small">PRECIO</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                             @if (priceList != null)
-                            {
-                                for (int i = 0; i < priceList.Count; i++)
-                                {
-                                    <tr>
-                                        <td class="fw-semibold ListName">
-                                            @priceList[i].Nombre
-                                        </td>
-                            
-                                        <td>
-                                            <input type="hidden" 
-                                                   name="Items[@i].ListId" 
-                                                   value="@priceList[i].Id" />
-                            
-                                            <div class="input-group">
-                                                <span class="input-group-text bg-light border-0">
-                                                    <i class="bi bi-currency-dollar"></i>
-                                                </span>
-                                                <input type="number"
-                                                       name="Items[@i].Price"
-                                                       class="form-control bg-light border-0 rounded-3 py-2 price-input"
-                                                       placeholder="0"
-                                                       required>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
-                            }
-                            else
-                            {
-                                <tr>
-                                    <td colspan="5" class="text-center py-4">
-                                        No hay listas cargadas.
-                                    </td>
-                                </tr>
-                            }
-                            </tbody>
-                        </table>
+
+            <!-- Body -->
+            <div class="modal-body">
+                <div class="erp-modal-body">
+                    <div class="card-body">
+
+                        <section class="erp-form-section">
+                            <div class="">
+                                 <small class="erp-form-section-title">PRECIOS POR LISTA</small>
+                                  <p class="text-muted small mb-3">
+                                      Definí el valor para cada lista.
+                                  </p>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-modern table-hover align-middle">
+                                    <thead class="">
+                                        <tr>
+                                            <th class="py-3">Nombre</th>
+                                            <th class="py-3">Precio</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                     @if (priceList != null)
+                                    {
+                                        for (int i = 0; i < priceList.Count; i++)
+                                        {
+                                            <tr>
+                                                <td class="fw-bold">
+                                                    @priceList[i].Nombre
+                                                </td>
+                                    
+                                                <td>
+                                                    <input type="hidden" 
+                                                           name="Items[@i].ListId" 
+                                                           value="@priceList[i].Id" />
+                                    
+                                                    <div class="input-group">
+                                                        <span class="input-group-text bg-light border-0">
+                                                            <i class="bi bi-currency-dollar"></i>
+                                                        </span>
+                                                        <input type="number"
+                                                               name="Items[@i].Price"
+                                                               class="form-control"
+                                                               placeholder="0"
+                                                               required>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="5" class="text-center py-4">
+                                                No hay listas cargadas.
+                                            </td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer border-0 bg-light d-flex justify-content-center gap-2">
-                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn fw-bold rounded-pill px-4" style="background-color: #fd7e14; color: white;" id="btnLista" onclick="savedSubModal()">Aceptar</button>
+            <div class="erp-modal-footer">
+                <button type="button" class="btn btn-soft btn-pill" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary btn-pill" id="btnLista" onclick="savedSubModal()"><i class="bi bi-check2-circle me-2"></i>Aceptar</button>
             </div>
         </div>
     </div>
@@ -288,9 +337,10 @@
 
         if (crear) {
             // Modo crear
-            document.getElementById('modalArticuloTitle').innerHTML = '<i class="bi bi-plus-circle me-2"></i>Crear Nuevo Articulo';
+            document.getElementById('modalArticuloTitle').innerHTML = `<span class="erp-modal-title-icon"><i class="bi bi-box-seam"></i></span>
+                Crear nuevo articulo`;
             document.getElementById('formArticulo').action = '@Url.Action("GuardarArticulo", "Articulos")';
-            document.getElementById('btnSubmitForm').innerText = 'Registrar Articulo';
+            document.getElementById('btnSubmitForm').innerHTML = '<i class="bi bi-check2-circle me-2"></i>Registrar articulo';
             document.getElementById('formArticulo').reset();
             btnSubmit.style.display = 'block';
             btnLista.style.display = 'block';
@@ -327,9 +377,9 @@
                 btnSubmit.style.display = 'none';
                 btnLista.style.display = 'none';
             } else {
-                document.getElementById('modalArticuloTitle').innerHTML = '<i class="bi bi-pencil-square me-2"></i>Editar Articulo';
+                document.getElementById('modalArticuloTitle').innerHTML = '<i class="bi bi-pencil-square me-2 erp-modal-title-icon"></i>Editar Articulo';
                 document.getElementById('formArticulo').action = '@Url.Action("EditarArticulo", "Articulos")';
-                document.getElementById('btnSubmitForm').innerText = 'Actualizar';
+                document.getElementById('btnSubmitForm').innerHTML = '<i class="bi bi-check2-circle me-2"></i>Actualizar articulo';
                 btnSubmit.style.display = 'block';
                 btnLista.style.display = 'block';
             }
