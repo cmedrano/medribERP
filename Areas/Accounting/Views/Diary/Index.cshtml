@@ -1,13 +1,9 @@
 ﻿@using PresupuestoMVC.Models.DTOs
 @using PresupuestoMVC.Models.Entities
 @using System.Globalization
-
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Diario";
     var rubros = ViewBag.Rubros as IEnumerable<CategoryResponseDto>;
     var periodos = ViewBag.Periodos as IEnumerable<PeriodResponseDto>;
     var cuentas = ViewBag.Cuentas as IEnumerable<CuentaResponseDto>;
@@ -27,203 +23,231 @@
         return $"{capitalizedMonth} {fecha.Year}";
     };
 }
-<!-- Header -->
-<header class="oca-header">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h1 class="display-5 fw-bold">
-                    <i class="bi bi-cash-stack me-3"></i>
-                    Diario
-                </h1>
-                <p class="lead mb-0">Sistema de control y seguimiento diario</p>
+<main class="flex-grow-1 container-main">
+    <!-- Header -->
+    <div class="topbar">
+        <div class="searchbox">
+            <i class="bi bi-search"></i>
+            <input class="form-control" type="text" placeholder="Buscar movimientos, rubros o notas..." />
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <button class="btn btn-success-soft" onclick="AbrirModalCrearGasto()"><i class=" bi bi-plus-lg me-2" id="btnNuevoGasto"></i>Nuevo gasto</button>
+        </div>
+    </div>
+    <div class="page-head">
+        <div>
+        <h1 class="page-title">@ViewData["Title"]</h1>
+            <p class="page-subtitle">Control y seguimiento diario de gastos y movimientos por rubro, cuenta y período.</p>
+        </div>
+    </div>
+
+    <!-- informacion util rapida -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-6 col-xl-3">
+            <div class="erp-card metric-card">
+                <div class="metric-icon"><i class="bi bi-journal-text"></i></div>
+                <div class="metric-label">Movimientos del mes</div>
+                <div class="metric-value">148</div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="erp-card metric-card">
+                <div class="metric-icon"><i class="bi bi-cash-stack"></i></div>
+                <div class="metric-label">Total del período</div>
+                <div class="metric-value">$ 1.245.800</div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="erp-card metric-card">
+                <div class="metric-icon"><i class="bi bi-credit-card-2-front"></i></div>
+                <div class="metric-label">Cuenta principal</div>
+                <div class="metric-value">Mercado Pago</div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="erp-card metric-card">
+                <div class="metric-icon"><i class="bi bi-tags"></i></div>
+                <div class="metric-label">Rubro principal</div>
+                <div class="metric-value">Mercadería</div>
             </div>
         </div>
     </div>
-</header>
 
-<div class="container">
-
-    <!-- Filtros -->
-    <section class="filter-section" style="margin:10px 0px;">
-        <div class="row align-items-end">
-
-            <div class="col-md-2">
-                <label class="form-label fw-semibold">
-                    <i class="bi bi-calendar-event me-1"></i> Desde
-                </label>
-                <input type="date"
-                       class="form-control"
-                       id="fechaDesde"
-                       value="@ViewBag.FechaDesde"
-                       onchange="aplicarFiltros()" />
+    <section class="erp-card filters-card mb-4">
+         <!-- Filtros -->
+        <div class="section-head">
+           <div>
+             <h2 class="section-title">Filtros</h2>
+              <p class="section-subtitle">Aplicá filtros para encontrar movimientos más rápido.</p>
+           </div>
+            <div class="d-flex gap-2 flex-wrap">
+                <button class="btn btn-soft" onclick="limpiarFiltrosGasto()">
+                    <i class="bi bi-arrow-clockwise me-2"></i>Limpiar
+                </button>
             </div>
-
-            <div class="col-md-2">
-                <label class="form-label fw-semibold">
-                    <i class="bi bi-calendar-check me-1"></i> Hasta
-                </label>
-                <input type="date"
-                       class="form-control"
-                       id="fechaHasta"
-                       value="@ViewBag.FechaHasta"
-                       onchange="aplicarFiltros()" />
-            </div>
-
-            @* los nombres de los rubros fijos se muestran primero  *@
-            @{
-                var rubrosFijos = new[] { 34, 35 };
-
-                var rubrosOrdenados = rubros
-                .OrderByDescending(r => rubrosFijos.Contains(r.Id));
-            }
-
-            <div class="col-md-3">
-                <label for="rubroFilter" class="form-label fw-semibold">
-                    <i class="bi bi-file-earmark-text me-1"></i>Filtrar por Rubro
-                </label>
-                <select class="form-select" id="rubroFilter" onchange="aplicarFiltros()">
-                    <option value="">Todos los rubros</option>
-                    @if (rubros != null)
-                    {
-          
-
-                        foreach (var rubro in rubrosOrdenados)
-                        {
-                            <option value="@rubro.Id"
-                                    selected="@(ViewBag.FiltroRubroId?.ToString() == rubro.Id.ToString())">
-                                @rubro.nombreRubro
-                            </option>
-                        }
-                    }
-                </select>
-            </div>
-
-            <div class="col-md-3">
-                <label for="cuentaFilter" class="form-label fw-semibold">
-                    <i class="bi bi-building me-1"></i>Filtrar por Cuenta
-                </label>
-                <select class="form-select" id="cuentaFilter" onchange="aplicarFiltros()">
-                    <option value="">Todas las cuentas</option>
-                    @if (cuentas != null)
-                    {
-                        foreach (var cuenta in cuentas)
-                        {
-                            @* <option value="@cuenta.Id">@cuenta.nombreCuenta</option> *@
-                            <option value="@cuenta.Id"
-                                    selected="@(ViewBag.FiltroCuentaId?.ToString() == cuenta.Id.ToString())">
-                                @cuenta.nombreCuenta
-                            </option>
-                        }
-                    }
-                </select>
-            </div>
-
-            <div class="col-md-2">
-                <div class="d-flex gap-2 align-items-end">
-                    <button class="btn btn-outline-secondary" id="btnLimpiarFiltros"
-                            onclick="limpiarFiltrosGasto()">
-                        <i class="bi bi-arrow-clockwise"></i>Limpiar
-                    </button>
-                    <button class="btn btn-outline-success" id="btnNuevoGasto"
-                            onclick="AbrirModalCrearGasto()">
-                        <i class="bi bi-plus-circle"></i>Nuevo
-                    </button>
-                </div>
-            </div>
-
         </div>
+
+            <div class="filters-body">
+                <div class="row g-3">
+
+                    <!-- Desde -->
+                    <div class="col-md-2">
+                        <label class="form-label">Desde</label>
+                        <input type="date" class="form-control"
+                               id="fechaDesde"
+                               value="@ViewBag.FechaDesde"
+                               onchange="aplicarFiltros()" />
+                    </div>
+
+                    <!-- Hasta -->
+                    <div class="col-md-2">
+                        <label class="form-label">Hasta</label>
+                        <input type="date" class="form-control"
+                               id="fechaHasta"
+                               value="@ViewBag.FechaHasta"
+                               onchange="aplicarFiltros()" />
+                    </div>
+
+                    @* los nombres de los rubros fijos se muestran primero  *@
+                    @{
+                        var rubrosFijos = new[] { 34, 35 };
+
+                        var rubrosOrdenados = rubros
+                        .OrderByDescending(r => rubrosFijos.Contains(r.Id));
+                    }
+
+
+                    <!-- Rubro -->
+                    <div class="col-md-3">
+                        <label class="form-label">Rubro</label>
+                        <select class="form-select" id="rubroFilter" onchange="aplicarFiltros()">
+                            <option value="">Todos</option>
+                            @foreach (var rubro in rubrosOrdenados)
+                            {
+                                <option value="@rubro.Id"
+                                        selected="@(ViewBag.FiltroRubroId?.ToString() == rubro.Id.ToString())">
+                                    @rubro.nombreRubro
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Cuenta -->
+                    <div class="col-md-3">
+                        <label class="form-label">Cuenta</label>
+                        <select class="form-select" id="cuentaFilter" onchange="aplicarFiltros()">
+                            <option value="">Todas</option>
+                            @foreach (var cuenta in cuentas)
+                            {
+                                <option value="@cuenta.Id"
+                                        selected="@(ViewBag.FiltroCuentaId?.ToString() == cuenta.Id.ToString())">
+                                    @cuenta.nombreCuenta
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                </div>
+            <div class="quick-filters">
+                <a href="#" class="quick-chip active">Hoy</a>
+                <a href="#" class="quick-chip">Últimos 7 días</a>
+                <a href="#" class="quick-chip">Este mes</a>
+                <a href="#" class="quick-chip">Mes anterior</a>
+                <a href="#" class="quick-chip">Solo Mercado Pago</a>
+            </div>
+            </div>
     </section>
 
-    <div>
-        <h5>
-            Items: @items
-        </h5>
-    </div>
-
     <!-- Grilla de Gastos -->
-    <div class="table-responsive">
-        <table class="table table-hover table-oca">
-            <thead>
-                <tr>
-                    <th scope="col">Fecha</th>
-                    <th scope="col">Monto</th>
-                    <th scope="col">Rubro</th>
-                    <th scope="col">Cuenta</th>
-                    <th scope="col">Nota</th>
-                    <th scope="col">Acciones</th> 
-                </tr>
-            </thead>
-            <tbody id="gastosTableBody">
-                <!-- Los gastos se cargarán dinámicamente -->
-                @if (paginacion.Datos != null && paginacion.Datos.Any())
-                {
-                    foreach (var gasto in paginacion.Datos)
+    <section class="erp-card table-card">
+        <div class="table-tools">
+            <div>
+                <h2 class="section-title">Movimientos registrados</h2>
+                <p class="section-subtitle">
+                    Mostrando @items de @totalGastos
+                </p>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-modern table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th class="text-end">Monto</th>
+                        <th>Rubro</th>
+                        <th>Cuenta</th>
+                        <th>Nota</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+
+
+                <tbody id="gastosTableBody">
+                    <!-- Los gastos se cargarán dinámicamente -->
+                    @if (paginacion.Datos != null && paginacion.Datos.Any())
                     {
-                        <tr class="@(gasto.Tipo == "Transferencia"
-                        ? "table-warning fw-semibold"
-                            : gasto.Tipo == "Ingreso"
-                            ? "table-success fw-semibold"
-                            : "")">
-                            <td data-fecha="@gasto.Fecha.ToString("yyyy-MM-dd")">
-                                @gasto.Fecha.ToString("dd/MM/yyyy")
-                            </td>
-                            <td data-monto="@gasto.Monto">
-                                @gasto.Monto.ToString("C0", new CultureInfo("es-AR"))
-                            </td>
-                            <td data-rubroid="@gasto.RubroTypeId">
-                                @(gasto.RubroTypeNombre ?? gasto.Tipo)
-                            </td>
-                            <td data-cuentaid="@gasto.CuentaId">
-                                @gasto.CuentaNombre
-                            </td>
-                            <td>@(gasto.Nota ?? "")</td>
-                            <td>
-                                <button class="btn btn-sm btn-primary me-1 btn-editar-gasto"
-                                        onclick="AbrirModalEditarGasto(
-                                        '@gasto.Id',
-                                        '@gasto.Fecha.ToString("yyyy-MM-dd")',
-                                        @gasto.Monto.ToString().Replace(",", "."),
-                                        '@Html.Raw(gasto.Nota?.Replace("'", "\\'") ?? "")',
-                                        @gasto.RubroTypeId,
-                                        @gasto.CuentaId,
-                                        @gasto.PeriodoId
-                                    )">
-                                    <i class="bi bi-pencil-square"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger btn-eliminar-gasto"
-                                        onclick="AbrirModalEliminarGasto(
-                                        '@gasto.Id',
-                                        '@gasto.Fecha.ToString("dd/MM/yyyy")',
-                                        @gasto.Monto.ToString().Replace(",", "."),
-                                        '@gasto.RubroTypeNombre',
-                                        '@gasto.CuentaNombre'
-                                    )">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
+                        foreach (var gasto in paginacion.Datos)
+                        {
+                            <tr class="@(gasto.Tipo == "Transferencia"
+                            ? "table-warning fw-semibold"
+                                : gasto.Tipo == "Ingreso"
+                                ? "table-success fw-semibold"
+                                : "")">
+                                <td data-fecha="@gasto.Fecha.ToString("yyyy-MM-dd")">
+                                    @gasto.Fecha.ToString("dd/MM/yyyy")
+                                </td>
+                                <td class="text-end money" data-monto="@gasto.Monto">
+                                    @gasto.Monto.ToString("C0", new CultureInfo("es-AR"))
+                                </td>
+                                <td><span class="badge-soft badge-rubro" data-rubroid="@gasto.RubroTypeId">
+                                    @(gasto.RubroTypeNombre ?? gasto.Tipo)
+                                </span></td>
+                                <td><span class="badge-soft badge-cuenta" data-cuentaid="@gasto.CuentaId">
+                                    @gasto.CuentaNombre
+                                </span></td>
+                                <td class="note-cell"><div class="truncate">@(gasto.Nota ?? "")</div></td>
+                            <td class="text-end">
+                                    <button class="icon-btn"
+                                            onclick="AbrirModalEditarGasto(
+                                            '@gasto.Id',
+                                            '@gasto.Fecha.ToString("yyyy-MM-dd")',
+                                            @gasto.Monto.ToString().Replace(",", "."),
+                                            '@Html.Raw(gasto.Nota?.Replace("'", "\\'") ?? "")',
+                                            @gasto.RubroTypeId,
+                                            @gasto.CuentaId,
+                                            @gasto.PeriodoId
+                                        )">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                    <button class="icon-btn icon-btn-danger"
+                                            onclick="AbrirModalEliminarGasto(
+                                            '@gasto.Id',
+                                            '@gasto.Fecha.ToString("dd/MM/yyyy")',
+                                            @gasto.Monto.ToString().Replace(",", "."),
+                                            '@gasto.RubroTypeNombre',
+                                            '@gasto.CuentaNombre'
+                                        )">
+                                        <i class="bi bi-trash text-danger"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
                     }
-                }
-            </tbody>
-        </table>
-    </div>
-
-    <div>
-        <h5>
-            total: @totalGastos
-        </h5>
-    </div>
-
-    <!-- Paginación -->
-    <nav aria-label="Paginación de gastos">
-        <ul class="pagination justify-content-center">
-            <!-- Botón Anterior -->
-            <li class="page-item @(ViewBag.PaginaActual == 1 ? "disabled" : "")">
-                @if (ViewBag.PaginaActual > 1)
-                {
-                    <a class="page-link"
-                       href="@Url.Action("Index", new {
+                </tbody>
+            </table>
+        </div>
+        <!-- Paginación -->
+        <div class="table-footer">
+            <small class="text-muted">Página 1 de 19</small>
+            <nav aria-label="Paginación de gastos">
+                <ul class="pagination pagination-sm mb-0">
+                    <!-- Botón Anterior -->
+                    <li class="page-item @(ViewBag.PaginaActual == 1 ? "disabled" : "")">
+                        @if (ViewBag.PaginaActual > 1)
+                        {
+                            <a class="page-link"
+                               href="@Url.Action("Index", new {
                                rubroTypeId = ViewBag.FiltroRubroId,
                                cuentaId = ViewBag.FiltroCuentaId,
                                pagina = ViewBag.PaginaActual - 1,
@@ -231,20 +255,20 @@
                                fechaDesde = ViewBag.FechaDesde,
                                fechaHasta =  ViewBag.FechaHasta
                            })">
-                        Anterior
-                    </a>
-                }
-                else
-                {
-                    <span class="page-link">Anterior</span>
-                }
-            </li>
+                                Anterior
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="page-link">Anterior</span>
+                        }
+                    </li>
 
-            @for (int i = inicio; i <= fin; i++)
-            {
-                <li class="page-item @(i == ViewBag.PaginaActual ? "active" : "")">
-                    <a class="page-link"
-                       href="@Url.Action("Index", new {
+                    @for (int i = inicio; i <= fin; i++)
+                    {
+                        <li class="page-item @(i == ViewBag.PaginaActual ? "active" : "")">
+                            <a class="page-link"
+                               href="@Url.Action("Index", new {
                                rubroTypeId = ViewBag.FiltroRubroId,
                                cuentaId = ViewBag.FiltroCuentaId,
                                pagina = i,
@@ -252,16 +276,16 @@
                                fechaDesde = ViewBag.FechaDesde,
                                fechaHasta =  ViewBag.FechaHasta
                            })">
-                        @i
-                    </a>
-                </li>
-            }
-            <!-- Botón Siguiente -->
-            <li class="page-item @(ViewBag.PaginaActual >= totalPaginas ? "disabled" : "")">
-                @if (ViewBag.PaginaActual < totalPaginas)
-                {
-                    <a class="page-link"
-                       href="@Url.Action("Index", new {
+                                @i
+                            </a>
+                        </li>
+                    }
+                    <!-- Botón Siguiente -->
+                    <li class="page-item @(ViewBag.PaginaActual >= totalPaginas ? "disabled" : "")">
+                        @if (ViewBag.PaginaActual < totalPaginas)
+                        {
+                            <a class="page-link"
+                               href="@Url.Action("Index", new {
                                rubroTypeId = ViewBag.FiltroRubroId,
                                cuentaId = ViewBag.FiltroCuentaId,
                                pagina = ViewBag.PaginaActual + 1,
@@ -269,17 +293,21 @@
                                fechaDesde = ViewBag.FechaDesde,
                                fechaHasta =  ViewBag.FechaHasta
                            })">
-                        Siguiente
-                    </a>
-                }
-                else
-                {
-                    <span class="page-link">Siguiente</span>
-                }
-            </li>
-        </ul>
-    </nav>
-</div>
+                                Siguiente
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="page-link">Siguiente</span>
+                        }
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </section>
+</main>
+
+
 
 <!-- Modal de Creación -->
 <div class="modal fade" id="modalCrearGastoId" tabindex="-1">
