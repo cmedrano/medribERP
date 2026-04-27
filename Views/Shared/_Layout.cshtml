@@ -160,6 +160,13 @@
                                             <span class="ms-1 d-none d-sm-inline text-muted">Lista de precios</span>
                                         </a>
                                     </li>
+                                    <!-- Facturación -->
+                                    <li>
+                                        <a asp-area="Ventas" asp-controller="Facturacion" asp-action="Index" class="nav-link px-0 align-middle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Diary")">
+                                            @* <i class="fs-4 bi-cash-stack"></i>  *@
+                                            <span class="ms-1 d-none d-sm-inline text-muted">Facturación</span>
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                         </li>

@@ -71,6 +71,9 @@ namespace PresupuestoMVC
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
+            // Razor Runtime Compilation
+            builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+
             // Configurar autenticación JWT
             builder.Services.AddAuthentication(options =>
             {
