@@ -29,12 +29,6 @@
         color: var(--erp-text);
     }
 
-    .page {
-        max-width: 1280px;
-        margin: 0 auto;
-        padding: 28px;
-    }
-
     .hero-card,
     .erp-card,
     .summary-card {
@@ -74,7 +68,7 @@
 
     .hero-title {
         margin: 0;
-        font-size: 3rem;
+        font-size: 2.4rem;
         line-height: 1.02;
         letter-spacing: -.05em;
         font-weight: 900;
