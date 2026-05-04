@@ -6,19 +6,261 @@
         .ToList();
 }
 
-<div class="container mt-4">
+<div class="page">
+    <section class="hero-card">
+        <div class="hero-left">
+            <span class="hero-icon"><i class="bi bi-grid-1x2"></i></span>
+            <div>
+                <h1 class="hero-title">Dashboard</h1>
+                <p class="hero-subtitle">Vista general del negocio con acceso rápido a los módulos clave del ERP, métricas del período y alertas operativas.</p>
+            </div>
+        </div>
 
-    <h2 class="mb-5 text-center">Menú</h2>
+        <div class="hero-actions">
+            <a href="#" class="btn btn-soft"><i class="bi bi-arrow-repeat"></i>Actualizar</a>
+            <a href="#" class="btn btn-primary"><i class="bi bi-plus-lg"></i>Nueva operación</a>
+        </div>
+    </section>
+
+    <section class="dashboard-grid">
+        <div class="left-stack">
+            <div class="kpi-grid">
+                <article class="kpi-card">
+                    <div class="kpi-top">
+                        <span class="kpi-icon"><i class="bi bi-cash-stack"></i></span>
+                        <span class="kpi-chip chip-success"><i class="bi bi-arrow-up"></i>+12%</span>
+                    </div>
+                    <div class="kpi-label">Ventas del mes</div>
+                    <div class="kpi-value">$ 8.420.000</div>
+                    <div class="kpi-meta">Comparado con el mes anterior</div>
+                </article>
+
+                <article class="kpi-card">
+                    <div class="kpi-top">
+                        <span class="kpi-icon"><i class="bi bi-wallet2"></i></span>
+                        <span class="kpi-chip chip-warning"><i class="bi bi-exclamation-triangle"></i>75%</span>
+                    </div>
+                    <div class="kpi-label">Presupuesto usado</div>
+                    <div class="kpi-value">$ 1.245.800</div>
+                    <div class="kpi-meta">Quedan $ 412.000 disponibles</div>
+                </article>
+
+                <article class="kpi-card">
+                    <div class="kpi-top">
+                        <span class="kpi-icon"><i class="bi bi-people"></i></span>
+                        <span class="kpi-chip chip-success"><i class="bi bi-person-plus"></i>+8</span>
+                    </div>
+                    <div class="kpi-label">Clientes activos</div>
+                    <div class="kpi-value">248</div>
+                    <div class="kpi-meta">8 nuevos en los últimos 30 días</div>
+                </article>
+
+@*                 <article class="kpi-card">
+                    <div class="kpi-top">
+                        <span class="kpi-icon"><i class="bi bi-box-seam"></i></span>
+                        <span class="kpi-chip chip-danger"><i class="bi bi-bell"></i>5 críticos</span>
+                    </div>
+                    <div class="kpi-label">Stock bajo</div>
+                    <div class="kpi-value">17</div>
+                    <div class="kpi-meta">Artículos por debajo del mínimo</div>
+                </article> *@
+            </div>
+
+            <section class="menu-section">
+                <div class="section-heading">
+                    <div>
+                        <h2 class="section-title">Accesos rápidos</h2>
+                        <p class="section-subtitle">Entrá directo a los módulos más usados y ejecutá acciones frecuentes.</p>
+                    </div>
+                </div>
+
+                <div class="menu-grid">
+
+                    @* usuarios *@
+                    @if (modules.Contains("users"))
+                    {
+                        <article class="menu-card">
+                            <div class="menu-card-header">
+                                <span class="menu-icon"><i class="bi bi-person"></i></span>
+                                <span class="menu-mini-chip">9 usuarios</span>
+                            </div>
+                            <h3 class="menu-title">Usuarios</h3>
+                            <p class="menu-description">Administración de usuarios, perfiles, permisos y acceso al sistema.</p>
+                            <div class="menu-stats">
+                                <div class="menu-stat"><span>Activos</span><strong>9</strong></div>
+                                <div class="menu-stat"><span>Administradores</span><strong>4</strong></div>
+                            </div>
+                            <div class="menu-actions">
+                                <a asp-area="Users" asp-controller="User" asp-action="Index" class="btn btn-primary btn-block"><i class="bi bi-arrow-right-circle"></i>Administrar</a>
+                                <a href="#" class="btn btn-ghost btn-block"><i class="bi bi-plus-lg"></i>Nuevo usuario</a>
+                            </div>
+                        </article>
+                    }
+                    @* ventas *@
+                    @if (modules.Contains("sales"))
+                    {
+                        <article class="menu-card">
+                            <div class="menu-card-header">
+                                <span class="menu-icon"><i class="bi bi-shop"></i></span>
+                                <span class="menu-mini-chip">248 clientes</span>
+                            </div>
+                            <h3 class="menu-title">Clientes</h3>
+                            <p class="menu-description">Gestión comercial de clientes, contactos, datos fiscales y condiciones de venta.</p>
+                            <div class="menu-stats">
+                                <div class="menu-stat"><span>Nuevos este mes</span><strong>12</strong></div>
+                                <div class="menu-stat"><span>Con cuenta corriente</span><strong>68</strong></div>
+                            </div>
+                            <div class="menu-actions">
+                                <a asp-area="Ventas" asp-controller="Clientes" asp-action="Index" class="btn btn-primary btn-block"><i class="bi bi-people"></i>Ver clientes</a>
+                                <a href="#" class="btn btn-ghost btn-block"><i class="bi bi-person-plus"></i>Nuevo cliente</a>
+                            </div>
+                        </article>
+
+                        <article class="menu-card">
+                            <div class="menu-card-header">
+                                <span class="menu-icon"><i class="bi bi-box-seam"></i></span>
+                                <span class="menu-mini-chip">1.284 artículos</span>
+                            </div>
+                            <h3 class="menu-title">Artículos</h3>
+                            <p class="menu-description">Catálogo de productos, rubros, marcas, proveedores y control de precios.</p>
+                            <div class="menu-stats">
+                                <div class="menu-stat"><span>Stock bajo</span><strong>17</strong></div>
+                                <div class="menu-stat"><span>Nuevos esta semana</span><strong>5</strong></div>
+                            </div>
+                            <div class="menu-actions">
+                                <a hasp-area="Ventas" asp-controller="Articulos" asp-action="Index" class="btn btn-primary btn-block"><i class="bi bi-box"></i>Ver artículos</a>
+                                <a href="#" class="btn btn-ghost btn-block"><i class="bi bi-plus-lg"></i>Nuevo artículo</a>
+                            </div>
+                        </article>
+
+                        <article class="menu-card">
+                            <div class="menu-card-header">
+                                <span class="menu-icon"><i class="bi bi-tags"></i></span>
+                                <span class="menu-mini-chip">3 listas</span>
+                            </div>
+                            <h3 class="menu-title">Lista de precios</h3>
+                            <p class="menu-description">Definición de listas minorista, mayorista y distribuidor con precios actualizados.</p>
+                            <div class="menu-stats">
+                                <div class="menu-stat"><span>Listas activas</span><strong>3</strong></div>
+                                <div class="menu-stat"><span>Actualizadas hoy</span><strong>1</strong></div>
+                            </div>
+                            <div class="menu-actions">
+                                <a asp-area="Ventas" asp-controller="PriceList" asp-action="Index" class="btn btn-primary btn-block"><i class="bi bi-tag"></i>Ver listas</a>
+                                <a href="#" class="btn btn-ghost btn-block"><i class="bi bi-plus-lg"></i>Nueva lista</a>
+                            </div>
+                        </article>
+                    }
+                </div>
+            </section>
+        </div>
+
+        <div class="right-stack">
+            <section class="panel-card">
+                <div class="panel-header">
+                    <div>
+                        <h2 class="panel-title">Estado del sistema</h2>
+                        <p class="panel-subtitle">Resumen rápido de lo que necesita atención hoy.</p>
+                    </div>
+                </div>
+                <div class="status-list">
+                    <div class="status-item">
+                        <div class="status-left">
+                            <span class="status-dot dot-danger"><i class="bi bi-exclamation-lg"></i></span>
+                            <div>
+                                <p class="status-name">Artículos con stock crítico</p>
+                                <p class="status-meta">Revisar reposición urgente</p>
+                            </div>
+                        </div>
+                        <div class="status-value">5</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-left">
+                            <span class="status-dot dot-primary"><i class="bi bi-receipt"></i></span>
+                            <div>
+                                <p class="status-name">Ventas pendientes de facturar</p>
+                                <p class="status-meta">Operaciones del día sin cierre</p>
+                            </div>
+                        </div>
+                        <div class="status-value">12</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-left">
+                            <span class="status-dot dot-success"><i class="bi bi-check2-circle"></i></span>
+                            <div>
+                                <p class="status-name">Cierres correctos</p>
+                                <p class="status-meta">Sin inconsistencias detectadas</p>
+                            </div>
+                        </div>
+                        <div class="status-value">OK</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel-card">
+                <div class="panel-header">
+                    <div>
+                        <h2 class="panel-title">Actividad reciente</h2>
+                        <p class="panel-subtitle">Últimos movimientos importantes del sistema.</p>
+                    </div>
+                </div>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-left">
+                            <span class="activity-icon"><i class="bi bi-person-plus"></i></span>
+                            <div>
+                                <p class="activity-title">Se creó un nuevo cliente</p>
+                                <p class="activity-meta">Distribuidora Centro · hace 12 min</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-left">
+                            <span class="activity-icon"><i class="bi bi-pencil-square"></i></span>
+                            <div>
+                                <p class="activity-title">Se actualizó una lista de precios</p>
+                                <p class="activity-meta">Lista mayorista · hace 38 min</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-left">
+                            <span class="activity-icon"><i class="bi bi-box-seam"></i></span>
+                            <div>
+                                <p class="activity-title">Se registró un nuevo artículo</p>
+                                <p class="activity-meta">Yerba mate 1kg · hace 1 h</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-left">
+                            <span class="activity-icon"><i class="bi bi-person-workspace"></i></span>
+                            <div>
+                                <p class="activity-title">Se modificaron permisos</p>
+                                <p class="activity-meta">Usuario BraianD · hace 2 h</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-left">
+                            <span class="activity-icon"><i class="bi bi-person-workspace"></i></span>
+                            <div>
+                                <p class="activity-title">Se modificaron permisos</p>
+                                <p class="activity-meta">Usuario BraianD · hace 2 h</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </section>
 
     <div class="row g-4 justify-content-center">
-
-
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             <!-- Areas Accounting-->
             @if (modules.Contains("accounting"))
             {
-                <!-- Presupuesto -->
-                <div class="col-12 col-md-6 col-lg-4">
+                @* Presupuesto *@
+@*                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="card shadow border-0 rounded-4 h-100 dashboard-card">
                         <div class="card-body d-flex flex-column justify-content-between">
                             <div>
@@ -41,9 +283,9 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> *@
 
-                <!-- Gastos -->
+                @* Gastos *@
               @* <div class="col-12 col-md-6 col-lg-4">
                  <div class="card shadow-sm border-0 h-100">
                  <div class="card-body">
@@ -61,8 +303,8 @@
                  </div>
                  </div> *@
 
-                <!-- Diario -->
-                <div class="col-12 col-md-6 col-lg-4">
+                @* Diario *@
+@*                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="card shadow border-0 rounded-4 h-100 dashboard-card">
                         <div class="card-body d-flex flex-column justify-content-between">
                             <div>
@@ -85,10 +327,10 @@
                             </a>
                         </div>
                     </div>
-                </div>
+                </div> *@
 
-                <!-- Rubros -->
-                <div class="col-12 col-md-6 col-lg-4">
+                @* Rubros *@
+@*                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="card shadow border-0 rounded-4 h-100 dashboard-card">
                         <div class="card-body d-flex flex-column justify-content-between">
                             <div>
@@ -111,10 +353,10 @@
                             </a>
                         </div>
                     </div>
-                </div>
+                </div> *@
 
-                <!-- Cuentas -->
-                <div class="col-12 col-md-6 col-lg-4">
+                @* Cuentas *@
+@*                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="card shadow border-0 rounded-4 h-100 dashboard-card">
                         <div class="card-body d-flex flex-column justify-content-between">
                             <div>
@@ -137,14 +379,14 @@
                             </a>
                         </div>
                     </div>
-                </div>
+                </div> *@
             }
 
             <!-- Areas Users-->
             @if (modules.Contains("users"))
             {
-                <!-- Usuarios -->
-                <div class="col-12 col-md-6 col-lg-4">
+                @* Usuarios *@
+@*                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="card shadow border-0 rounded-4 h-100 dashboard-card">
                         <div class="card-body d-flex flex-column justify-content-between">
                             <div>
@@ -167,14 +409,14 @@
                             </a>
                         </div>
                     </div>
-                </div>
+                </div> *@
             }
  
             <!-- Areas Ventas-->
             @if (modules.Contains("sales"))
             {
-                <!-- Clientes -->
-                <div class="col-12 col-md-6 col-lg-4">
+                @* Clientes *@
+@*                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="card shadow-sm border-0 h-100" style="border-left: 5px solid #6f42c1 !important;">
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-3">
@@ -190,10 +432,10 @@
                             </a>
                         </div>
                     </div>
-                </div>
+                </div> *@
 
-                <!-- Artículos -->
-                <div class="col-12 col-md-6 col-lg-4">
+                @* Artículos *@
+@*                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="card shadow-sm border-0 h-100" style="border-left: 5px solid #fd7e14 !important;">
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-3">
@@ -209,10 +451,10 @@
                             </a>
                         </div>
                     </div>
-                </div>
+                </div> *@
 
-                <!-- Lista de precios -->
-                <div class="col-12 col-md-6 col-lg-4">
+                @* Lista de precios *@
+@*                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="card shadow-sm border-0 h-100">
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-3">
@@ -227,7 +469,7 @@
                             </a>
                         </div>
                     </div>
-                </div>
+                </div> *@
             }
 
             <!-- Card test-->
