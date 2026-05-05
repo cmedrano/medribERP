@@ -54,8 +54,8 @@
                 <div class="form-grid">
                     <div class="field">
                         <label class="label">Cliente</label>
-                        <select class="select">
-                            <option>Seleccionar cliente...</option>
+                        <select id="clientSelect" class="select">
+                            <option value="">Seleccionar cliente...</option>
                             @if (Model.Clientes != null && Model.Clientes.Any())
                             {
                                 foreach (var lista in Model.Clientes)
@@ -254,6 +254,7 @@
 
         $(document).ready(function () {
 
+            // Articulos
             $('#articuloSelect').select2({
                 placeholder: "Buscar artículo...",
                 width: '100%',
@@ -273,6 +274,12 @@
             // inicializar precio
             actualizarPrecio();
 
+            // Clientes
+            $('#clientSelect').select2({
+                placeholder: "Buscar Cliente...",
+                width: '100%',
+                allowClear: false
+            });
         });
     </script>
 }
