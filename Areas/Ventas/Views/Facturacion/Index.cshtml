@@ -7,228 +7,226 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="page">
-    <section class="hero-card">
-        <div class="hero-left">
-            <span class="hero-icon"><i class="bi bi-receipt-cutoff"></i></span>
-            <div>
-                <h1 class="hero-title">Nueva factura</h1>
-                <p class="hero-subtitle">Facturá a clientes registrados o a consumidores finales, aplicando la lista de precios correspondiente.</p>
-            </div>
+<section class="hero-card">
+    <div class="hero-left">
+        <span class="hero-icon"><i class="bi bi-receipt-cutoff"></i></span>
+        <div>
+            <h1 class="hero-title">Nueva factura</h1>
+            <p class="hero-subtitle">Facturá a clientes registrados o a consumidores finales, aplicando la lista de precios correspondiente.</p>
         </div>
-        <div class="hero-actions">
-            <a href="#" class="btn btn-soft"><i class="bi bi-clock-history"></i>Facturas recientes</a>
-            <a href="#" class="btn btn-primary"><i class="bi bi-plus-lg"></i>Nueva factura</a>
-        </div>
-    </section>
+    </div>
+    <div class="hero-actions">
+        <a href="#" class="btn btn-soft"><i class="bi bi-clock-history"></i>Facturas recientes</a>
+        <a href="#" class="btn btn-primary"><i class="bi bi-plus-lg"></i>Nueva factura</a>
+    </div>
+</section>
 
-    <div class="billing-layout">
-        <main class="main-stack">
-            <section class="erp-card">
-                <div class="card-header">
-                    <div>
-                        <h2 class="card-title">Datos de facturación</h2>
-                        <p class="card-subtitle">Definí si la venta corresponde a un cliente registrado o a un comprador eventual.</p>
-                    </div>
-                    <span class="price-list-chip"><i class="bi bi-tags"></i>Lista: Mayorista</span>
+<div class="billing-layout">
+    <main class="main-stack">
+        <section class="erp-card">
+            <div class="card-header">
+                <div>
+                    <h2 class="card-title">Datos de facturación</h2>
+                    <p class="card-subtitle">Definí si la venta corresponde a un cliente registrado o a un comprador eventual.</p>
                 </div>
-                <div class="card-body">
-                    <div class="toggle-group">
-                        <label class="toggle-card">
-                            <input type="radio" name="tipoFactura" checked>
-                            <span class="toggle-icon"><i class="bi bi-person-check"></i></span>
-                            <span>
-                                <span class="toggle-title">Cliente registrado</span>
-                                <span class="toggle-text">Usa automáticamente su lista asignada.</span>
-                            </span>
-                        </label>
-                        <label class="toggle-card">
-                            <input type="radio" name="tipoFactura">
-                            <span class="toggle-icon"><i class="bi bi-person"></i></span>
-                            <span>
-                                <span class="toggle-title">No es cliente</span>
-                                <span class="toggle-text">Elegís manualmente la lista de precios.</span>
-                            </span>
-                        </label>
-                    </div>
+                <span class="price-list-chip"><i class="bi bi-tags"></i>Lista: Mayorista</span>
+            </div>
+            <div class="card-body">
+                <div class="toggle-group">
+                    <label class="toggle-card">
+                        <input type="radio" name="tipoFactura" checked>
+                        <span class="toggle-icon"><i class="bi bi-person-check"></i></span>
+                        <span>
+                            <span class="toggle-title">Cliente registrado</span>
+                            <span class="toggle-text">Usa automáticamente su lista asignada.</span>
+                        </span>
+                    </label>
+                    <label class="toggle-card">
+                        <input type="radio" name="tipoFactura">
+                        <span class="toggle-icon"><i class="bi bi-person"></i></span>
+                        <span>
+                            <span class="toggle-title">No es cliente</span>
+                            <span class="toggle-text">Elegís manualmente la lista de precios.</span>
+                        </span>
+                    </label>
+                </div>
 
-                    <div class="form-grid">
-                        <div class="field">
-                            <label class="label">Cliente</label>
-                            <select class="select">
-                                <option>Seleccionar cliente...</option>
-                                @if (Model.Clientes != null && Model.Clientes.Any())
+                <div class="form-grid">
+                    <div class="field">
+                        <label class="label">Cliente</label>
+                        <select class="select">
+                            <option>Seleccionar cliente...</option>
+                            @if (Model.Clientes != null && Model.Clientes.Any())
+                            {
+                                foreach (var lista in Model.Clientes)
                                 {
-                                    foreach (var lista in Model.Clientes)
-                                    {
-                                        <option value="@lista.Id">@lista.Nombre</option>
-                                    }
+                                    <option value="@lista.Id">@lista.Nombre</option>
                                 }
-                                else
-                                {
-                                    <option value="">Sin clientes</option>
-                                }
-                                @* <option>Distribuidora Centro</option>
+                            }
+                            else
+                            {
+                                <option value="">Sin clientes</option>
+                            }
+                            @* <option>Distribuidora Centro</option>
                                 <option>Almacén Don Pedro</option> *@
-                            </select>
-                        </div>
-                        <div class="field">
-                            <label class="label">Lista de precios</label>
-                            <select class="select">
-                                <option value="">Seleccionar lista de precio...</option>
-                                @if (Model.ListasDePrecio != null && Model.ListasDePrecio.Any())
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label class="label">Lista de precios</label>
+                        <select class="select">
+                            <option value="">Seleccionar lista de precio...</option>
+                            @if (Model.ListasDePrecio != null && Model.ListasDePrecio.Any())
+                            {
+                                foreach (var lista in Model.ListasDePrecio)
                                 {
-                                    foreach (var lista in Model.ListasDePrecio)
-                                    {
-                                        <option value="@lista.Id">@lista.Nombre</option>
-                                    }
+                                    <option value="@lista.Id">@lista.Nombre</option>
                                 }
-                                else
-                                {
-                                    <option value="">Sin lista de precios</option>
-                                }
-                                @* <option>Mayorista</option>
+                            }
+                            else
+                            {
+                                <option value="">Sin lista de precios</option>
+                            }
+                            @* <option>Mayorista</option>
                                 <option>Minorista</option>
                                 <option>Distribuidor</option> *@
-                            </select>
-                        </div>
-                        <div class="field">
-                            <label class="label">Nombre / Razón social</label>
-                            <input class="input" type="text" placeholder="Opcional si no es cliente">
-                        </div>
-                        <div class="field">
-                            <label class="label">DNI / CUIT</label>
-                            <input class="input" type="text" placeholder="Opcional">
-                        </div>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label class="label">Nombre / Razón social</label>
+                        <input class="input" type="text" placeholder="Opcional si no es cliente">
+                    </div>
+                    <div class="field">
+                        <label class="label">DNI / CUIT</label>
+                        <input class="input" type="text" placeholder="Opcional">
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <section class="erp-card">
-                <div class="card-header">
-                    <div>
-                        <h2 class="card-title">Agregar artículos</h2>
-                        <p class="card-subtitle">Buscá el producto, indicá cantidad y el sistema toma el precio según la lista elegida.</p>
-                    </div>
+        <section class="erp-card">
+            <div class="card-header">
+                <div>
+                    <h2 class="card-title">Agregar artículos</h2>
+                    <p class="card-subtitle">Buscá el producto, indicá cantidad y el sistema toma el precio según la lista elegida.</p>
                 </div>
-                <div class="card-body">
-                    <div class="add-product-row">
-                        <div class="field">
-                            <label class="label">Artículo</label>
-                            <select class="select">
-                                <option>Buscar artículo...</option>
-                                @if (Model.Articulos != null && Model.Articulos.Any())
+            </div>
+            <div class="card-body">
+                <div class="add-product-row">
+                    <div class="field">
+                        <label class="label">Artículo</label>
+                        <select class="select">
+                            <option>Buscar artículo...</option>
+                            @if (Model.Articulos != null && Model.Articulos.Any())
+                            {
+                                foreach (var lista in Model.Articulos)
                                 {
-                                    foreach (var lista in Model.Articulos)
-                                    {
-                                        <option value="@lista.Id">@lista.Nombre</option>
-                                    }
+                                    <option value="@lista.Id">@lista.Nombre</option>
                                 }
-                                else
-                                {
-                                    <option value="">Sin articulos</option>
-                                }
-                                @*
+                            }
+                            else
+                            {
+                                <option value="">Sin articulos</option>
+                            }
+                            @*
                                 <option>Yerba mate 1kg</option>
                                 <option>Azúcar 1kg</option>
                                 <option>Aceite 900ml</option> *@
-                            </select>
-                        </div>
-                        <div class="field">
-                            <label class="label">Cantidad</label>
-                            <input class="input" type="number" value="1">
-                        </div>
-                        <div class="field">
-                            <label class="label">Precio</label>
-                            <input class="input" type="text" value="$ 1.200">
-                        </div>
-                        <button class="btn btn-primary" type="button"><i class="bi bi-plus-lg"></i>Agregar</button>
+                        </select>
                     </div>
-                </div>
-            </section>
-
-            <section class="erp-card">
-                <div class="card-header">
-                    <div>
-                        <h2 class="card-title">Detalle de factura</h2>
-                        <p class="card-subtitle">Artículos cargados en la operación actual.</p>
+                    <div class="field">
+                        <label class="label">Cantidad</label>
+                        <input class="input" type="number" value="1">
                     </div>
-                </div>
-                <div class="table-responsive">
-                    <table class="table-modern">
-                        <thead>
-                            <tr>
-                                <th>Artículo</th>
-                                <th>Cantidad</th>
-                                <th>Precio unitario</th>
-                                <th>Total</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="product-cell">
-                                        <span class="product-icon">Y</span>
-                                        <div>
-                                            <p class="product-title">Yerba mate 1kg</p>
-                                            <p class="product-meta">Almacén · Lista mayorista</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="qty-badge">2</span></td>
-                                <td class="money">$ 1.200</td>
-                                <td class="money">$ 2.400</td>
-                                <td><a href="#" class="icon-btn"><i class="bi bi-trash"></i></a></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="product-cell">
-                                        <span class="product-icon">A</span>
-                                        <div>
-                                            <p class="product-title">Aceite 900ml</p>
-                                            <p class="product-meta">Almacén · Lista mayorista</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="qty-badge">1</span></td>
-                                <td class="money">$ 1.850</td>
-                                <td class="money">$ 1.850</td>
-                                <td><a href="#" class="icon-btn"><i class="bi bi-trash"></i></a></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-        </main>
-
-        <aside class="summary-card">
-            <div class="summary-header">
-                <h2 class="summary-title">Resumen de factura</h2>
-                <p class="summary-subtitle">Control final antes de emitir.</p>
-            </div>
-            <div class="summary-body">
-                <div class="summary-line"><span>Cliente</span><strong>Distribuidora Centro</strong></div>
-                <div class="summary-line"><span>Lista aplicada</span><strong>Mayorista</strong></div>
-                <div class="summary-line"><span>Artículos</span><strong>2</strong></div>
-                <div class="summary-line"><span>Subtotal</span><strong>$ 4.250</strong></div>
-                <div class="summary-line"><span>Descuento</span><strong>$ 0</strong></div>
-
-                <div class="summary-total">
-                    <span>Total</span>
-                    <strong>$ 4.250</strong>
-                </div>
-
-                <div class="summary-actions">
-                    <button class="btn btn-primary btn-block" type="button"><i class="bi bi-check2-circle"></i>Confirmar factura</button>
-                    <button class="btn btn-soft btn-block" type="button"><i class="bi bi-file-earmark-text"></i>Guardar borrador</button>
-                    <button class="btn btn-danger-soft btn-block" type="button"><i class="bi bi-x-circle"></i>Cancelar</button>
-                </div>
-
-                <div class="notice">
-                    <strong>Nota:</strong> si seleccionás un cliente registrado, la lista de precios puede completarse automáticamente según su configuración.
+                    <div class="field">
+                        <label class="label">Precio</label>
+                        <input class="input" type="text" value="$ 1.200">
+                    </div>
+                    <button class="btn btn-primary" type="button"><i class="bi bi-plus-lg"></i>Agregar</button>
                 </div>
             </div>
-        </aside>
-    </div>
+        </section>
+
+        <section class="erp-card">
+            <div class="card-header">
+                <div>
+                    <h2 class="card-title">Detalle de factura</h2>
+                    <p class="card-subtitle">Artículos cargados en la operación actual.</p>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table-modern">
+                    <thead>
+                        <tr>
+                            <th>Artículo</th>
+                            <th>Cantidad</th>
+                            <th>Precio unitario</th>
+                            <th>Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="product-cell">
+                                    <span class="product-icon">Y</span>
+                                    <div>
+                                        <p class="product-title">Yerba mate 1kg</p>
+                                        <p class="product-meta">Almacén · Lista mayorista</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="qty-badge">2</span></td>
+                            <td class="money">$ 1.200</td>
+                            <td class="money">$ 2.400</td>
+                            <td><a href="#" class="icon-btn"><i class="bi bi-trash"></i></a></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="product-cell">
+                                    <span class="product-icon">A</span>
+                                    <div>
+                                        <p class="product-title">Aceite 900ml</p>
+                                        <p class="product-meta">Almacén · Lista mayorista</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="qty-badge">1</span></td>
+                            <td class="money">$ 1.850</td>
+                            <td class="money">$ 1.850</td>
+                            <td><a href="#" class="icon-btn"><i class="bi bi-trash"></i></a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <aside class="summary-card">
+        <div class="summary-header">
+            <h2 class="summary-title">Resumen de factura</h2>
+            <p class="summary-subtitle">Control final antes de emitir.</p>
+        </div>
+        <div class="summary-body">
+            <div class="summary-line"><span>Cliente</span><strong>Distribuidora Centro</strong></div>
+            <div class="summary-line"><span>Lista aplicada</span><strong>Mayorista</strong></div>
+            <div class="summary-line"><span>Artículos</span><strong>2</strong></div>
+            <div class="summary-line"><span>Subtotal</span><strong>$ 4.250</strong></div>
+            <div class="summary-line"><span>Descuento</span><strong>$ 0</strong></div>
+
+            <div class="summary-total">
+                <span>Total</span>
+                <strong>$ 4.250</strong>
+            </div>
+
+            <div class="summary-actions">
+                <button class="btn btn-primary btn-block" type="button"><i class="bi bi-check2-circle"></i>Confirmar factura</button>
+                <button class="btn btn-soft btn-block" type="button"><i class="bi bi-file-earmark-text"></i>Guardar borrador</button>
+                <button class="btn btn-danger-soft btn-block" type="button"><i class="bi bi-x-circle"></i>Cancelar</button>
+            </div>
+
+            <div class="notice">
+                <strong>Nota:</strong> si seleccionás un cliente registrado, la lista de precios puede completarse automáticamente según su configuración.
+            </div>
+        </div>
+    </aside>
 </div>
