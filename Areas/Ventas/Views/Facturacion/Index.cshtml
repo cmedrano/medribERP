@@ -103,48 +103,46 @@
             </div>
         </section>
 
-        <section class="erp-card">
-            <div class="card-header">
-                <div>
-                    <h2 class="card-title">Agregar artículos</h2>
-                    <p class="card-subtitle">Buscá el producto, indicá cantidad y el sistema toma el precio según la lista elegida.</p>
+            <section class="erp-card">
+                <div class="card-header">
+                    <div>
+                        <h2 class="card-title">Agregar artículos</h2>
+                        <p class="card-subtitle">Buscá el producto, indicá cantidad y el sistema toma el precio según la lista elegida.</p>
+                    </div>
                 </div>
-            </div>
-            <div class="card-body">
-                <div class="add-product-row">
-                    <div class="field">
-                        <label class="label">Artículo</label>
-                        <select class="select">
-                            <option>Buscar artículo...</option>
-                            @if (Model.Articulos != null && Model.Articulos.Any())
-                            {
-                                foreach (var lista in Model.Articulos)
+                <div class="card-body">
+                    <div class="add-product-row">
+                        <div class="field">
+                            <label class="label">Artículo</label>
+                            <select id="articuloSelect" class="select">
+                                <option value="">Buscar artículo...</option>
+                                @if (Model.Articulos != null && Model.Articulos.Any())
                                 {
-                                    <option value="@lista.Id">@lista.Nombre</option>
+                                    foreach (var lista in Model.Articulos)
+                                    {
+                                        <option value="@lista.Id" data-price="@lista.SalePrice">
+                                            @lista.Codigo - @lista.Nombre
+                                        </option>
+                                    }
                                 }
-                            }
-                            else
-                            {
-                                <option value="">Sin articulos</option>
-                            }
-                            @*
-                                <option>Yerba mate 1kg</option>
-                                <option>Azúcar 1kg</option>
-                                <option>Aceite 900ml</option> *@
-                        </select>
+                                else
+                                {
+                                    <option value="">Sin artículos</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label class="label">Cantidad</label>
+                            <input id="cantidadInput" class="input" type="number" value="1" min="1">
+                        </div>
+                        <div class="field">
+                            <label class="label">Precio</label>
+                            <input id="precioInput" class="input" type="text" value="$ 0" readonly>
+                        </div>
+                        <button class="btn btn-primary" type="button"><i class="bi bi-plus-lg"></i>Agregar</button>
                     </div>
-                    <div class="field">
-                        <label class="label">Cantidad</label>
-                        <input class="input" type="number" value="1">
-                    </div>
-                    <div class="field">
-                        <label class="label">Precio</label>
-                        <input class="input" type="text" value="$ 1.200">
-                    </div>
-                    <button class="btn btn-primary" type="button"><i class="bi bi-plus-lg"></i>Agregar</button>
                 </div>
-            </div>
-        </section>
+            </section>
 
         <section class="erp-card">
             <div class="card-header">
@@ -222,9 +220,60 @@
                 <button class="btn btn-danger-soft btn-block" type="button"><i class="bi bi-x-circle"></i>Cancelar</button>
             </div>
 
-            <div class="notice">
-                <strong>Nota:</strong> si seleccionás un cliente registrado, la lista de precios puede completarse automáticamente según su configuración.
+                <div class="notice">
+                    <strong>Nota:</strong> si seleccionás un cliente registrado, la lista de precios puede completarse automáticamente según su configuración.
+                </div>
             </div>
-        </div>
-    </aside>
+        </aside>
+    </div>
 </div>
+
+@section Styles
+{
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+}
+
+@section Scripts
+{
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        function actualizarPrecio() {
+
+            const articulo = document.getElementById("articuloSelect");
+            const cantidad = document.getElementById("cantidadInput");
+            const precio = document.getElementById("precioInput");
+
+            const selectedOption = articulo.options[articulo.selectedIndex];
+            const salePrice = parseFloat(selectedOption.dataset.price || 0);
+            const cantidadValor = parseInt(cantidad.value || 1);
+            const total = salePrice * cantidadValor;
+
+            precio.value = `$ ${total.toLocaleString('es-AR')}`;
+        }
+
+        $(document).ready(function () {
+
+            $('#articuloSelect').select2({
+                placeholder: "Buscar artículo...",
+                width: '100%',
+                allowClear: false
+            });
+
+            // cuando cambia articulo
+            $('#articuloSelect').on('change', function () {
+                actualizarPrecio();
+            });
+
+            // cuando cambia cantidad
+            document
+            .getElementById("cantidadInput")
+            .addEventListener("input", actualizarPrecio);
+
+            // inicializar precio
+            actualizarPrecio();
+
+        });
+    </script>
+}
+
