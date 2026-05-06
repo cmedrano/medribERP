@@ -93,11 +93,11 @@
                     </div>
                     <div class="field">
                         <label class="label">Nombre / Razón social</label>
-                        <input class="input" type="text" placeholder="Opcional si no es cliente">
+                        <input id="nombreCliente" class=" input" type="text" placeholder="Opcional si no es cliente">
                     </div>
                     <div class="field">
                         <label class="label">DNI / CUIT</label>
-                        <input class="input" type="text" placeholder="Opcional">
+                        <input id="dniCliente" class="input" type="text" placeholder="Opcional">
                     </div>
                 </div>
             </div>
@@ -348,6 +348,25 @@
                 $(this).closest('tr').remove();
                 actualizarResumen();
             });
+        });
+
+
+        $('#clientSelect').on('change', function () {
+
+            const clienteId = parseInt($(this).val());
+
+            const clientes = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Clientes));
+            const cliente = clientes.find(c => c.Id == clienteId);
+            console.log(cliente)
+
+            if (!cliente) {
+                $('#nombreCliente').val('');
+                $('#dniCliente').val('');
+                return;
+            }
+
+            $('#nombreCliente').val(cliente.Nombre);
+            $('#dniCliente').val(cliente.DNI);
         });
     </script>
 }
