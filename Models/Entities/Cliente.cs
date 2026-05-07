@@ -73,5 +73,13 @@ namespace PresupuestoMVC.Models.Entities
 
         [Display(Name = "Inhabilitado para Facturar")]
         public bool InhabilitadoFacturar { get; set; } = false;
+
+        // FK
+        [Column("lista_precio_id")]
+        public int PriceListId { get; set; }
+
+        // navegación
+        [ForeignKey(nameof(PriceListId))]
+        public PriceList PriceList { get; set; }
     }
 }

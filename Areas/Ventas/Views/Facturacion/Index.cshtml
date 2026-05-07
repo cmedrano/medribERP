@@ -277,7 +277,7 @@
                     alert('Seleccione un artículo');
                     return;
                 }
-
+                
                 // Option seleccionada
                 const selectedOption = articuloSelect.find(':selected');
                 const articuloTexto = selectedOption.text();
@@ -350,6 +350,11 @@
             });
         });
 
+        $('#clientSelect').select2({
+            placeholder: "Buscar Cliente...",
+            width: '100%',
+            allowClear: false
+        });}
 
         $('#clientSelect').on('change', function () {
 

@@ -110,6 +110,7 @@ namespace PresupuestoMVC.Repository
                 clienteExistente.Categoria = cliente.Categoria;
                 clienteExistente.OperacionesContado = cliente.OperacionesContado;
                 clienteExistente.InhabilitadoFacturar = cliente.InhabilitadoFacturar;
+                clienteExistente.PriceListId = cliente.PriceListId;
 
                 //_context.Clientes.Update(clienteExistente);
                 //await _context.SaveChangesAsync();
