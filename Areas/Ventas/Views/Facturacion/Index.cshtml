@@ -73,7 +73,7 @@
                     </div>
                     <div class="field">
                         <label class="label">Lista de precios</label>
-                        <select class="select">
+                        <select class="select" id="listaPrecioClienteId">
                             <option value="">Seleccionar lista de precio...</option>
                             @if (Model.ListasDePrecio != null && Model.ListasDePrecio.Any())
                             {
@@ -354,7 +354,7 @@
             placeholder: "Buscar Cliente...",
             width: '100%',
             allowClear: false
-        });}
+        });
 
         $('#clientSelect').on('change', function () {
 
@@ -367,11 +367,15 @@
             if (!cliente) {
                 $('#nombreCliente').val('');
                 $('#dniCliente').val('');
+                $('#listaPrecioCliente').val('');
                 return;
             }
 
             $('#nombreCliente').val(cliente.Nombre);
             $('#dniCliente').val(cliente.DNI);
+            $('#listaPrecioClienteId').val(cliente.PriceListId);
+
+            console.log(cliente.PriceListId)
         });
     </script>
 }

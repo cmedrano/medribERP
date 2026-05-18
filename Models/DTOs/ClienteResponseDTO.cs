@@ -1,3 +1,6 @@
+using PresupuestoMVC.Models.Entities;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace PresupuestoMVC.Models.DTOs
 {
     public class ClienteResponseDTO
@@ -19,5 +22,7 @@ namespace PresupuestoMVC.Models.DTOs
         public bool OperacionesContado { get; set; }
         public bool InhabilitadoFacturar { get; set; }
         public DateTime FechaRegistro { get; set; }
+        public int PriceListId { get; set; }
+        public string PriceListNombre { get; set; }
     }
 }

@@ -18,6 +18,7 @@ namespace PresupuestoMVC.Repository
         public async Task<List<Cliente>> ObtenerTodosAsync()
         {
             return await _context.Clientes
+                .Include(c => c.PriceList)
                 .Where(c => c.Activo)
                 .AsNoTracking()
                 .OrderByDescending(c => c.FechaRegistro)
