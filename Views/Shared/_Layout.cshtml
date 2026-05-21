@@ -199,7 +199,7 @@
                  
         </div>
         <!-- Main Content -->
-        <div class=" content">
+        <div class="content" id="main-content">
             @RenderBody()
         </div>
     </div>
@@ -215,8 +215,15 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        window.urls = window.urls || {};
 
+        window.urls.createGasto = '@Url.Action("Create", "Diary", new { area = "Accounting" })';
+        window.urls.getRubros = '@Url.Action("GetCategoriesbyDate", "Budget", new { area = "Accounting" })?date=';
+    </script>
+    <script src="~/js/diary.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/navigation.js"></script>
     <script>
         function toggleDarkMode() {
         const body = document.body;
@@ -245,6 +252,97 @@
         document.getElementById('darkModeText').textContent = 'Modo Claro';
         document.getElementById('darkModeIcon').className = 'bi bi-sun me-2';
         }
+        });
+
+
+        // logica para renderizar
+        document.addEventListener("DOMContentLoaded", () => {
+
+            document.querySelectorAll(".nav-link").forEach(link => {
+
+                link.addEventListener("click", function (e) {
+
+                    const href = this.getAttribute("href");
+
+                    // ignorar collapse bootstrap
+                    if (!href || href.startsWith("#"))
+                        return;
+
+                    e.preventDefault();
+
+                    cargarVista(href);
+
+                });
+
+            });
+
+        });
+
+        function cargarVista(url) {
+
+            fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(res => res.text())
+                .then(html => {
+
+                    const parser = new DOMParser();
+
+                    const doc = parser.parseFromString(html, 'text/html');
+
+                    // Vista completa
+                    const nuevoMain =
+                        doc.querySelector('#main-content');
+
+                    // Partial Diary
+                    const nuevoDiary =
+                        doc.querySelector('#diary-content');
+
+                    // Si vino layout completo
+                    if (nuevoMain) {
+
+                        document.querySelector('#main-content').innerHTML =
+                            nuevoMain.innerHTML;
+
+                    }
+
+                    // Si vino partial de diary
+                    else if (document.querySelector('#diary-content')) {
+
+                        document.querySelector('#diary-content').innerHTML =
+                            html;
+
+                    }
+
+                    // fallback
+                    else {
+
+                        document.querySelector('#main-content').innerHTML =
+                            html;
+
+                    }
+
+                    history.pushState({}, '', url);
+
+                    reInicializarScripts();
+
+                })
+                .catch(err => console.error(err));
+
+        }
+
+        window.addEventListener('popstate', () => {
+            cargarVista(location.href);
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+
+            if (typeof inicializarDiary === 'function') {
+                inicializarDiary();
+            }
+
         });
     </script>
 

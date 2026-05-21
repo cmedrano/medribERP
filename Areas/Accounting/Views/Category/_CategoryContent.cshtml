@@ -1,0 +1,113 @@
+﻿@using PresupuestoMVC.Models.Entities
+@using PresupuestoMVC.Models.DTOs
+@using PresupuestoMVC.Enums;
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Rubros";
+    var categories = ViewBag.Categories as IEnumerable<CategoryResponseDto>;
+    var totalCategories = ViewBag.TotalCategories;
+}
+<!-- Header -->
+<div class="topbar">
+    <div class="searchbox">
+        <i class="bi bi-search"></i>
+        <input class="form-control" type="text" placeholder="Buscar nombre de rubro..." />
+    </div>
+</div>
+<div class="page-head">
+    <div>
+        <h1 class="page-title">@ViewData["Title"]</h1>
+        <p class="page-subtitle">Sistema de control de Rubros.</p>
+    </div>
+</div>
+
+<!-- Filtros -->
+<!-- Grilla de Rubros -->
+<section class="erp-card table-card">
+
+    <div class="table-tools">
+        <div>
+            <h2 class="section-title">Total</h2>
+            <p class="section-subtitle">
+                Mostrando @totalCategories
+            </p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <button class="btn btn-success-soft" onclick="abrirModalCrear('',false)"><i class=" bi bi-plus-lg me-2" id="btnNuevoGasto"></i>Rubro</button>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-modern table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Rubro</th>
+                    <th class="text-end pe-3">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var category in categories.Where(c => c.Id != 34 && c.Id != 35))
+                {
+                    var collapseId = $"subrubros-{category.Id}";
+
+                    <!-- Rubro padre -->
+                    <tr class="rubro-row">
+                        <td>
+                            @if (category.SubCategories.Any())
+                            {
+                                <button class="btn btn-sm btn-link p-0 me-2"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#@collapseId"
+                                        aria-expanded="false">
+                                    <i class="bi bi-caret-right-fill"></i>
+                                </button>
+                            }
+
+                            <strong>@category.nombreRubro</strong>
+                        </td>
+                        <td class="text-end pe-3">
+                            <button class="btn btn-outline-success" id="btnNuevoSubRubro"
+                                    onclick="abrirModalCrear(@category.Id, true)">
+                                <i class="bi bi-plus-circle"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger"
+                                    onclick="abrirModalEliminar('@category.Id', '@category.nombreRubro')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Subrubros -->
+                    @if (category.SubCategories.Any())
+                    {
+                        <tr class="collapse subrubro-row" id="@collapseId">
+                            <td colspan="2" class="p-0">
+                                <table class="table mb-0 table-sm">
+                                    <tbody>
+                                        @foreach (var sub in category.SubCategories)
+                                        {
+                                            <tr>
+                                                <td class="ps-5">
+                                                    <i class="bi bi-arrow-return-right me-2 text-muted"></i>
+                                                    @sub.nombreRubro
+                                                </td>
+                                                <td class="text-end pe-3">
+                                                    <button class="btn btn-sm btn-danger"
+                                                            onclick="abrirModalEliminar('@sub.Id', '@sub.nombreRubro')">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
