@@ -50,9 +50,9 @@ namespace PresupuestoMVC
             builder.Services.AddScoped<IDiaryService, DiaryService>();
             builder.Services.AddScoped<IDiaryRepository, DiaryRepository>();
             builder.Services.AddScoped<IClienteService, ClienteService>();
-            builder.Services.AddScoped<ILocalidadPostalService, LocalidadPostalService>();
+            builder.Services.AddScoped<ILocalidadService, LocalidadService>();
             builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
-            builder.Services.AddScoped<ILocalidadPostalRepository, LocalidadPostalRepository>();
+            builder.Services.AddScoped<ILocalidadRepository, LocalidadRepository>();
             builder.Services.AddScoped<IArticuloService, ArticuloService>();
             builder.Services.AddScoped<IArticuloRepository, ArticuloRepository>();
             builder.Services.AddScoped<IPriceListService, PriceListService>();

@@ -17,5 +17,6 @@ namespace PresupuestoMVC.Models.ViewModels
         public string? CondicionDeVenta { get; set; }
         public bool OperacionesContado { get; set; }
         public bool InhabilitadoFacturar { get; set; }
+        public int PriceListId { get; set; }
     }
 }

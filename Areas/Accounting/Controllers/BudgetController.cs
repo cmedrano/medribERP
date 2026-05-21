@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PresupuestoMVC.Areas.Accounting.Data.Model;
 using PresupuestoMVC.Enums;
 using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Models.ViewModels;
@@ -55,7 +56,7 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                 var culture = new CultureInfo("es-AR");
 
                 var meses = Enumerable.Range(1, 12)
-                    .Select(m => new
+                    .Select(m => new MesViewModel
                     {
                         Numero = m,
                         Nombre = culture.TextInfo.ToTitleCase(

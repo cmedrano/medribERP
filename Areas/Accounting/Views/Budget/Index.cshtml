@@ -2,6 +2,7 @@
 @using PresupuestoMVC.Models.Entities
 @using PresupuestoMVC.Helpers
 @using System.Globalization
+@using PresupuestoMVC.Areas.Accounting.Data.Model
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -9,7 +10,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Presupuesto";
     var rubros = ViewBag.Rubros as IEnumerable<CategoryResponseDto>;
-    var meses = ViewBag.Meses as IEnumerable<int>;
+    var meses = ViewBag.Meses as IEnumerable<MesViewModel>;
     var anios = ViewBag.Anios as IEnumerable<int>;
     bool deficit = ViewBag.Deficit;
     var paginacion = ViewBag.Paginacion as PaginacionRespuestaDto<BudgetGroupedDto>;
@@ -68,7 +69,7 @@
                 </label>
                 <select class="form-select" id="mesFilter" onchange="aplicarFiltros()">
                     <option value="">Todos los Meses</option>
-                    @foreach (var mesItem in ViewBag.Meses)
+                    @foreach (var mesItem in meses)
                     {
                         <option value="@mesItem.Numero"
                                 selected="@(ViewBag.FiltroMes?.ToString() == mesItem.Numero.ToString())">

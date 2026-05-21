@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Models.ViewModels;
 using PresupuestoMVC.Services.Interfaces;
 using System.Security.Claims;
@@ -11,15 +12,18 @@ namespace PresupuestoMVC.Controllers
     public class ClientesController : Controller
     {
         private readonly IClienteService _clienteService;
-        private readonly ILocalidadPostalService _localidadPostalService;
+        private readonly ILocalidadService _localidadPostalService;
+        private readonly IPriceListService _priceListService;
         private const int PageSize = 10;
 
         public ClientesController(
             IClienteService clienteService,
-            ILocalidadPostalService localidadPostalService)
+            ILocalidadService localidadPostalService,
+            IPriceListService priceListService)
         {
             _clienteService = clienteService;
             _localidadPostalService = localidadPostalService;
+            _priceListService = priceListService;
         }
 
         public async Task<IActionResult> Index(int page = 1, string? searchNombre = null, string? searchFantasia = null)
@@ -39,6 +43,8 @@ namespace PresupuestoMVC.Controllers
 
                 var resultado = await _clienteService.ObtenerPaginadosAsync(filtro, page, PageSize);
 
+                var priceList = await _priceListService.GetAllAsync();
+                ViewBag.PriceList = priceList;
                 ViewData["CurrentPage"] = page;
                 ViewData["PageSize"] = PageSize;
                 ViewData["SearchNombre"] = searchNombre ?? "";
@@ -196,7 +202,7 @@ namespace PresupuestoMVC.Controllers
                 //var provincia = _provinciaService.GetNombreProvincia(idProvincia);
 
                 var localidadesList = localidades
-                    .Select(x => x.Localidad)
+                    .Select(x => x.Nombre)
                     .Where(x => !string.IsNullOrWhiteSpace(x))
                     .Distinct()
                     .ToList();

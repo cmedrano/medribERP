@@ -12,8 +12,8 @@ using PresupuestoMVC.Data;
 namespace PresupuestoMVC.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260424191632_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260507141706_AddPriceListFKToProducts")]
+    partial class AddPriceListFKToProducts
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -271,6 +271,10 @@ namespace PresupuestoMVC.Migrations
                     b.Property<bool>("OperacionesContado")
                         .HasColumnType("boolean");
 
+                    b.Property<int>("PriceListId")
+                        .HasColumnType("integer")
+                        .HasColumnName("lista_precio_id");
+
                     b.Property<string>("Provincia")
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
@@ -280,6 +284,8 @@ namespace PresupuestoMVC.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PriceListId");
 
                     b.ToTable("Clientes");
                 });
@@ -792,6 +798,17 @@ namespace PresupuestoMVC.Migrations
                     b.Navigation("CreateByUser");
 
                     b.Navigation("tipoRubro");
+                });
+
+            modelBuilder.Entity("PresupuestoMVC.Models.Entities.Cliente", b =>
+                {
+                    b.HasOne("PresupuestoMVC.Models.Entities.PriceList", "PriceList")
+                        .WithMany()
+                        .HasForeignKey("PriceListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PriceList");
                 });
 
             modelBuilder.Entity("PresupuestoMVC.Models.Entities.Diary", b =>

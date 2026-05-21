@@ -54,26 +54,26 @@
                 <div class="form-grid">
                     <div class="field">
                         <label class="label">Cliente</label>
-                        <select class="select">
-                            <option>Seleccionar cliente...</option>
+                        <select id="clientSelect" class="select">
+                            <option value="">Seleccionar cliente...</option>
                             @if (Model.Clientes != null && Model.Clientes.Any())
                             {
                                 foreach (var lista in Model.Clientes)
                                 {
-                                    <option value="@lista.Id">@lista.Nombre</option>
+                                    <option value="@lista.Id"
+                                            data-nombre="@lista.Nombre"
+                                            data-dni="@lista.DNI">@lista.Nombre</option>
                                 }
                             }
                             else
                             {
                                 <option value="">Sin clientes</option>
                             }
-                            @* <option>Distribuidora Centro</option>
-                                <option>Almacén Don Pedro</option> *@
                         </select>
                     </div>
                     <div class="field">
                         <label class="label">Lista de precios</label>
-                        <select class="select">
+                        <select id="listaPrecioSelect" class="select">
                             <option value="">Seleccionar lista de precio...</option>
                             @if (Model.ListasDePrecio != null && Model.ListasDePrecio.Any())
                             {
@@ -86,18 +86,15 @@
                             {
                                 <option value="">Sin lista de precios</option>
                             }
-                            @* <option>Mayorista</option>
-                                <option>Minorista</option>
-                                <option>Distribuidor</option> *@
                         </select>
                     </div>
                     <div class="field">
                         <label class="label">Nombre / Razón social</label>
-                        <input class="input" type="text" placeholder="Opcional si no es cliente">
+                        <input id="nombreCliente" class=" input" type="text" placeholder="Opcional si no es cliente">
                     </div>
                     <div class="field">
                         <label class="label">DNI / CUIT</label>
-                        <input class="input" type="text" placeholder="Opcional">
+                        <input id="dniCliente" class="input" type="text" placeholder="Opcional">
                     </div>
                 </div>
             </div>
@@ -114,34 +111,32 @@
                 <div class="add-product-row">
                     <div class="field">
                         <label class="label">Artículo</label>
-                        <select class="select">
-                            <option>Buscar artículo...</option>
+                        <select id="articuloSelect" class="select">
+                            <option value="">Buscar artículo...</option>
                             @if (Model.Articulos != null && Model.Articulos.Any())
                             {
                                 foreach (var lista in Model.Articulos)
                                 {
-                                    <option value="@lista.Id">@lista.Nombre</option>
+                                    <option value="@lista.Id" data-price="@lista.SalePrice">
+                                        @lista.Codigo - @lista.Nombre
+                                    </option>
                                 }
                             }
                             else
                             {
-                                <option value="">Sin articulos</option>
+                                <option value="">Sin artículos</option>
                             }
-                            @*
-                                <option>Yerba mate 1kg</option>
-                                <option>Azúcar 1kg</option>
-                                <option>Aceite 900ml</option> *@
                         </select>
                     </div>
                     <div class="field">
                         <label class="label">Cantidad</label>
-                        <input class="input" type="number" value="1">
+                        <input id="cantidadInput" class="input" type="number" value="1" min="1">
                     </div>
                     <div class="field">
                         <label class="label">Precio</label>
-                        <input class="input" type="text" value="$ 1.200">
+                        <input id="precioInput" class="input" type="text" value="$ 0" readonly>
                     </div>
-                    <button class="btn btn-primary" type="button"><i class="bi bi-plus-lg"></i>Agregar</button>
+                    <button id="btnAgregarArticulo" class="btn btn-primary" type="button"><i class="bi bi-plus-lg"></i>Agregar</button>
                 </div>
             </div>
         </section>
@@ -164,35 +159,7 @@
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <div class="product-cell">
-                                    <div>
-                                        <p class="product-title">Yerba mate 1kg</p>
-                                        <p class="product-meta">Almacén · Lista mayorista</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td><span class="qty-badge">2</span></td>
-                            <td class="money">$ 1.200</td>
-                            <td class="money">$ 2.400</td>
-                            <td><a href="#" class="icon-btn"><i class="bi bi-trash"></i></a></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="product-cell">
-                                    <div>
-                                        <p class="product-title">Aceite 900ml</p>
-                                        <p class="product-meta">Almacén · Lista mayorista</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td><span class="qty-badge">1</span></td>
-                            <td class="money">$ 1.850</td>
-                            <td class="money">$ 1.850</td>
-                            <td><a href="#" class="icon-btn"><i class="bi bi-trash"></i></a></td>
-                        </tr>
+                    <tbody id="detalleFacturaBody">
                     </tbody>
                 </table>
             </div>
@@ -205,15 +172,15 @@
             <p class="summary-subtitle">Control final antes de emitir.</p>
         </div>
         <div class="summary-body">
-            <div class="summary-line"><span>Cliente</span><strong>Distribuidora Centro</strong></div>
-            <div class="summary-line"><span>Lista aplicada</span><strong>Mayorista</strong></div>
-            <div class="summary-line"><span>Artículos</span><strong>2</strong></div>
-            <div class="summary-line"><span>Subtotal</span><strong>$ 4.250</strong></div>
-            <div class="summary-line"><span>Descuento</span><strong>$ 0</strong></div>
+            <div class="summary-line"><span>Cliente</span><strong id="resumenCliente">Sin seleccionar</strong></div>
+            <div class="summary-line"><span>Lista aplicada</span><strong id="resumenLista">Sin seleccionar</strong></div>
+            <div class="summary-line"><span>Artículos</span><strong id="resumenArticulos">0</strong></div>
+            <div class="summary-line"><span>Subtotal</span><strong id="resumenSubtotal">$ 0</strong></div>
+            <div class="summary-line"><span>Descuento (10%)</span><strong id="resumenDescuento">$ 0</strong></div>
 
             <div class="summary-total">
                 <span>Total</span>
-                <strong>$ 4.250</strong>
+                <strong id="resumenTotal">$ 0</strong>
             </div>
 
             <div class="summary-actions">
@@ -221,10 +188,206 @@
                 <button class="btn btn-soft btn-block" type="button"><i class="bi bi-file-earmark-text"></i>Guardar borrador</button>
                 <button class="btn btn-danger-soft btn-block" type="button"><i class="bi bi-x-circle"></i>Cancelar</button>
             </div>
-
             <div class="notice">
                 <strong>Nota:</strong> si seleccionás un cliente registrado, la lista de precios puede completarse automáticamente según su configuración.
             </div>
         </div>
     </aside>
 </div>
+
+@section Styles
+{
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+}
+
+@section Scripts
+{
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+
+        // Función para actualizar el precio cada vez que se cambia el artículo o la cantidad
+        function actualizarPrecio() {
+
+            const articulo = document.getElementById("articuloSelect");
+            const cantidad = document.getElementById("cantidadInput");
+            const precio = document.getElementById("precioInput");
+
+            const selectedOption = articulo.options[articulo.selectedIndex];
+            const salePrice = parseFloat(selectedOption.dataset.price || 0);
+            const cantidadValor = parseInt(cantidad.value || 1);
+            const total = salePrice * cantidadValor;
+
+            precio.value = `$ ${total.toLocaleString('es-AR')}`;
+        }
+
+        // Función para actualizar el resumen cada vez que se agrega o elimina un artículo
+        function actualizarResumen() {
+            let cantidadArticulos = 0;
+            let subtotal = 0;
+
+            $('#detalleFacturaBody tr').each(function () {
+                cantidadArticulos += parseInt($(this).data('cantidad'));
+                subtotal += parseFloat($(this).data('total'));
+            });
+
+            // Descuento 10%
+            let descuento = subtotal * 0.10;
+            let total = subtotal - descuento;
+
+            $('#resumenArticulos').text(cantidadArticulos);
+            $('#resumenSubtotal').text(`$ ${subtotal.toLocaleString('es-AR')}`);
+            $('#resumenDescuento').text(`$ ${descuento.toLocaleString('es-AR')}`);
+            $('#resumenTotal').text(`$ ${total.toLocaleString('es-AR')}`);
+        }
+
+        // Inicialización de select2 y eventos
+        $(document).ready(function () {
+
+            // Articulos
+            $('#articuloSelect').select2({
+                placeholder: "Buscar artículo...",
+                width: '100%',
+                allowClear: false
+            });
+
+            // Cuando cambia articulo
+            $('#articuloSelect').on('change', function () {
+                actualizarPrecio();
+            });
+
+            // Cuando cambia cantidad
+            document
+            .getElementById("cantidadInput")
+            .addEventListener("input", actualizarPrecio);
+
+            // Inicializar precio
+            actualizarPrecio();
+
+            $('#btnAgregarArticulo').on('click', function () {
+
+                const articuloSelect = $('#articuloSelect');
+                const articuloId = articuloSelect.val();
+
+                // Validar
+                if (!articuloId) {
+                    alert('Seleccione un artículo');
+                    return;
+                }
+                
+                // Option seleccionada
+                const selectedOption = articuloSelect.find(':selected');
+                const articuloTexto = selectedOption.text();
+                const precioUnitario = parseFloat(selectedOption.data('price')) || 0;
+                const cantidad = parseInt($('#cantidadInput').val()) || 1;
+                const total = precioUnitario * cantidad;
+
+                // Crear fila
+                const fila = `
+                    <tr data-total="${total}" data-cantidad="${cantidad}">
+
+                    <td>
+                    <div class="product-cell">
+
+                    <span class="product-icon">
+                    ${articuloTexto.charAt(0)}
+                    </span>
+
+                    <div>
+
+                    <p class="product-title">
+                    ${articuloTexto}
+                    </p>
+
+                    <p class="product-meta">
+                    Artículo agregado
+                    </p>
+
+                    </div>
+
+                    </div>
+                    </td>
+
+                    <td>
+                    <span class="qty-badge">
+                    ${cantidad}
+                    </span>
+                    </td>
+
+                    <td class="money">
+                    $ ${precioUnitario.toLocaleString('es-AR')}
+                    </td>
+
+                    <td class="money">
+                    $ ${total.toLocaleString('es-AR')}
+                    </td>
+
+                    <td>
+                    <a href="#" class="icon-btn btnEliminar">
+                    <i class="bi bi-trash"></i>
+                    </a>
+                    </td>
+
+                    </tr>
+                `;
+
+                $('#detalleFacturaBody').append(fila);// Agregar fila
+                actualizarResumen(); // Actualizo resumen
+                $('#cantidadInput').val(1);// Resetear formulario
+                $('#precioInput').val('');
+                $('#articuloSelect').val(null).trigger('change');
+
+            });
+
+            // Evento para eliminar artículo
+            $(document).on('click', '.btnEliminar', function (e) {
+                e.preventDefault();
+                $(this).closest('tr').remove();
+                actualizarResumen();
+            });
+        });
+
+        $('#clientSelect').select2({
+            placeholder: "Buscar Cliente...",
+            width: '100%',
+            allowClear: false
+        });
+
+        $('#clientSelect').on('change', function () {
+
+            const clienteId = parseInt($(this).val());
+            const option = this.options[this.selectedIndex];
+
+            $('#nombreCliente').val(option.dataset.nombre || '');
+            $('#dniCliente').val(option.dataset.dni || '');
+            $('#resumenCliente').text(option.text || 'Sin seleccionar');
+
+            const clientes = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Clientes));
+            const cliente = clientes.find(c => c.Id == clienteId);
+
+            console.log(cliente)
+
+            if (!cliente) {
+                $('#nombreCliente').val('');
+                $('#dniCliente').val('');
+                $('#listaPrecioCliente').val('');
+                return;
+            }
+
+            $('#nombreCliente').val(cliente.Nombre);
+            $('#dniCliente').val(cliente.DNI);
+            $('#listaPrecioClienteId').val(cliente.PriceListId);
+
+            console.log(cliente.PriceListId)
+        });
+
+        $('#listaPrecioSelect').on('change', function () {
+
+            const texto = $(this).find(':selected').text();
+
+            $('#resumenLista').text(texto || 'Sin seleccionar');
+        });
+
+    </script>
+}
+

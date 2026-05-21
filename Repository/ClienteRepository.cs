@@ -18,6 +18,7 @@ namespace PresupuestoMVC.Repository
         public async Task<List<Cliente>> ObtenerTodosAsync()
         {
             return await _context.Clientes
+                .Include(c => c.PriceList)
                 .Where(c => c.Activo)
                 .AsNoTracking()
                 .OrderByDescending(c => c.FechaRegistro)
@@ -110,6 +111,7 @@ namespace PresupuestoMVC.Repository
                 clienteExistente.Categoria = cliente.Categoria;
                 clienteExistente.OperacionesContado = cliente.OperacionesContado;
                 clienteExistente.InhabilitadoFacturar = cliente.InhabilitadoFacturar;
+                clienteExistente.PriceListId = cliente.PriceListId;
 
                 //_context.Clientes.Update(clienteExistente);
                 //await _context.SaveChangesAsync();
