@@ -20,7 +20,7 @@ namespace PresupuestoMVC.Data
         public DbSet<Income> Income { get; set; }
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Provincia> Provincias { get; set; }
-        public DbSet<LocalidadPostal> localidades_postales { get; set; }
+        public DbSet<Localidad> Localidades { get; set; }
         public DbSet<Articulo> Articulos { get; set; }
         public DbSet<PriceList> PriceList { get; set; }
         public DbSet<Provider> Provider { get; set; }
@@ -55,13 +55,6 @@ namespace PresupuestoMVC.Data
                 .HasForeignKey(t => t.ToAccountId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Configuración para LocalidadPostal
-            //modelBuilder.Entity<LocalidadPostal>()
-            //    //.HasOne(l => l.Provincia)
-            //    .WithMany()
-            //    .HasForeignKey(l => l.IdProvincia)
-            //    .OnDelete(DeleteBehavior.Restrict);
-
             modelBuilder.Entity<PriceList>(entity =>
             {
                 entity.ToTable("listas_precios"); 
@@ -86,7 +79,61 @@ namespace PresupuestoMVC.Data
                         .HasColumnName("total_gastos")
                         .HasColumnType("numeric(18,2)")
                         .HasDefaultValue(0);
-            }); ;
+            });
+
+            modelBuilder.Entity<Provincia>(entity =>
+            {
+                entity.ToTable("provincias");
+
+                entity.HasKey(x => x.Id);
+
+                entity.Property(x => x.Id)
+                    .HasColumnName("id");
+
+                entity.Property(x => x.Nombre)
+                    .HasColumnName("nombre")
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(x => x.DateInserted)
+                    .HasColumnName("date_inserted")
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                // Configuración de la relación con Localidad
+                entity.HasMany(x => x.Localidades)
+                    .WithOne(x => x.Provincia)
+                    .HasForeignKey(x => x.ProvinciaId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Localidad>(entity =>
+            {
+                entity.ToTable("localidades");
+
+                entity.HasKey(x => x.Id);
+
+                entity.Property(x => x.Id) 
+                    .HasColumnName("id");
+
+                entity.Property(x => x.Nombre)
+                    .HasColumnName("nombre")
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(x => x.CodigoPostal)
+                    .HasColumnName("codigo_postal")
+                    .IsRequired()
+                    .HasMaxLength(10);
+
+                entity.Property(x => x.ProvinciaId)
+                    .HasColumnName("provincia_id");
+
+                entity.Property(x => x.DateInserted)
+                    .HasColumnName("date_inserted")
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            });
+
         }
 
     }

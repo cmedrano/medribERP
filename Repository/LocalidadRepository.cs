@@ -5,23 +5,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PresupuestoMVC.Repository
 {
-    public class LocalidadPostalRepository : ILocalidadPostalRepository
+    public class LocalidadRepository : ILocalidadRepository
     {
         private readonly AppDbContext _context;
 
-        public LocalidadPostalRepository(AppDbContext context)
+        public LocalidadRepository(AppDbContext context)
         {
             _context = context;
         }
 
-        public async Task<List<LocalidadPostal>> ObtenerPorCodigoPostalAsync(string codigoPostal)
+        public async Task<List<Localidad>> ObtenerPorCodigoPostalAsync(string codigoPostal)
         {
             if (string.IsNullOrWhiteSpace(codigoPostal))
-                return new List<LocalidadPostal>();
+                return new List<Localidad>();
 
             // 1. Ejecutamos la consulta y esperamos el resultado (await)
             // Usamos .AsNoTracking() por performance si solo es para lectura
-            var resultados = await _context.localidades_postales
+            var resultados = await _context.Localidades
                             .AsNoTracking() // Mejora el rendimiento para lectura
                             .Include(x => x.Provincia)
                             .Where(x => x.CodigoPostal.Trim() == codigoPostal.Trim())
@@ -31,12 +31,12 @@ namespace PresupuestoMVC.Repository
             return resultados;
         }
 
-        public async Task<LocalidadPostal?> ObtenerPorCodigoPostalPrimeroAsync(string codigoPostal)
+        public async Task<Localidad?> ObtenerPorCodigoPostalPrimeroAsync(string codigoPostal)
         {
             if (string.IsNullOrWhiteSpace(codigoPostal))
                 return null;
 
-            return await _context.localidades_postales
+            return await _context.Localidades
                 //.Include(x => x.Provincia)
                 .Where(x => x.CodigoPostal.Trim() == codigoPostal.Trim())
                 .FirstOrDefaultAsync();

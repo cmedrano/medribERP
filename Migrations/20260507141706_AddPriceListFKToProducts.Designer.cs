@@ -259,7 +259,7 @@ namespace PresupuestoMVC.Migrations
                     b.Property<bool>("InhabilitadoFacturar")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Localidad")
+                    b.Property<string>("Nombre")
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
@@ -472,7 +472,7 @@ namespace PresupuestoMVC.Migrations
                     b.ToTable("income_transfers");
                 });
 
-            modelBuilder.Entity("PresupuestoMVC.Models.Entities.LocalidadPostal", b =>
+            modelBuilder.Entity("PresupuestoMVC.Models.Entities.Localidad", b =>
                 {
                     b.Property<int>("IdCodPostal")
                         .ValueGeneratedOnAdd()
@@ -491,7 +491,7 @@ namespace PresupuestoMVC.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("id_provincia");
 
-                    b.Property<string>("Localidad")
+                    b.Property<string>("Nombre")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
@@ -501,7 +501,7 @@ namespace PresupuestoMVC.Migrations
 
                     b.HasIndex("IdProvincia");
 
-                    b.ToTable("localidades_postal");
+                    b.ToTable("localidades");
                 });
 
             modelBuilder.Entity("PresupuestoMVC.Models.Entities.Module", b =>
@@ -887,7 +887,7 @@ namespace PresupuestoMVC.Migrations
                     b.Navigation("ToAccount");
                 });
 
-            modelBuilder.Entity("PresupuestoMVC.Models.Entities.LocalidadPostal", b =>
+            modelBuilder.Entity("PresupuestoMVC.Models.Entities.Localidad", b =>
                 {
                     b.HasOne("PresupuestoMVC.Models.Entities.Provincia", "Provincia")
                         .WithMany()

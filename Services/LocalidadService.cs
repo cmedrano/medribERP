@@ -4,21 +4,21 @@ using PresupuestoMVC.Models.Entities;
 
 namespace PresupuestoMVC.Services
 {
-    public class LocalidadPostalService : ILocalidadPostalService
+    public class LocalidadService : ILocalidadService
     {
-        private readonly ILocalidadPostalRepository _repository;
+        private readonly ILocalidadRepository _repository;
 
-        public LocalidadPostalService(ILocalidadPostalRepository repository)
+        public LocalidadService(ILocalidadRepository repository)
         {
             _repository = repository;
         }
 
-        public async Task<List<LocalidadPostal>> ObtenerPorCodigoPostalAsync(string codigoPostal)
+        public async Task<List<Localidad>> ObtenerPorCodigoPostalAsync(string codigoPostal)
         {
             return await _repository.ObtenerPorCodigoPostalAsync(codigoPostal);
         }
 
-        public async Task<LocalidadPostal?> ObtenerPorCodigoPostalPrimeroAsync(string codigoPostal)
+        public async Task<Localidad?> ObtenerPorCodigoPostalPrimeroAsync(string codigoPostal)
         {
             return await _repository.ObtenerPorCodigoPostalPrimeroAsync(codigoPostal);
         }
