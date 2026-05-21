@@ -60,20 +60,20 @@
                             {
                                 foreach (var lista in Model.Clientes)
                                 {
-                                    <option value="@lista.Id">@lista.Nombre</option>
+                                    <option value="@lista.Id"
+                                            data-nombre="@lista.Nombre"
+                                            data-dni="@lista.DNI">@lista.Nombre</option>
                                 }
                             }
                             else
                             {
                                 <option value="">Sin clientes</option>
                             }
-                            @* <option>Distribuidora Centro</option>
-                                <option>Almacén Don Pedro</option> *@
                         </select>
                     </div>
                     <div class="field">
                         <label class="label">Lista de precios</label>
-                        <select class="select" id="listaPrecioClienteId">
+                        <select id="listaPrecioSelect" class="select">
                             <option value="">Seleccionar lista de precio...</option>
                             @if (Model.ListasDePrecio != null && Model.ListasDePrecio.Any())
                             {
@@ -86,9 +86,6 @@
                             {
                                 <option value="">Sin lista de precios</option>
                             }
-                            @* <option>Mayorista</option>
-                                <option>Minorista</option>
-                                <option>Distribuidor</option> *@
                         </select>
                     </div>
                     <div class="field">
@@ -175,8 +172,8 @@
             <p class="summary-subtitle">Control final antes de emitir.</p>
         </div>
         <div class="summary-body">
-            <div class="summary-line"><span>Cliente</span><strong>Distribuidora Centro</strong></div>
-            <div class="summary-line"><span>Lista aplicada</span><strong>Mayorista</strong></div>
+            <div class="summary-line"><span>Cliente</span><strong id="resumenCliente">Sin seleccionar</strong></div>
+            <div class="summary-line"><span>Lista aplicada</span><strong id="resumenLista">Sin seleccionar</strong></div>
             <div class="summary-line"><span>Artículos</span><strong id="resumenArticulos">0</strong></div>
             <div class="summary-line"><span>Subtotal</span><strong id="resumenSubtotal">$ 0</strong></div>
             <div class="summary-line"><span>Descuento (10%)</span><strong id="resumenDescuento">$ 0</strong></div>
@@ -359,9 +356,15 @@
         $('#clientSelect').on('change', function () {
 
             const clienteId = parseInt($(this).val());
+            const option = this.options[this.selectedIndex];
+
+            $('#nombreCliente').val(option.dataset.nombre || '');
+            $('#dniCliente').val(option.dataset.dni || '');
+            $('#resumenCliente').text(option.text || 'Sin seleccionar');
 
             const clientes = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Clientes));
             const cliente = clientes.find(c => c.Id == clienteId);
+
             console.log(cliente)
 
             if (!cliente) {
@@ -377,6 +380,14 @@
 
             console.log(cliente.PriceListId)
         });
+
+        $('#listaPrecioSelect').on('change', function () {
+
+            const texto = $(this).find(':selected').text();
+
+            $('#resumenLista').text(texto || 'Sin seleccionar');
+        });
+
     </script>
 }
 
