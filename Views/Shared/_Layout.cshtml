@@ -89,6 +89,10 @@
                             <a asp-area="Accounting" asp-controller="Period" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Period" ? "active" : "")">
                                 Periodos
                             </a>
+                            <!-- Reportes -->
+                            <a asp-area="Accounting" asp-controller="Report" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Report" ? "active" : "")">
+                                Reportes
+                            </a>
                         </div>
                     </div>
                 </nav>
