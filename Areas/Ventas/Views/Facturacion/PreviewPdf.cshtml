@@ -1,0 +1,209 @@
+﻿@using PresupuestoMVC.Areas.Ventas.ViewModels.DTOs
+
+@{
+    @model PreviewPdfViewModel
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="invoice">
+
+    <!-- HEADER -->
+    <div class="header">
+
+        <div class="company">
+
+            <div class="logo">
+                NX
+            </div>
+
+            <h1>@Model.Company.CompanyName</h1>
+
+            <p>@($"{@Model.Company.Street} {@Model.Company.StreetNumber} - {@Model.Company.Locality}, {@Model.Company.Province} , CP: ({@Model.Company.CP})")</p>
+            <p>@Model.Company.Phone</p>
+            <p>CUIT: @Model.Company.CUIT</p>
+            <p>IVA Responsable Inscripto</p>
+
+        </div>
+
+        <div class="invoice-info">
+
+            <div class="invoice-letter">
+                A
+            </div>
+
+            <div class="invoice-body">
+
+                <h2>FACTURA</h2>
+
+                <p><strong>Número:</strong> 0003-00045871</p>
+                <p><strong>Fecha:</strong> @Model.Sale.DateInserted.ToString("dd/MM/yyyy")</p>
+                <p><strong>Punto Venta:</strong> 0003</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- CLIENTE -->
+    <div class="section">
+
+        <div class="section-title">
+            DATOS DEL CLIENTE
+        </div>
+
+        <div class="section-content">
+
+            <div class="grid">
+
+                <div class="field">
+                    <strong>Razón Social</strong>
+                    <span>Comercial Delta SRL</span>
+                </div>
+
+                <div class="field">
+                    <strong>CUIT/DNI</strong>
+                    <span>@Model.Sale.DNI</span>
+                </div>
+
+                <div class="field">
+                    <strong>Domicilio</strong>
+                    <span>@($"{Model.Cliente.Domicilio} - {Model.Cliente.Localidad}, {Model.Cliente.Provincia}, CP: {Model.Cliente.CodigoPostal}")</span>
+                </div>
+
+                <div class="field">
+                    <strong>Condición IVA</strong>
+                    <span>Responsable Inscripto</span>
+                </div>
+
+                <div class="field">
+                    <strong>Condición de Pago</strong>
+                    <span>Cuenta Corriente 30 días</span>
+                </div>
+
+                <div class="field">
+                    <strong>Vendedor</strong>
+                    <span>@Model.Company.CompanyName</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- DETALLE -->
+    <div class="section">
+
+        <div class="section-title">
+            DETALLE DE PRODUCTOS
+        </div>
+
+        <div class="section-content" style="padding:0;">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Descripción</th>
+                        <th class="right">Cant.</th>
+                        <th>U. Med</th>
+                        <th class="right">Precio</th>
+                        <th class="right">Desc.</th>
+                        <th class="right">Total</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model.Sale.Detail)
+                    {
+                        <tr>
+                            <td>@item.CodeItem</td>
+                            <td>@item.NameItem</td>
+                            <td class="right">@item.Quantity</td>
+                            <td>@item.PrecioUnitario</td>
+                            <td class="right">$ @item.PrecioUnitario</td>
+                            <td class="right">10%</td>
+                            <td class="right">$ @item.Total</td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <!-- TOTALES -->
+    <div class="totals">
+
+        <table>
+
+            <tr>
+                <td>Subtotal</td>
+                <td class="right">$ @Model.Sale.Subtotal</td>
+            </tr>
+
+            <tr>
+                <td>IVA 21%</td>
+                <td class="right">$ 585.963</td>
+            </tr>
+
+            <tr>
+                <td>Descuentos 10%</td>
+                <td class="right">$ @Model.Sale.Descuento</td>
+            </tr>
+
+            <tr class="grand-total">
+                <td>TOTAL</td>
+                <td class="right">$ @Model.Sale.Total</td>
+            </tr>
+
+        </table>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+
+        <div class="notes">
+
+            <strong>Observaciones</strong>
+
+            <p>
+                Mercadería sujeta a disponibilidad de stock.
+                Gracias por confiar en Nexus Distribuciones S.A.
+                Conserve esta factura como comprobante válido.
+            </p>
+
+            <div class="barcode"></div>
+
+        </div>
+
+        <div class="signature">
+
+            <div class="signature-line">
+                Firma y aclaración
+            </div>
+
+        </div>
+
+    </div>
+
+    @* Botones Descarga *@
+
+    <div class="d-flex gap-2 mb-3">
+
+        <a class="btn btn-primary" href="/Ventas/Facturacion/DescargarPdf/@Model.Sale.Id">
+            <i class="bi bi-download"></i> Descargar PDF
+        </a>
+
+    </div>
+</div>
+
+<link rel="stylesheet" href="~/css/PreviewPdf.css" asp-append-version="true" />
+

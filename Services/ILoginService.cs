@@ -1,4 +1,5 @@
 ﻿using PresupuestoMVC.Models.DTOs;
+using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Models.ViewModels;
 
 namespace PresupuestoMVC.Services
