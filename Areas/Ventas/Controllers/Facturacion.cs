@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PresupuestoMVC.Areas.Ventas.ViewModels;
 using PresupuestoMVC.Areas.Ventas.ViewModels.DTOs;
-using PresupuestoMVC.Models.DTOs;
-using PresupuestoMVC.Models.Entities;
-using PresupuestoMVC.Services;
+using PresupuestoMVC.Areas.Ventas.Views.Facturacion.PDF;
 using PresupuestoMVC.Services.Interfaces;
 
 namespace PresupuestoMVC.Areas.Ventas.Controllers
@@ -13,12 +12,15 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
         private readonly IClienteService _clienteService;
         private readonly IPriceListService _priceListService;
         private readonly IArticuloService _articuloService;
+        private readonly IFacturacionService _facturacionService;
 
-        public FacturacionController(IClienteService clienteService, IPriceListService priceListService, IArticuloService articuloService)
+
+        public FacturacionController(IClienteService clienteService, IPriceListService priceListService, IArticuloService articuloService, IFacturacionService facturacionService)
         {
             _clienteService = clienteService;
             _priceListService = priceListService;
             _articuloService = articuloService;
+            _facturacionService = facturacionService;
         }
 
         public async Task<IActionResult> Index()
@@ -38,11 +40,64 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
             return View(viewModel);
         }
 
-        public class FacturacionViewModel
+        [HttpPost]
+        public async Task<IActionResult> Crear([FromBody] SaleRequestDTO request)
         {
-            public IEnumerable<ClienteResponseDTO> Clientes { get; set; }
-            public IEnumerable<ArticuloResponseDTO> Articulos { get; set; }
-            public List<PriceList> ListasDePrecio { get; set; }
+            try
+            {
+                if (request == null)
+                    return BadRequest("El cuerpo de la solicitud no puede estar vacío.");
+
+                var result = await _facturacionService.CreateSaleAsync(request);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
+
+        [HttpGet]
+        public async Task<IActionResult> PreviewPdf(int id)
+        {
+            try
+            {
+                var sale = await _facturacionService.GetSaleByIdAsync(id);
+                var client = await _clienteService.ObtenerPorIdAsync((int)sale.ClientId);
+                var company = await _facturacionService.GetCompanyInfoAsync(2);
+
+                var ViewModel = new PreviewPdfViewModel
+                {
+                    Sale = sale,
+                    Cliente = client,
+                    Company = company
+                };
+
+                return View(ViewModel);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DescargarPdf(int id)
+        {
+            var sale = await _facturacionService.GetSaleByIdAsync(id);
+            var client = await _clienteService.ObtenerPorIdAsync((int)sale.ClientId);
+            var company = await _facturacionService.GetCompanyInfoAsync(2);
+
+            var pdf = FacturaPdfGenerator.Generate(sale, client, company);
+
+            return File(
+                pdf,
+                "application/pdf",
+                $"factura-{sale.Id}.pdf"
+            );
+        }
+
     }
 }

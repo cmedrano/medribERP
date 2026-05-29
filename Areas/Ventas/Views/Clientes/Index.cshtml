@@ -1,10 +1,11 @@
-@using PresupuestoMVC.Models.DTOs
+Ôªø@using PresupuestoMVC.Models.DTOs
 @model PaginacionRespuestaDto<ClienteResponseDTO>
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Clientes";
     var priceList = ViewBag.PriceList;
+    var provincia = ViewBag.Provincia;
     var currentPage = (int)ViewData["CurrentPage"];
     var searchNombre = (string)ViewData["SearchNombre"];
     var searchFantasia = (string)ViewData["SearchFantasia"];
@@ -15,7 +16,7 @@
     <div class="topbar">
         <div class="searchbox">
             <i class="bi bi-search"></i>
-            <input class="form-control" type="text" placeholder="Buscar cleinte Û alias..." />
+            <input class="form-control" type="text" placeholder="Buscar cleinte √≥ alias..." />
         </div>
         <div class="d-flex gap-2 flex-wrap">
             <button type="button" class="btn btn-success-soft"
@@ -28,7 +29,7 @@
     <div class="page-head">
         <div>
             <h1 class="page-title">@ViewData["Title"]</h1>
-            <p class="page-subtitle">AdministraciÛn y gestiÛn integral de clientes</p>
+            <p class="page-subtitle">Administraci√≥n y gesti√≥n integral de clientes</p>
         </div>
     </div>
 
@@ -70,7 +71,7 @@
         <div class="section-head">
             <div>
                 <h2 class="section-title">Filtros</h2>
-                <p class="section-subtitle">Aplic· filtros para encontrar movimientos m·s r·pido.</p>
+                <p class="section-subtitle">Aplic√° filtros para encontrar movimientos m√°s r√°pido.</p>
             </div>
             <div class="d-flex gap-2 flex-wrap">
                 <button class="btn btn-soft" onclick="limpiarFiltrosGasto()">
@@ -142,7 +143,7 @@
             </div>
             <div class="quick-filters">
                 <a href="#" class="quick-chip active">Hoy</a>
-                <a href="#" class="quick-chip">⁄ltimos 7 dÌas</a>
+                <a href="#" class="quick-chip">√öltimos 7 d√≠as</a>
                 <a href="#" class="quick-chip">Este mes</a>
                 <a href="#" class="quick-chip">Mes anterior</a>
                 <a href="#" class="quick-chip">Solo Mercado Pago</a>
@@ -159,8 +160,8 @@
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label small fw-bold mb-2" style="color: #6f42c1;">NOMBRE FANTASÕA</label>
-                    <input type="text" id="inputNombreFantasia" name="searchFantasia" class="form-control bg-light border-0 rounded-3 py-2" value="@searchFantasia" placeholder="Buscar por fantasÌa...">
+                    <label class="form-label small fw-bold mb-2" style="color: #6f42c1;">NOMBRE FANTAS√çA</label>
+                    <input type="text" id="inputNombreFantasia" name="searchFantasia" class="form-control bg-light border-0 rounded-3 py-2" value="@searchFantasia" placeholder="Buscar por fantas√≠a...">
                 </div>
 
                 <div class="col-md-12">
@@ -202,20 +203,20 @@
                     <div class="erp-form-grid">
                         <!-- COLUMNA IZQUIERDA -->
                         <section class="erp-form-section">
-                            <!-- Datos B·sicos -->
-                            <h3 class="erp-form-section-title">DATOS B¡SICOS</h3>
+                            <!-- Datos B√°sicos -->
+                            <h3 class="erp-form-section-title">DATOS B√ÅSICOS</h3>
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Nombre</label>
-                                    <input type="text" name="Nombre" id="clienteNombre" class="form-control" placeholder="Ej. Juan PÈrez" required>
+                                    <input type="text" name="Nombre" id="clienteNombre" class="form-control" placeholder="Ej. Juan P√©rez" required>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">Nombre fantasÌa</label>
+                                    <label class="form-label">Nombre fantas√≠a</label>
                                     <input type="text" name="Fantasia" id="clienteFantasia" class="form-control" placeholder="Ej. Distribuidora Centro">
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label class="form-label">CategorÌa</label>
+                                    <label class="form-label">Categor√≠a</label>
                                     <select name="Categoria" id="clienteCategoria" class="form-select">
                                         <option value="">Seleccionar...</option>
                                         <option value="Mayorista">Mayorista</option>
@@ -223,7 +224,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">CondicÌon de venta</label>
+                                    <label class="form-label">Condic√≠on de venta</label>
                                     <select name="CondicionDeVenta" id="clienteCondicionDeVenta" class="form-select">
                                         <option value="">Seleccionar...</option>
                                         <option value="Contado">Contado</option>
@@ -262,11 +263,11 @@
 
                         <!-- COLUMNA DERECHA -->
                         <section class="erp-form-section">
-                            <!-- Contacto/UbicaciÛn -->
-                            <h3 class="erp-form-section-title">Contacto y ubicaciÛn</h3>
+                            <!-- Contacto/Ubicaci√≥n -->
+                            <h3 class="erp-form-section-title">Contacto y ubicaci√≥n</h3>
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label class="form-label">TelÈfono</label>
+                                    <label class="form-label">Tel√©fono</label>
                                     <input type="tel" name="Telefono" id="clienteTelefono" class="form-control" placeholder="Ej. 11 4567 8901" />
                                 </div>
                                 <div class="col-md-6">
@@ -277,7 +278,7 @@
                                     <label class="form-label small fw-bold text-secondary">EMAIL</label>
                                     <input type="email" name="Email" id="clienteEmail" class="form-control bg-light border-0 rounded-3 py-2">
                                 </div> *@
-                                <!-- En la secciÛn del modal, dentro de la COLUMNA DERECHA, reemplaz· el input de EMAIL con este cÛdigo: -->
+                                <!-- En la secci√≥n del modal, dentro de la COLUMNA DERECHA, reemplaz√° el input de EMAIL con este c√≥digo: -->
                                 <div class="col-12">
                                     <label class="form-label">Email</label>
                                     <input type="email" name="Email" id="clienteEmail" class="form-control" placeholder="cliente@empresa.com">
@@ -291,18 +292,27 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label small fw-bold text-secondary">Codigo postal</label>
-                                    <input type="text" name="CodigoPostal" id="clienteCodigoPostal" class="form-control" placeholder="1888">
+                                        <input type="text" name="CodigoPostal" id="clienteCodigoPostal" class="form-control" placeholder="CP">
                                 </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-secondary">Provincia</label>
+                                        <select name="Provincia" id="clienteProvincia" class="form-control">
+                                            <option value="">Seleccionar provincia...</option>
+                                            @if (provincia != null)
+                                            {
+                                                foreach (var loc in provincia)
+                                                {
+                                                    <option value="@loc.Id">@loc.Nombre</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
                                 <div class="col-md-6">
                                     <label class="form-label small fw-bold text-secondary">Localidad</label>
                                     <select name="Localidad" id="clienteLocalidad" class="form-select">
                                         <option value="">Seleccionar localidad...</option>
-                                        <option value="Solano">Solano</option>
                                     </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label small fw-bold text-secondary">Provincia</label>
-                                    <input type="text" name="Provincia" id="clienteProvincia" class="form-control" placeholder="Buenos Aires">
                                 </div>
                             </div>
 
@@ -333,8 +343,6 @@
     </div>
 </div>
 
-
-
 <!-- Modal Confirmar Eliminar -->
 <div class="modal fade" id="modalConfirmarEliminar" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -343,16 +351,17 @@
                 <div class="mb-4">
                     <i class="bi bi-exclamation-circle-fill text-danger" style="font-size: 3rem;"></i>
                 </div>
-                <h5 class="fw-bold mb-2">øEst·s seguro?</h5>
-                <p class="text-muted">Se eliminar· a <strong id="clienteEliminarNombre"></strong></p>
+                <h5 class="fw-bold mb-2">¬øEst√°s seguro?</h5>
+                <p class="text-muted">Se eliminar√° a <strong id="clienteEliminarNombre"></strong></p>
             </div>
             <div class="modal-footer border-0 bg-light d-flex justify-content-center gap-2">
                 <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger rounded-pill px-4" id="btnConfirmarEliminar">SÌ, Eliminar</button>
+                <button type="button" class="btn btn-danger rounded-pill px-4" id="btnConfirmarEliminar">S√≠, Eliminar</button>
             </div>
         </div>
     </div>
 </div>
+
 <script>
     let debounceTimer;
     let isCreating = true;
@@ -366,22 +375,62 @@
         const formCliente = document.getElementById('formCliente');
         const emailInput = document.getElementById('clienteEmail');
         const codigoPostalInput = document.getElementById('clienteCodigoPostal');
+        const provinciaSelect = document.getElementById("clienteProvincia");
 
-        inputNombre.addEventListener('input', realizarBusqueda);
-        inputNombreFantasia.addEventListener('input', realizarBusqueda);
+        // inputNombre.addEventListener('input', realizarBusqueda);
+        // inputNombreFantasia.addEventListener('input', realizarBusqueda);
 
-        // Agregar validaciÛn al enviar el formulario
+        // Agregar validaci√≥n al enviar el formulario
         formCliente.addEventListener('submit', validarEmailAntesDeSomete);
 
         // Limpiar errores al escribir en el email
         emailInput.addEventListener('input', limpiarErrorEmail);
-        
+
         // Agregar evento onBlur para cargar localidades y provincia
-        codigoPostalInput.addEventListener('blur', cargarLocalidadesYProvincia);
+        //codigoPostalInput.addEventListener('blur', cargarLocalidadesYProvincia);
+
+        // Agregar evento change al select de provincia para cargar localidades
+        provinciaSelect.addEventListener("change", async function () {
+            const provinciaId = this.value;
+            const localidadSelect = document.getElementById("clienteLocalidad");
+
+            localidadSelect.addEventListener("change", function () {
+                const selectedOption = this.options[this.selectedIndex];
+                const codigoPostal = selectedOption.dataset.cp || "";
+                document.getElementById("clienteCodigoPostal").value = codigoPostal;
+            });
+
+            localidadSelect.innerHTML =
+                '<option value="">Seleccionar localidad...</option>';
+
+            if (!provinciaId)
+                return;
+
+            try {
+                const response = await fetch(
+                    `@Url.Action("ObtenerLocalidadesPorProvincia", "Clientes")?provinciaId=${provinciaId}`
+                );
+
+                const localidades = await response.json();
+
+                localidades.forEach(localidad => {
+                    const option = document.createElement("option");
+
+                    option.value = localidad.id;
+                    option.text = localidad.nombre;
+                    option.dataset.cp = localidad.codigoPostal;
+
+                    localidadSelect.appendChild(option);
+                });
+            }
+            catch (error) {
+                console.error("Error cargando localidades:", error);
+            }
+        });
     });
 
-    // FunciÛn para limpiar errores del email
-       function limpiarErrorEmail() {
+    // Funci√≥n para limpiar errores del email
+    function limpiarErrorEmail() {
         const emailInput = document.getElementById('clienteEmail');
         const errorContainer = document.getElementById('emailErrorContainer');
         const errorMessage = document.getElementById('emailErrorMessage');
@@ -390,20 +439,20 @@
         errorMessage.textContent = ''; // Vaciamos el texto
         errorContainer.classList.add('d-none'); // Escondemos el contenedor
         errorContainer.classList.remove('d-block');
-      }
+    }
 
-    // FunciÛn para validar email antes de enviar el formulario
+    // Funci√≥n para validar email antes de enviar el formulario
     async function validarEmailAntesDeSomete(event) {
         const emailInput = document.getElementById('clienteEmail');
         const email = emailInput.value.trim();
         const clienteId = document.getElementById('clienteId').value;
 
-        // Si no hay email, dejar que se envÌe (es opcional)
+        // Si no hay email, dejar que se env√≠e (es opcional)
         if (!email) {
             return true;
         }
 
-        // Detener el envÌo del formulario mientras se valida
+        // Detener el env√≠o del formulario mientras se valida
         event.preventDefault();
 
         try {
@@ -426,8 +475,9 @@
                 // Mostrar error
                 mostrarErrorEmail(data.mensaje);
                 return false;
-            } else {
-                // Email v·lido, enviar formulario
+            }
+            else {
+                // Email v√°lido, enviar formulario
                 limpiarErrorEmail();
                 event.target.submit();
             }
@@ -437,8 +487,8 @@
         }
     }
 
-    // FunciÛn para mostrar error de email
-        function mostrarErrorEmail(mensaje) {
+    // Funci√≥n para mostrar error de email
+    function mostrarErrorEmail(mensaje) {
         const emailInput = document.getElementById('clienteEmail');
         const errorContainer = document.getElementById('emailErrorContainer');
         const errorMessage = document.getElementById('emailErrorMessage');
@@ -448,14 +498,15 @@
         errorContainer.classList.remove('d-none'); // Mostramos
         errorContainer.classList.add('d-block');
     }
-    // FunciÛn de debounce
+
+    // Funci√≥n de debounce
     function realizarBusqueda() {
         clearTimeout(debounceTimer);
 
         const searchNombre = document.getElementById('inputNombre').value.trim();
         const searchFantasia = document.getElementById('inputNombreFantasia').value.trim();
 
-        // Verificar si al menos uno cumple con el mÌnimo de caracteres
+        // Verificar si al menos uno cumple con el m√≠nimo de caracteres
         const nombreValido = searchNombre.length >= MIN_SEARCH_LENGTH || searchNombre.length === 0;
         const fantasiaValida = searchFantasia.length >= MIN_SEARCH_LENGTH || searchFantasia.length === 0;
 
@@ -468,7 +519,7 @@
         }, DEBOUNCE_DELAY);
     }
 
-    // FunciÛn para buscar clientes (AJAX)
+    // Funci√≥n para buscar clientes (AJAX)
     function buscarClientes(page = 1, searchNombre = '', searchFantasia = '') {
         const loading = document.getElementById('loadingIndicator');
         loading.classList.remove('d-none');
@@ -499,14 +550,14 @@
         });
     }
 
-    // FunciÛn para cambiar p·gina
+    // Funci√≥n para cambiar p√°gina
     function cambiarPagina(page) {
         const searchNombre = document.getElementById('inputNombre').value.trim();
         const searchFantasia = document.getElementById('inputNombreFantasia').value.trim();
         buscarClientes(page, searchNombre, searchFantasia);
     }
 
-    // FunciÛn para limpiar filtros
+    // Funci√≥n para limpiar filtros
     function limpiarFiltros() {
         document.getElementById('inputNombre').value = '';
         document.getElementById('inputNombreFantasia').value = '';
@@ -533,7 +584,8 @@
 
             // Limpiar errores
             limpiarErrorEmail();
-        } else {
+        }
+        else {
             // Modo ver/editar
             document.getElementById('clienteId').value = id;
             document.getElementById('clienteNombre').value = nombre;
@@ -551,24 +603,26 @@
             document.getElementById('clienteOperacionesContado').checked = String(operacionesContado) === 'true';
             document.getElementById('clienteInhabilitadoFacturar').checked = String(inhabitadoFacturar) === 'true';
 
-            // Cargar localidades si hay cÛdigo postal
+            // Cargar localidades si hay c√≥digo postal
             if (codigoPostal) {
                 cargarLocalidadesYProvinciaAlEditar(codigoPostal, localidad);
-            } else {
+            }
+            else {
                 document.getElementById('clienteLocalidad').innerHTML = '<option value="">Seleccionar localidad...</option>';
             }
 
             if (soloVer) {
                 document.getElementById('modalClienteTitle').innerHTML = '<i class="bi bi-eye me-2"></i>Detalles del Cliente';
                 btnSubmit.style.display = 'none';
-            } else {
+            }
+            else {
                 document.getElementById('modalClienteTitle').innerHTML = '<i class="bi bi-pencil-square erp-modal-title-icon"></i>Editar Cliente';
                 document.getElementById('formCliente').action = '@Url.Action("EditarCliente", "Clientes")';
                 document.getElementById('btnSubmitForm').innerHTML = '<i class="bi bi-check2-circle me-2"></i>Actualizar cliente';
                 btnSubmit.style.display = 'block';
             }
 
-            // Aplicar readonly/disabled seg˙n soloVer
+            // Aplicar readonly/disabled seg√∫n soloVer
             document.querySelectorAll('#formCliente input, #formCliente select').forEach(el => {
                 el.disabled = soloVer;
             });
@@ -581,10 +635,10 @@
         modal.show();
     }
 
-    // FunciÛn auxiliar para cargar localidades al editar
+    // Funci√≥n auxiliar para cargar localidades al editar
     async function cargarLocalidadesYProvinciaAlEditar(codigoPostal, localidadActual) {
         const localidadSelect = document.getElementById('clienteLocalidad');
-        
+
         if (!codigoPostal) {
             localidadSelect.innerHTML = '<option value="">Seleccionar localidad...</option>';
             return;
@@ -614,11 +668,12 @@
                     localidadSelect.appendChild(option);
                 });
 
-                // Si no se encontrÛ la localidad actual, seleccionar la primera
+                // Si no se encontr√≥ la localidad actual, seleccionar la primera
                 if (!localidadSelect.value && data.localidades.length > 0) {
                     localidadSelect.value = data.localidades[0];
                 }
-            } else {
+            }
+            else {
                 localidadSelect.innerHTML = '<option value="">Seleccionar localidad...</option>';
             }
         } catch (error) {
@@ -645,58 +700,61 @@
         };
     }
 
-    // FunciÛn para cargar localidades y provincia cuando sale del campo cÛdigo postal
-    async function cargarLocalidadesYProvincia() {
-        const codigoPostalInput = document.getElementById('clienteCodigoPostal');
-        const localidadSelect = document.getElementById('clienteLocalidad');
-        const provinciaInput = document.getElementById('clienteProvincia');
-        const codigoPostal = codigoPostalInput.value.trim();
+    // Funci√≥n para cargar localidades y provincia cuando sale del campo c√≥digo postal
+    // async function cargarLocalidadesYProvincia() {
+    //     const codigoPostalInput = document.getElementById('clienteCodigoPostal');
+    //     const localidadSelect = document.getElementById('clienteLocalidad');
+    //     const provinciaInput = document.getElementById('clienteProvincia');
+    //     const codigoPostal = codigoPostalInput.value.trim();
 
-        // Limpiar si el cÛdigo postal est· vacÌo
-        if (!codigoPostal) {
-            localidadSelect.innerHTML = '<option value="">Seleccionar localidad...</option>';
-            provinciaInput.value = '';
-            return;
-        }
+    //     // Limpiar si el c√≥digo postal est√° vac√≠o
+    //     if (!codigoPostal) {
+    //         localidadSelect.innerHTML = '<option value="">Seleccionar localidad...</option>';
+    //         provinciaInput.value = '';
+    //         return;
+    //     }
 
-        try {
-            const response = await fetch(`@Url.Action("ObtenerLocalidadPorCodigoPostal", "Clientes")?codigoPostal=${encodeURIComponent(codigoPostal)}`, {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
+    //     try {
+    //         const response = await fetch(`@Url.Action("ObtenerLocalidadPorCodigoPostal", "Clientes")?codigoPostal=${encodeURIComponent(codigoPostal)}`, {
+    //             method: 'GET',
+    //             headers: {
+    //                 'X-Requested-With': 'XMLHttpRequest'
+    //             }
+    //         });
 
-            const data = await response.json();
+    //         const data = await response.json();
 
-            if (data.success) {
-                // Llenar el select de localidades
-                localidadSelect.innerHTML = '';
-                data.localidades.forEach((localidad, index) => {
-                    const option = document.createElement('option');
-                    option.value = localidad;
-                    option.textContent = localidad;
-                    if (index === 0) {
-                        option.selected = true; // Seleccionar la primera localidad por defecto
-                    }
-                    localidadSelect.appendChild(option);
-                });
+    //         if (data.success) {
+    //             // Llenar el select de localidades
+    //             localidadSelect.innerHTML = '';
+    //             data.localidades.forEach((localidad, index) => {
+    //                 const option = document.createElement('option');
+    //                 option.value = localidad;
+    //                 option.textContent = localidad;
+    //                 if (index === 0) {
+    //                     option.selected = true; // Seleccionar la primera localidad por defecto
+    //                 }
+    //                 localidadSelect.appendChild(option);
+    //             });
 
-                // Llenar el campo de provincia
-                provinciaInput.value = data.provincia;
-                // provinciaInput.readOnly = true; // Hacerlo de solo lectura
-            } else {
-                // Mostrar error
-                console.warn(data.mensaje);
-                localidadSelect.innerHTML = '<option value="">Seleccionar localidad...</option>';
-                provinciaInput.value = '';
-                provinciaInput.readOnly = false;
-            }
-        } catch (error) {
-            console.error('Error al obtener localidades:', error);
-            localidadSelect.innerHTML = '<option value="">Seleccionar localidad...</option>';
-            provinciaInput.value = '';
-            provinciaInput.readOnly = false;
-        }
-    }
+    //             // Llenar el campo de provincia
+    //             provinciaInput.value = data.provincia;
+    //             // provinciaInput.readOnly = true; // Hacerlo de solo lectura
+    //         }
+    //         else {
+    //             // Mostrar error
+    //             console.warn(data.mensaje);
+    //             localidadSelect.innerHTML = '<option value="">Seleccionar localidad...</option>';
+    //             provinciaInput.value = '';
+    //             provinciaInput.readOnly = false;
+    //         }
+    //     }
+    //     catch (error) {
+    //         console.error('Error al obtener localidades:', error);
+    //         localidadSelect.innerHTML = '<option value="">Seleccionar localidad...</option>';
+    //         provinciaInput.value = '';
+    //         provinciaInput.readOnly = false;
+    //     }
+    // }
 </script>
+

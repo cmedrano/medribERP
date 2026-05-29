@@ -32,10 +32,14 @@ namespace PresupuestoMVC.Data
         public DbSet<Year> Year { get; set; }
         public DbSet<Month> Months { get; set; }
         public DbSet<PeriodoResumen> PeriodoResumenes { get; set; }
+        public DbSet<Sale> Sales { get; set; }
+        public DbSet<SaleDetail> SaleDetails { get; set; }
+        public DbSet<Company> Companies { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder); 
+            base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<RubroType>()
                 .HasOne(r => r.RubroPadre)
@@ -57,7 +61,7 @@ namespace PresupuestoMVC.Data
 
             modelBuilder.Entity<PriceList>(entity =>
             {
-                entity.ToTable("listas_precios"); 
+                entity.ToTable("listas_precios");
 
                 entity.Property(e => e.Id).HasColumnName("id");
                 entity.Property(e => e.Nombre).HasColumnName("nombre");
@@ -112,7 +116,7 @@ namespace PresupuestoMVC.Data
 
                 entity.HasKey(x => x.Id);
 
-                entity.Property(x => x.Id) 
+                entity.Property(x => x.Id)
                     .HasColumnName("id");
 
                 entity.Property(x => x.Nombre)
@@ -133,6 +137,112 @@ namespace PresupuestoMVC.Data
                     .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             });
+
+            modelBuilder.Entity<Sale>(entity =>
+            {
+                entity.ToTable("sales");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.ClientId).HasColumnName("client_id");
+                entity.Property(e => e.NameClient).HasColumnName("name_client");
+                entity.Property(e => e.DNI).HasColumnName("dni");
+                entity.Property(e => e.PriceListId).HasColumnName("price_list_id");
+                entity.Property(e => e.Subtotal)
+                        .HasColumnName("subtotal")
+                        .HasColumnType("numeric(18,2)")
+                        .HasDefaultValue(0);
+                entity.Property(e => e.Descuento)
+                        .HasColumnName("descuento")
+                        .HasColumnType("numeric(18,2)")
+                        .HasDefaultValue(0);
+                entity.Property(e => e.Total)
+                        .HasColumnName("total")
+                        .HasColumnType("numeric(18,2)")
+                        .HasDefaultValue(0);
+                entity.Property(e => e.DateInserted)
+                        .HasColumnName("date_inserted")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            });
+
+            modelBuilder.Entity<SaleDetail>(entity =>
+            {
+                entity.ToTable("sales_details");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.SaleId).HasColumnName("sale_id");
+                entity.Property(e => e.ItemId).HasColumnName("item_id");
+                entity.Property(e => e.CodeItem).HasColumnName("code_item");
+                entity.Property(e => e.NameItem).HasColumnName("name_item");
+                entity.Property(e => e.Quantity).HasColumnName("quantity");
+                entity.Property(e => e.PrecioUnitario)
+                        .HasColumnName("precio_unitario")
+                        .HasColumnType("numeric(18,2)")
+                        .HasDefaultValue(0);
+                entity.Property(e => e.Total)
+                        .HasColumnName("total")
+                        .HasColumnType("numeric(18,2)")
+                        .HasDefaultValue(0);
+
+                // Configuración de la relación con Sale
+                entity.HasOne(sd => sd.Sale)
+                        .WithMany(s => s.Detail)
+                        .HasForeignKey(sd => sd.SaleId)
+                        .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Company>(entity =>
+            {
+                entity.ToTable("Company");
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Id).HasColumnName("Id");
+
+                entity.Property(e => e.CompanyName)
+                    .HasColumnName("CompanyName")
+                    .HasMaxLength(200);
+
+                entity.Property(e => e.Street)
+                    .HasColumnName("Street")
+                    .HasMaxLength(200);
+
+                entity.Property(e => e.StreetNumber)
+                    .HasColumnName("StreetNumber");
+
+                entity.Property(e => e.FloorOrApartment)
+                    .HasColumnName("FloorOrApartment")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Locality)
+                    .HasColumnName("Locality")
+                    .HasMaxLength(150);
+
+                entity.Property(e => e.Province)
+                    .HasColumnName("Province")
+                    .HasMaxLength(150);
+
+                entity.Property(e => e.Country)
+                    .HasColumnName("Country")
+                    .HasMaxLength(150);
+
+                entity.Property(e => e.CP)
+                    .HasColumnName("CP");
+
+                entity.Property(e => e.Phone)
+                    .HasColumnName("Phone")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.CUIT)
+                    .HasColumnName("CUIT")
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.CreateDate)
+                    .HasColumnName("CreateDate")
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            });
+
+
+
 
         }
 

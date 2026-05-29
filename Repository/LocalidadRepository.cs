@@ -14,6 +14,14 @@ namespace PresupuestoMVC.Repository
             _context = context;
         }
 
+        public async Task<List<Localidad>> ObtenerTodasAsync()
+        {
+            return await _context.Localidades
+                .AsNoTracking()
+                .Include(x => x.Provincia)
+                .ToListAsync();
+        }
+
         public async Task<List<Localidad>> ObtenerPorCodigoPostalAsync(string codigoPostal)
         {
             if (string.IsNullOrWhiteSpace(codigoPostal))
@@ -40,6 +48,15 @@ namespace PresupuestoMVC.Repository
                 //.Include(x => x.Provincia)
                 .Where(x => x.CodigoPostal.Trim() == codigoPostal.Trim())
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<List<Localidad>> ObtenerPorProvinciaAsync(int provinciaId)
+        {
+            return await _context.Localidades
+                .AsNoTracking()
+                .Where(x => x.ProvinciaId == provinciaId)
+                .OrderBy(x => x.Nombre)
+                .ToListAsync();
         }
     }
 }
