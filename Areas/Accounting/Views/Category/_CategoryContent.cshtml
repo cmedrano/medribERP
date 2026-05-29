@@ -35,7 +35,7 @@
             </p>
         </div>
         <div class="d-flex gap-2 flex-wrap">
-            <button class="btn btn-success-soft" onclick="abrirModalCrear('',false)"><i class=" bi bi-plus-lg me-2" id="btnNuevoGasto"></i>Rubro</button>
+            <button class="btn btn-success-soft" onclick="abrirModalCrearRubro('',false)"><i class=" bi bi-plus-lg me-2" id="btnNuevoGasto"></i>Rubro</button>
         </div>
     </div>
     <div class="table-responsive">
@@ -69,11 +69,11 @@
                         </td>
                         <td class="text-end pe-3">
                             <button class="btn btn-outline-success" id="btnNuevoSubRubro"
-                                    onclick="abrirModalCrear(@category.Id, true)">
+                                    onclick="abrirModalCrearRubro(@category.Id, true)">
                                 <i class="bi bi-plus-circle"></i>
                             </button>
                             <button class="btn btn-sm btn-danger"
-                                    onclick="abrirModalEliminar('@category.Id', '@category.nombreRubro')">
+                                    onclick="abrirModalEliminarRubro('@category.Id', '@category.nombreRubro')">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </td>
@@ -95,7 +95,7 @@
                                                 </td>
                                                 <td class="text-end pe-3">
                                                     <button class="btn btn-sm btn-danger"
-                                                            onclick="abrirModalEliminar('@sub.Id', '@sub.nombreRubro')">
+                                                            onclick="abrirModalEliminarRubro('@sub.Id', '@sub.nombreRubro')">
                                                         <i class="bi bi-trash"></i>
                                                     </button>
                                                 </td>
@@ -111,3 +111,198 @@
         </table>
     </div>
 </section>
+
+<!-- Modal de Creación -->
+<div class="modal fade" id="modalCrear" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border-success">
+            <!-- Header verde -->
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-plus-circle me-2"></i>Nuevo Rubro
+                </h5>
+                <button type="button" class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Formulario -->
+            <form action="@Url.Action("CreateCategory")" method="post">
+                <div class="modal-body">
+
+                    <!-- Rubro -->
+                    <div class="mb-3">
+                        <label for="createCategory" class="form-label">Rubro</label>
+                        <div class="input-group">
+                            <input type="string" id="createCategory" name="Rubro"
+                                   class="form-control"
+                                   min="0"
+                                   step="1"
+                                   placeholder="ej.: Seguridad"
+                                   required />
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle me-1"></i>Crear Rubro
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Creación SubCategory-->
+<div class="modal fade" id="modalCrearSubCategory" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border-success">
+            <!-- Header verde -->
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-plus-circle me-2"></i>Nuevo Sub Rubro
+                </h5>
+                <button type="button" class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Formulario -->
+            <form action="@Url.Action("CreateCategory")" method="post">
+                <div class="modal-body">
+
+                    <!-- Rubro -->
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <input type="hidden" id="categoryId" name="RubroPadreId"
+                                   class="form-control"
+                                   min="0"
+                                   step="1"
+                        </div>
+                    </div>
+
+                    <!-- SubRubro -->
+                    <div class="mb-3">
+                        <label for="createSubCategory" class="form-label">Sub Rubro</label>
+                        <div class="input-group">
+                            <input type="string" id="createSubCategory" name="SubCategory"
+                                   class="form-control"
+                                   min="0"
+                                   step="1"
+                                   placeholder="ej.: Informatica"
+                                   required />
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle me-1"></i>Crear Sub Rubro
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Edición -->
+@* <div class="modal fade" id="modalEditar" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form asp-controller="User" asp-action="Edit" method="post">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-pencil-square me-2"></i>Editar Usuario
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white"
+                            data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <!-- Campo oculto para el ID -->
+                    <input type="hidden" id="editUserId" name="Id" value="" />
+
+                    <!-- Cuenta -->
+                    <div class="mb-3">
+                        <label for="editUsernameId" class="form-label">Nombre de usuario</label>
+                        <div class="input-group">
+                            <input type="string" id="editUsernameId" name="Username"
+                                   class="form-control"
+                                   min="0"
+                                   step="1"
+                                   placeholder="Ryoma"
+                                   required />
+                        </div>
+                    </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> *@
+
+<!-- Modal de Eliminación -->
+<div class="modal fade" id="modalEliminarRubroId" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content border-danger">
+            <!-- Header rojo -->
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Confirmar Eliminación
+                </h5>
+                <button type="button" class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Formulario -->
+            <form action="@Url.Action("DeleteCategory")" method="delete">
+                <div class="modal-body">
+                    <!-- Campo oculto para el ID -->
+                    <input type="hidden" id="deleteCategoryId" name="Id" />
+
+                    <!-- Mensaje de confirmación -->
+                    <div class="text-center">
+                        <i class="bi bi-trash text-danger" style="font-size: 3rem;"></i>
+                        <h5 class="mt-3">¿Estás seguro de eliminar el rubro/sub rubro?</h5>
+                        <p class="text-muted">
+                            Esta acción no se puede deshacer. El rubro y/o sub rubro será eliminado permanentemente.
+                        </p>
+
+                        <!-- Información del rubro a eliminar -->
+                        <div class="alert alert-light mt-3 text-start" id="deleteCategoryInfo">
+                            <div class="row">
+                                <div class="col-6"><strong>id:</strong> <span id="deleteCategory">-</span></div>
+                                <div class="col-6"><strong>Rubro:</strong> <span id="deleteCategoryName">-</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-1"></i>Sí, Eliminar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

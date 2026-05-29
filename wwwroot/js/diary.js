@@ -1,47 +1,46 @@
-﻿function inicializarDiary() {
-    console.log("Diary iniciado");
+﻿//function inicializarDiary() {
 
-    document.getElementById("crearFecha")
-        ?.addEventListener("change", () => {
+//    document.getElementById("crearFecha")
+//        ?.addEventListener("change", () => {
 
-            actualizarRubrosPorFecha(
-                "crearFecha",
-                "crearRubroId"
-            );
+//            actualizarRubrosPorFecha(
+//                "crearFecha",
+//                "crearRubroId"
+//            );
 
-        });
-    const crearFecha = document.getElementById("crearFecha");
-    if (crearFecha) {
-        crearFecha.addEventListener("change", () => {
-            actualizarRubrosPorFecha("crearFecha", "crearRubroId");
-        });
-    }
+//        });
+//    const crearFecha = document.getElementById("crearFecha");
+//    if (crearFecha) {
+//        crearFecha.addEventListener("change", () => {
+//            actualizarRubrosPorFecha("crearFecha", "crearRubroId");
+//        });
+//    }
 
-    const editFecha = document.getElementById("editFecha");
-    if (editFecha) {
-        editFecha.addEventListener("change", () => {
-            actualizarRubrosPorFecha("editFecha", "editRubroId");
-        });
-    }
+//    const editFecha = document.getElementById("editFecha");
+//    if (editFecha) {
+//        editFecha.addEventListener("change", () => {
+//            actualizarRubrosPorFecha("editFecha", "editRubroId");
+//        });
+//    }
 
-    const modalCrear = document.getElementById("modalCrearGastoId");
-    if (modalCrear) {
-        modalCrear.addEventListener("shown.bs.modal", function () {
-            const fechaInput = document.getElementById("crearFecha");
-            if (!fechaInput) return;
+//    const modalCrear = document.getElementById("modalCrearGastoId");
+//    if (modalCrear) {
+//        modalCrear.addEventListener("shown.bs.modal", function () {
+//            const fechaInput = document.getElementById("crearFecha");
+//            if (!fechaInput) return;
 
-            //fechaInput.focus();
+//            //fechaInput.focus();
 
-            //if (fechaInput.showPicker) {
-            //    fechaInput.showPicker();
-            //}
+//            //if (fechaInput.showPicker) {
+//            //    fechaInput.showPicker();
+//            //}
 
-            //setTimeout(() => {
-            //    fechaInput.showPicker();
-            //}, 100);
-        });
-    }
-}
+//            //setTimeout(() => {
+//            //    fechaInput.showPicker();
+//            //}, 100);
+//        });
+//    }
+//}
 
 function actualizarRubrosPorFecha(fechaInputId, rubroSelectId, rubroSeleccionadoId = null) {
     const date = document.getElementById(fechaInputId).value;
@@ -100,7 +99,7 @@ function AbrirModalCrearGasto() {
     document.getElementById('crearCuentaId').value = "";
 
     // Al abrir, cargamos los rubros para la fecha por defecto (hoy)
-    actualizarRubrosPorFecha("crearFecha", "crearRubroId");
+    //actualizarRubrosPorFecha("crearFecha", "crearRubroId");
 
     const modal = new bootstrap.Modal(document.getElementById('modalCrearGastoId'));
     modal.show();
@@ -150,7 +149,7 @@ function limpiarFiltrosGasto() {
     window.location.href = '@Url.Action("Index", "Diary")';
 }
 
-function aplicarFiltros() {
+function aplicarFiltrosGastos() {
     const rubroId = document.getElementById('rubroFilter').value;
     const cuentaId = document.getElementById('cuentaFilter').value;
     const fechaDesde = document.getElementById('fechaDesde')?.value;
@@ -223,10 +222,10 @@ function confirmarGastoConSaldoNegativo() {
 
 // --- INICIALIZACIÓN ---
 
-document.addEventListener("DOMContentLoaded", () => {
-    // Carga inicial para el campo de creación si hay una fecha por defecto
-    actualizarRubrosPorFecha("crearFecha", "crearRubroId");
-});
+//document.addEventListener("DOMContentLoaded", () => {
+//    // Carga inicial para el campo de creación si hay una fecha por defecto
+//    actualizarRubrosPorFecha("crearFecha", "crearRubroId");
+//});
 
 //const modalCrear = document.getElementById('modalCrearGastoId');
 //modalCrear.addEventListener('shown.bs.modal', function () {

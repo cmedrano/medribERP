@@ -55,6 +55,11 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
                 ViewBag.Brands = brands;
                 ViewBag.Providers = providers;
                 ViewBag.PriceList = priceList;
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return PartialView("_ArticulosContent", articulos);
+                }
+
                 return View(articulos);
             }
             catch (Exception ex)

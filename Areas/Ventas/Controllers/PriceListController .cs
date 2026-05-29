@@ -19,6 +19,10 @@ namespace PresupuestoMVC.Controllers
         public async Task<IActionResult> Index()
         {
             var model = await _priceListService.GetAllAsync();
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("_PriceListContent", model);
+            }
             return View(model);
         }
 

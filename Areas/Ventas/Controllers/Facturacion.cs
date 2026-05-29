@@ -34,7 +34,10 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
                 ListasDePrecio = listPrice
             };
 
-
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("_FacturacionContent", viewModel);
+            }
             return View(viewModel);
         }
 

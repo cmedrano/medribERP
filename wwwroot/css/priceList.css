@@ -1,0 +1,19 @@
+﻿body {
+}
+.custom-header {
+    background: linear-gradient(90deg, #2b6edb, #1e4fbf);
+    /* font-size: 1.1rem; */
+}
+
+table tbody tr:hover {
+    background-color: #f5f8ff;
+}
+
+.card {
+    border-radius: 20px;
+}
+
+.btn-lg {
+    border-radius: 12px;
+    padding: 10px 25px;
+}

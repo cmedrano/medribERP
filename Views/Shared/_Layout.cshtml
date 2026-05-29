@@ -15,6 +15,8 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/PresupuestoMVC.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/priceList.css" asp-append-version="true" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     @await RenderSectionAsync("Styles", required: false)
 </head>
@@ -86,7 +88,7 @@
                                 Estadisticas
                             </a>
                             <!-- Periodos -->
-                            <a asp-area="Accounting" asp-controller="Period" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Period" ? "active" : "")">
+                            <a asp-area="Accounting" asp-controller="Period" asp-action="Index" data-spa="true" class=" nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Period" ? "active" : "")">
                                 Periodos
                             </a>
                         </div>
@@ -221,9 +223,20 @@
         window.urls.createGasto = '@Url.Action("Create", "Diary", new { area = "Accounting" })';
         window.urls.getRubros = '@Url.Action("GetCategoriesbyDate", "Budget", new { area = "Accounting" })?date=';
     </script>
-    <script src="~/js/diary.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/navigation.js"></script>
+
+    <script src="~/js/budget.js"></script>
+    <script src="~/js/diary.js"></script>
+    <script src="~/js/category.js"></script>
+    <script src="~/js/account.js"></script>
+    <script src="~/js/period.js"></script>
+
+    <script src="~/js/articulos.js"></script>
+    <script src="~/js/clientes.js"></script>
+    <script src="~/js/priceList.js"></script>
+    <script src="~/js/facturacion.js"></script>
+
     <script>
         function toggleDarkMode() {
         const body = document.body;
@@ -337,13 +350,16 @@
             cargarVista(location.href);
         });
 
-        document.addEventListener("DOMContentLoaded", () => {
+        // document.addEventListener("DOMContentLoaded", () => {
 
-            if (typeof inicializarDiary === 'function') {
-                inicializarDiary();
-            }
+        //     if (typeof inicializarDiary === 'function') {
+        //         inicializarDiary();
+        //     }
+        //     if (typeof inicializarCliente === 'function') {
+        //         inicializarCliente();
+        //     }
 
-        });
+        // });
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)
