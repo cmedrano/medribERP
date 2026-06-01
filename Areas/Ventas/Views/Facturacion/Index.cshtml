@@ -16,7 +16,7 @@
         </div>
     </div>
     <div class="hero-actions">
-        <a href="#" class="btn btn-soft"><i class="bi bi-clock-history"></i>Facturas recientes</a>
+        <a href="#" class="btn btn-soft" id="btnFacturasRecientes"><i class="bi bi-clock-history"></i>Facturas recientes</a>
         <a href="#" class="btn btn-primary"><i class="bi bi-plus-lg"></i>Nueva factura</a>
     </div>
 </section>
@@ -200,7 +200,7 @@
     </aside>
 </div>
 
-@*  Alert  *@
+@*Alert*@
 <div class="modal fade" id="mensajeModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg rounded-4">
@@ -238,6 +238,43 @@
     </div>
 </div>
 
+@*MODAL FACTURAS*@
+<div class="modal fade" id="modalFacturas" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="erp-modal-header">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-receipt-cutoff"></i>
+                    <span class="erp-modal-title">Facturas recientes</span>
+                </div>
+                <button class="erp-modal-close" type="button" data-bs-dismiss="modal" aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Cliente</th>
+                            <th>DNI</th>
+                            <th>Fecha</th>
+                            <th>Total</th>
+                            <th>Detalle</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tbodyFacturas">
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 @section Styles
 {
@@ -247,287 +284,10 @@
 @section Scripts
 {
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
     <script>
-
-        // Inicialización de select2 y eventos
-        $(document).ready(function () {
-
-            // Articulos
-            $('#articuloSelect').select2({
-                placeholder: "Buscar artículo...",
-                width: '100%',
-                allowClear: false
-            });
-
-            // Cuando cambia articulo
-            $('#articuloSelect').on('change', function () {
-                actualizarPrecio();
-            });
-
-            // Cuando cambia cantidad
-            document
-            .getElementById("cantidadInput")
-            .addEventListener("input", actualizarPrecio);
-
-            // Inicializar precio
-            actualizarPrecio();
-
-            $('#btnAgregarArticulo').on('click', function () {
-
-                const articuloSelect = $('#articuloSelect');
-                const articuloId = articuloSelect.val();
-
-                // Validar
-                if (!articuloId) {
-                    alert('Seleccione un artículo');
-                    return;
-                }
-                
-                // Option seleccionada
-                const selectedOption = articuloSelect.find(':selected');
-                //const articuloTexto = selectedOption.text().trim();
-                const codeItem = selectedOption.data('code');
-                const nameItem = selectedOption.data('name');
-                const precioUnitario = parseFloat(selectedOption.data('price')) || 0;
-                const cantidad = parseInt($('#cantidadInput').val()) || 1;
-                const total = precioUnitario * cantidad;
-
-                // Crear fila
-                const fila = `
-                    <tr
-                        data-itemid="${articuloId}"
-                        data-codeitem="${codeItem}"
-                        data-nameitem="${nameItem}"
-                        data-total="${total}"
-                        data-cantidad="${cantidad}"
-                        data-precio="${precioUnitario}">
-
-                    <td>
-                    <div class="product-cell">
-
-                    <span class="product-icon">
-                    ${nameItem.charAt(0)}
-                    </span>
-
-                    <div>
-
-                    <p class="product-title">
-                    ${codeItem} - ${nameItem}
-                    </p>
-
-                    <p class="product-meta">
-                    Artículo agregado
-                    </p>
-
-                    </div>
-
-                    </div>
-                    </td>
-
-                    <td>
-                    <span class="qty-badge">
-                    ${cantidad}
-                    </span>
-                    </td>
-
-                    <td class="money">
-                    $ ${precioUnitario.toLocaleString('es-AR')}
-                    </td>
-
-                    <td class="money">
-                    $ ${total.toLocaleString('es-AR')}
-                    </td>
-
-                    <td>
-                    <a href="#" class="icon-btn btnEliminar">
-                    <i class="bi bi-trash"></i>
-                    </a>
-                    </td>
-
-                    </tr>
-                `;
-
-                $('#detalleFacturaBody').append(fila);// Agregar fila
-                actualizarResumen(); // Actualizo resumen
-                $('#cantidadInput').val(1);// Resetear formulario
-                $('#precioInput').val('');
-                $('#articuloSelect').val(null).trigger('change');
-
-            });
-
-            // Evento para eliminar artículo
-            $(document).on('click', '.btnEliminar', function (e) {
-                e.preventDefault();
-                $(this).closest('tr').remove();
-                actualizarResumen();
-            });
-
-            // Evento para confirmar factura
-            $('#btnConfirmarFactura').click(function () {
-
-                let saleDetail = [];
-
-                $('#detalleFacturaBody tr').each(function () {
-                    const itemId = $(this).data('itemid');
-                    const codeItem = $(this).data('codeitem');
-                    const nameItem = $(this).data('nameitem');
-                    const quantity = parseInt($(this).data('cantidad'));
-                    const precioUnitario = parseFloat($(this).data('precio'));
-                    const total = parseFloat($(this).data('total'));
-
-                    saleDetail.push({
-                        itemId: itemId,
-                        codeItem: codeItem,
-                        nameItem: nameItem,
-                        quantity: quantity,
-                        precioUnitario: precioUnitario,
-                        total: total
-                    });
-                });
-
-                const sale = {
-                    clientId: $('#clientSelect').val() || null,
-                    nameClient: $('#clientSelect option:selected').text(),
-                    dni: $('#dniCliente').val(),
-                    priceListId: $('#listaPrecioSelect').val() || 0,
-
-                    subtotal: parseFloat($('#resumenSubtotal').text().replace('$', '').replace('.', '')),
-                    descuento: parseFloat($('#resumenDescuento').text().replace('$', '').replace('.', '')),
-                    total: parseFloat($('#resumenTotal').text().replace('$', '').replace('.', '')),
-
-                    detail: saleDetail
-                };
-
-                console.log(sale); // DEBUG
-
-                $.ajax({
-                    url: '/Ventas/Facturacion/Crear',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(sale),
-                    success: function (response) {
-                    console.log(response); // DEBUG
-                        mostrarAlerta(
-                            'success',
-                            'La factura se guardó correctamente'
-                        );
-
-                        setTimeout(() => {
-                            window.location.href =
-                            `/Ventas/Facturacion/PreviewPdf/${response}`;
-                        }, 1500);
-                    },
-                    error: function () {
-                        mostrarAlerta(
-                            'error',
-                            'Ocurrió un error al guardar la factura'
-                        );
-                    }
-                });
-
-            });
-        });
-
-        $('#clientSelect').select2({
-            placeholder: "Buscar Cliente...",
-            width: '100%',
-            allowClear: false
-        });
-
-        // Función para actualizar el precio cada vez que se cambia el artículo o la cantidad
-        function actualizarPrecio() {
-            const articulo = document.getElementById("articuloSelect");
-            const cantidad = document.getElementById("cantidadInput");
-            const precio = document.getElementById("precioInput");
-
-            const selectedOption = articulo.options[articulo.selectedIndex];
-            const salePrice = parseFloat(selectedOption.dataset.price || 0);
-            const cantidadValor = parseInt(cantidad.value || 1);
-            const total = salePrice * cantidadValor;
-
-            precio.value = `$ ${total.toLocaleString('es-AR')}`;
-        }
-
-        // Función para actualizar el resumen cada vez que se agrega o elimina un artículo
-        function actualizarResumen() {
-            let cantidadArticulos = 0;
-            let subtotal = 0;
-
-            $('#detalleFacturaBody tr').each(function () {
-                cantidadArticulos += parseInt($(this).data('cantidad'));
-                subtotal += parseFloat($(this).data('total'));
-            });
-
-            // Descuento 10%
-            let descuento = subtotal * 0.10;
-            let total = subtotal - descuento;
-
-            $('#resumenArticulos').text(cantidadArticulos);
-            $('#resumenSubtotal').text(`$ ${subtotal.toLocaleString('es-AR')}`);
-            $('#resumenDescuento').text(`$ ${descuento.toLocaleString('es-AR')}`);
-            $('#resumenTotal').text(`$ ${total.toLocaleString('es-AR')}`);
-        }
-
-        function mostrarAlerta(tipo, mensaje) {
-            let titulo = '';
-            let icono = '';
-
-            if (tipo === 'success') {
-                titulo = 'Éxito';
-                icono = '<i class="bi bi-check-circle-fill text-success"></i>';
-            }
-            else {
-                titulo = 'Error';
-                icono = '<i class="bi bi-x-circle-fill text-danger"></i>';
-            }
-
-            $('#mensajeTitulo').text(titulo);
-            $('#mensajeTexto').text(mensaje);
-            $('#mensajeIcono').html(icono);
-
-            const modal = new bootstrap.Modal(
-                document.getElementById('mensajeModal')
-            );
-
-            modal.show();
-        }
-
-        $('#clientSelect').on('change', function () {
-
-            const clienteId = parseInt($(this).val());
-            const option = this.options[this.selectedIndex];
-
-            $('#nombreCliente').val(option.dataset.nombre || '');
-            $('#dniCliente').val(option.dataset.dni || '');
-            $('#resumenCliente').text(option.text || 'Sin seleccionar');
-
-            const clientes = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Clientes));
-            const cliente = clientes.find(c => c.Id == clienteId);
-
-            console.log(cliente)
-
-            if (!cliente) {
-                $('#nombreCliente').val('');
-                $('#dniCliente').val('');
-                $('#listaPrecioCliente').val('');
-                return;
-            }
-
-            $('#nombreCliente').val(cliente.Nombre);
-            $('#dniCliente').val(cliente.DNI);
-            $('#listaPrecioSelect').val(cliente.PriceListId);
-
-            console.log(cliente.PriceListId)
-        });
-
-        $('#listaPrecioSelect').on('change', function () {
-
-            const texto = $(this).find(':selected').text();
-
-            $('#resumenLista').text(texto || 'Sin seleccionar');
-        });
-
+        window.clientes = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Clientes));
     </script>
+    <script src="~/js/facturacion.js"></script>
+    
 }
 
