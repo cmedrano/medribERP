@@ -60,6 +60,37 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> ObtenerFacturasRecientes()
+        {
+            try
+            {
+                var ventas = await _facturacionService.GetRecentSalesAsync();
+
+                var result = ventas.Select(v => new
+                {
+                    id = v.Id,
+                    cliente = v.NameClient,
+                    dni = v.DNI,
+                    fecha = v.DateInserted.ToString("dd/MM/yyyy HH:mm"),
+                    total = v.Total,
+                    detalle = v.Detail.Select(d => new
+                    {
+                        articulo = d.NameItem,
+                        cantidad = d.Quantity,
+                        precioUnitario = d.PrecioUnitario,
+                        total = d.Total
+                    })
+                });
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
         public async Task<IActionResult> PreviewPdf(int id)
         {
             try

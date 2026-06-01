@@ -70,6 +70,16 @@ namespace PresupuestoMVC.Services
             }
         }
 
+        public async Task<IEnumerable<Sale>> GetRecentSalesAsync()
+        {
+            var sales = await _saleRepository.GetAllAsync();
+
+            if (sales == null || !sales.Any())
+                throw new Exception("No se encontraron ventas");
+
+            return sales;
+        }
+
         public async Task<Sale> GetSaleByIdAsync(int id)
         {
             if (id <= 0)
