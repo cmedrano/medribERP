@@ -1,0 +1,426 @@
+﻿@using PresupuestoMVC.Areas.Ventas.ViewModels.DTOs
+@model IEnumerable<ArticuloResponseDTO>
+@using PresupuestoMVC.Models.DTOs
+
+@{
+    ViewData["Title"] = "Artículos";
+    var productCategories = ViewBag.ProductCategories as IEnumerable<ProductCategoryResponseDto>;
+    var brands = ViewBag.Brands;
+    var providers = ViewBag.Providers;
+    var priceList = ViewBag.PriceList;
+}
+
+<main class="flex-grow-1 container-main">
+    <!-- Header -->
+    <div class="topbar">
+        <div class="searchbox">
+            <i class="bi bi-search"></i>
+            <input class="form-control" type="text" placeholder="Buscar codigo ó articulo..." />
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <button type="button" class="btn btn-success-soft"
+                    onclick="abrirModalArticulo(true)">
+                <i class=" bi bi-plus-lg me-2" id="btnNuevoArticulo"></i>
+                Nuevo articulo
+            </button>
+        </div>
+    </div>
+    <div class="page-head">
+        <div>
+            <h1 class="page-title">@ViewData["Title"]</h1>
+            <p class="page-subtitle">Gestión de artículos y productos.</p>
+        </div>
+    </div>
+
+    <!-- informacion util rapida -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-6 col-xl-3">
+            <div class="erp-card metric-card">
+                <div class="metric-icon"><i class="bi bi-journal-text"></i></div>
+                <div class="metric-label">Articulos agregados este mes</div>
+                <div class="metric-value">215</div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="erp-card metric-card">
+                <div class="metric-icon"><i class="bi bi-cash-stack"></i></div>
+                <div class="metric-label">Valor total inventario</div>
+                <div class="metric-value">$ 3.945.700</div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="erp-card metric-card">
+                <div class="metric-icon"><i class="bi bi-credit-card-2-front"></i></div>
+                <div class="metric-label">medida mas utilizada</div>
+                <div class="metric-value">KG</div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="erp-card metric-card">
+                <div class="metric-icon"><i class="bi bi-tags"></i></div>
+                <div class="metric-label">Rubro principal</div>
+                <div class="metric-value">Almacen</div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<!-- Tabla de Clientes -->
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-0">
+        <div class="table-tools">
+            <div>
+                <h2 class="section-title">Articulos registrados</h2>
+                <p class="section-subtitle">
+                    Mostrando 10 de 100
+                </p>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-modern table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th class="py-3">CODIGO</th>
+                        <th class="py-3">NOMBRE</th>
+                        <th class="py-3">UNIDAD DE MEDIDA</th>
+                        <th class="py-3 text-end">ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                @* <td class="ps-4 py-4">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white"
+                                             style="width: 40px; height: 40px; background-color: #fd7e14;">
+                                            @item.Nombre.Substring(0, 1).ToUpper()
+                                        </div>
+                                    </div>
+                                </td> *@
+                                <td><span class="badge-soft badge-cuenta">@(item.Codigo ?? "-")</span></td>
+                                <td class="py-4">@(item.Nombre ?? "-")</td>
+                                <td><span class="badge-soft badge-rubro">@(item.UnidadMedida ?? "-")</span></td>
+                                <td class="pe-4 py-4 text-end">
+                                    <button type="button"
+                                            class="icon-btn"
+                                            title="Ver"
+                                            onclick="abrirModalArticulo(
+                                            false,
+                                            '@item.Id',
+                                            '@item.Codigo',
+                                            '@item.Nombre',
+                                            '@item.UnidadMedida',
+                                            '@item.ProductCategoryId',
+                                            '@item.BrendId',
+                                            '@item.ProviderId',
+                                            '@item.PurchasePrice',
+                                            '@item.SalePrice',
+                                            true)">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    <button type="button"
+                                            class="icon-btn"
+                                            title="Editar"
+                                            onclick="abrirModalArticulo(
+                                            false,
+                                            '@item.Id',
+                                            '@item.Codigo',
+                                            '@item.Nombre', 
+                                            '@item.UnidadMedida', 
+                                            '@item.ProductCategoryId',
+                                            '@item.BrendId',
+                                            '@item.ProviderId',
+                                            '@item.PurchasePrice',
+                                            '@item.SalePrice',
+                                            false)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button type="button"
+                                            class="icon-btn icon-btn-danger"
+                                            title="Eliminar"
+                                            onclick="abrirModalEliminarArticulos('@item.Id', '@item.Nombre');"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalConfirmarEliminar">
+                                        <i class="bi bi-trash text-danger"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                                <p class="mt-3">No hay articulos para mostrar</p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="table-footer">
+            <small class="text-muted">Página 1 de 19</small>
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item disabled"><a class="page-link" href="#">Anterior</a></li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">Siguiente</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Articulo (Crear/Ver/Editar) -->
+<div class="modal fade erp-modal-body" id="modalArticulo" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog  modal-xl erp-modal">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+
+            <div class="erp-modal-header">
+                <h2 class="erp-modal-title" id="modalArticuloTitle"></h2>
+                <button class="erp-modal-close" type="button" data-bs-dismiss="modal" aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <form id="formArticulo" method="post">
+                <div class="modal-body erp-modal-body p-4 bg-white">
+                    <input type="hidden" name="Id" id="articuloId">
+                    <!-- tabla donde se guardarán los precios -->
+                    <div id="priceContainer"></div>
+                    <div id="hiddenItemsContainer"></div>
+                    <div class="row g-4">
+                        <section class="erp-form-section">
+                            <!-- Datos Básicos -->
+                            <h3 class="erp-form-section-title">Datos del artículo</h3>
+                            <div class="row g-3 mb-3">
+                                <!-- Codigo -->
+                                <div class="col-md-4">
+                                    <label class="form-label">Codigo</label>
+                                    <input type="text" name="Codigo" id="articuloCodigo" class="form-control" placeholder="Ej. fda-123" required>
+                                </div>
+                                <!-- Nombre -->
+                                <div class="col-md-4">
+                                    <label class="form-label">Nombre</label>
+                                    <input type="text" name="Nombre" id="articuloNombre" class="form-control" placeholder="Ej. Richard" required>
+                                </div>
+                                <!-- Unidad de medida -->
+                                <div class="col-md-4">
+                                    <label class="form-label">Unidad de medida</label>
+                                    <input type="text" name="UnidadMedida" id="articuloUnidadMedida" class="form-control" placeholder="Ej. Kg" required>
+                                </div>
+                                <!-- Rubro -->
+                                <div class="col-md-4">
+                                    <label for="SelectRubroId" class="form-label">Rubro</label>
+                                    <select id="SelectRubroId" name="ProductCategoryId"
+                                            class="form-select" required>
+                                        <option value="">Seleccionar rubro...</option>
+                                        @if (productCategories != null)
+                                        {
+                                            foreach (var productCategory in productCategories)
+                                            {
+                                                <option value="@productCategory.Id">@productCategory.Name</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <!-- Marca -->
+                                <div class="col-md-4">
+                                    <label class="form-label">Marca</label>
+                                    <select id="BrendId" name="BrendId"
+                                            class="form-select" required>
+                                        <option value="">Seleccionar marca...</option>
+                                        @if (brands != null)
+                                        {
+                                            foreach (var brend in brands)
+                                            {
+                                                <option value="@brend.Id">@brend.Name</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <!-- Proveedor -->
+                                <div class="col-md-4">
+                                    <label class="form-label">Proveedor</label>
+                                    <select id="providerId" name="ProviderId"
+                                            class="form-select" required>
+                                        <option value="">Seleccionar proveedor...</option>
+                                        @if (providers != null)
+                                        {
+                                            foreach (var provider in providers)
+                                            {
+                                                <option value="@provider.Id">@provider.Name</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <!-- Precio de compra -->
+                                <div class="col-md-4">
+                                    <label class="form-label">Precio de compra</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-0">
+                                            <i class="bi bi-currency-dollar"></i>
+                                        </span>
+                                        <input type="number"
+                                               name="purchasePrice"
+                                               id="PurchasePrice"
+                                               placeholder="0"
+                                               class="form-control"
+                                               required>
+                                    </div>
+                                </div>
+                                <!-- Precio de venta -->
+                                <div class="col-md-4">
+                                    <label class="form-label">Precio de venta</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-0">
+                                            <i class="bi bi-currency-dollar"></i>
+                                        </span>
+                                        <input type="number"
+                                               name="SalePrice"
+                                               id="salePrice"
+                                               placeholder="0"
+                                               class="form-control"
+                                               required>
+                                    </div>
+                                </div>
+
+                                <!-- lista -->
+                                <div class="col-md-4">
+                                    <label class="form-label">Lista de precios</label>
+                                    <div class="input-group btn-lista">
+                                        <button type="button"
+                                                class="btn-orange-soft"
+                                                title="Ver"
+                                                onclick="abrirModalLista()">
+                                            <i class="bi bi-list me-1"></i>
+                                            Abrir lista
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <div class="erp-modal-footer">
+                    <button type="button" class="btn btn-soft btn-pill" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary btn-pill" id="btnSubmitForm"></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Eliminación -->
+<div class="modal fade" id="modalConfirmarEliminar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-body p-5 text-center">
+                <div class="mb-4">
+                    <i class="bi bi-exclamation-circle-fill text-danger" style="font-size: 3rem;"></i>
+                </div>
+                <h5 class="fw-bold mb-2">¿Estás seguro?</h5>
+                <p class="text-muted">Se eliminará a <strong id="articuloEliminarNombre"></strong></p>
+            </div>
+            <div class="modal-footer border-0 bg-light d-flex justify-content-center gap-2">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger rounded-pill px-4" id="btnConfirmarEliminar">Sí, Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sub modal lista de precios-->
+<div class="modal fade erp-modal-body" id="subModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered erp-modal">
+        <div class="modal-content border-0 shadow-lg">
+
+            <!-- Header -->
+            <div class="erp-modal-header">
+                <h5 class="erp-modal-title" id="modalArticuloTitle">
+                    <i class="bi bi-box"></i> Lista de precios
+                </h5>
+                <button class="erp-modal-close" type="button" data-bs-dismiss="modal" aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body">
+                <div class="erp-modal-body">
+                    <div class="card-body">
+
+                        <section class="erp-form-section">
+                            <div class="">
+                                <small class="erp-form-section-title">PRECIOS POR LISTA</small>
+                                <p class="text-muted small mb-3">
+                                    Definí el valor para cada lista.
+                                </p>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-modern table-hover align-middle">
+                                    <thead class="">
+                                        <tr>
+                                            <th class="py-3">Nombre</th>
+                                            <th class="py-3">Precio</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (priceList != null)
+                                        {
+                                            for (int i = 0; i < priceList.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td class="fw-bold">
+                                                        @priceList[i].Nombre
+                                                    </td>
+
+                                                    <td>
+                                                        <input type="hidden"
+                                                               name="Items[@i].ListId"
+                                                               value="@priceList[i].Id" />
+
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-light border-0">
+                                                                <i class="bi bi-currency-dollar"></i>
+                                                            </span>
+                                                            <input type="number"
+                                                                   name="Items[@i].Price"
+                                                                   class="form-control"
+                                                                   placeholder="0"
+                                                                   required>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="5" class="text-center py-4">
+                                                    No hay listas cargadas.
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+            <div class="erp-modal-footer">
+                <button type="button" class="btn btn-soft btn-pill" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary btn-pill" id="btnLista" onclick="savedSubModal()"><i class="bi bi-check2-circle me-2"></i>Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>

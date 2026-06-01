@@ -1,293 +1,359 @@
-﻿@using PresupuestoMVC.Areas.Ventas.ViewModels
-
-@{
-    @model FacturacionViewModel
-
-    ViewData["Title"] = "Facturación";
+﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<section class="hero-card">
-    <div class="hero-left">
-        <span class="hero-icon"><i class="bi bi-receipt-cutoff"></i></span>
-        <div>
-            <h1 class="hero-title">Nueva factura</h1>
-            <p class="hero-subtitle">Facturá a clientes registrados o a consumidores finales, aplicando la lista de precios correspondiente.</p>
-        </div>
-    </div>
-    <div class="hero-actions">
-        <a href="#" class="btn btn-soft" id="btnFacturasRecientes"><i class="bi bi-clock-history"></i>Facturas recientes</a>
-        <a href="#" class="btn btn-primary"><i class="bi bi-plus-lg"></i>Nueva factura</a>
-    </div>
-</section>
-
-<div class="billing-layout">
-    <main class="main-stack">
-        <section class="erp-card">
-            <div class="card-header">
-                <div>
-                    <h2 class="card-title">Datos de facturación</h2>
-                    <p class="card-subtitle">Definí si la venta corresponde a un cliente registrado o a un comprador eventual.</p>
-                </div>
-                <span class="price-list-chip"><i class="bi bi-tags"></i>Lista: Mayorista</span>
-            </div>
-            <div class="card-body">
-                <div class="toggle-group">
-                    <label class="toggle-card">
-                        <input type="radio" name="tipoFactura" checked>
-                        <span class="toggle-icon"><i class="bi bi-person-check"></i></span>
-                        <span>
-                            <span class="toggle-title">Cliente registrado</span>
-                            <span class="toggle-text">Usa automáticamente su lista asignada.</span>
-                        </span>
-                    </label>
-                    <label class="toggle-card">
-                        <input type="radio" name="tipoFactura">
-                        <span class="toggle-icon"><i class="bi bi-person"></i></span>
-                        <span>
-                            <span class="toggle-title">No es cliente</span>
-                            <span class="toggle-text">Elegís manualmente la lista de precios.</span>
-                        </span>
-                    </label>
-                </div>
-
-                <div class="form-grid">
-                    <div class="field">
-                        <label class="label">Cliente</label>
-                        <select id="clientSelect" class="select">
-                            <option value="">Seleccionar cliente...</option>
-                            @if (Model.Clientes != null && Model.Clientes.Any())
-                            {
-                                foreach (var lista in Model.Clientes)
-                                {
-                                    <option value="@lista.Id"
-                                            data-nombre="@lista.Nombre"
-                                            data-dni="@lista.DNI">@lista.Nombre</option>
-                                }
-                            }
-                            else
-                            {
-                                <option value="">Sin clientes</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="field">
-                        <label class="label">Lista de precios</label>
-                        <select id="listaPrecioSelect" class="select">
-                            <option value="">Seleccionar lista de precio...</option>
-                            @if (Model.ListasDePrecio != null && Model.ListasDePrecio.Any())
-                            {
-                                foreach (var lista in Model.ListasDePrecio)
-                                {
-                                    <option value="@lista.Id">@lista.Nombre</option>
-                                }
-                            }
-                            else
-                            {
-                                <option value="">Sin lista de precios</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="field">
-                        <label class="label">Nombre / Razón social</label>
-                        <input id="nombreCliente" class=" input" type="text" placeholder="Opcional si no es cliente">
-                    </div>
-                    <div class="field">
-                        <label class="label">DNI / CUIT</label>
-                        <input id="dniCliente" class="input" type="text" placeholder="Opcional">
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="erp-card">
-            <div class="card-header">
-                <div>
-                    <h2 class="card-title">Agregar artículos</h2>
-                    <p class="card-subtitle">Buscá el producto, indicá cantidad y el sistema toma el precio según la lista elegida.</p>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="add-product-row">
-                    <div class="field">
-                        <label class="label">Artículo</label>
-                        <select id="articuloSelect" class="select">
-                            <option value="">Buscar artículo...</option>
-                            @if (Model.Articulos != null && Model.Articulos.Any())
-                            {
-                                foreach (var lista in Model.Articulos)
-                                {
-                                    <option value="@lista.Id" 
-                                            data-code="@lista.Codigo"
-                                            data-name="@lista.Nombre"
-                                            data-price="@lista.SalePrice">
-
-                                        @lista.Codigo - @lista.Nombre
-
-                                    </option>
-                                }
-                            }
-                            else
-                            {
-                                <option value="">Sin artículos</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="field">
-                        <label class="label">Cantidad</label>
-                        <input id="cantidadInput" class="input" type="number" value="1" min="1">
-                    </div>
-                    <div class="field">
-                        <label class="label">Precio</label>
-                        <input id="precioInput" class="input" type="text" value="$ 0" readonly>
-                    </div>
-                    <button id="btnAgregarArticulo" class="btn btn-primary" type="button"><i class="bi bi-plus-lg"></i>Agregar</button>
-                </div>
-            </div>
-        </section>
-
-        <section class="erp-card">
-            <div class="card-header">
-                <div>
-                    <h2 class="card-title">Detalle de factura</h2>
-                    <p class="card-subtitle">Artículos cargados en la operación actual.</p>
-                </div>
-            </div>
-            <div class="table-responsive">
-                <table class="table-modern">
-                    <thead>
-                        <tr>
-                            <th>Artículo</th>
-                            <th>Cantidad</th>
-                            <th>Precio unitario</th>
-                            <th>Total</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody id="detalleFacturaBody">
-                    </tbody>
-                </table>
-            </div>
-        </section>
-    </main>
-
-    <aside class="summary-card">
-        <div class="summary-header">
-            <h2 class="summary-title">Resumen de factura</h2>
-            <p class="summary-subtitle">Control final antes de emitir.</p>
-        </div>
-        <div class="summary-body">
-            <div class="summary-line"><span>Cliente</span><strong id="resumenCliente">Sin seleccionar</strong></div>
-            <div class="summary-line"><span>Lista aplicada</span><strong id="resumenLista">Sin seleccionar</strong></div>
-            <div class="summary-line"><span>Artículos</span><strong id="resumenArticulos">0</strong></div>
-            <div class="summary-line"><span>Subtotal</span><strong id="resumenSubtotal">$ 0</strong></div>
-            <div class="summary-line"><span>Descuento (10%)</span><strong id="resumenDescuento">$ 0</strong></div>
-
-            <div class="summary-total">
-                <span>Total</span>
-                <strong id="resumenTotal">$ 0</strong>
-            </div>
-
-            <div class="summary-actions">
-                <button id="btnConfirmarFactura" class="btn btn-primary btn-block" type="button"><i class="bi bi-check2-circle"></i>Confirmar factura</button>
-                <button class="btn btn-soft btn-block" type="button"><i class="bi bi-file-earmark-text"></i>Guardar borrador</button>
-                <button class="btn btn-danger-soft btn-block" type="button"><i class="bi bi-x-circle"></i>Cancelar</button>
-            </div>
-            <div class="notice">
-                <strong>Nota:</strong> si seleccionás un cliente registrado, la lista de precios puede completarse automáticamente según su configuración.
-            </div>
-        </div>
-    </aside>
+<div id="facturacion-content">
+    @await Html.PartialAsync("_FacturacionContent")
 </div>
+                  @*   <span class="product-icon">
+                    ${articuloTexto.charAt(0)}
+                    </span>
 
-@*Alert*@
-<div class="modal fade" id="mensajeModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
+                    <div>
 
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title" id="mensajeTitulo">
-                    Mensaje
-                </h5>
+                    <p class="product-title">
+                    ${articuloTexto}
+                    </p>
 
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal">
-                </button>
-            </div>
+                    <p class="product-meta">
+                    Artículo agregado
+                    </p>
 
-            <div class="modal-body text-center py-4">
+                    </div>
 
-                <div id="mensajeIcono" class="mb-3 fs-1">
-                </div>
+                    </div>
+                    </td>
 
-                <p id="mensajeTexto" class="mb-0 fs-5">
-                </p>
+                    <td>
+                    <span class="qty-badge">
+                    ${cantidad}
+                    </span>
+                    </td>
 
-            </div>
+                    <td class="money">
+                    $ ${precioUnitario.toLocaleString('es-AR')}
+                    </td>
 
-            <div class="modal-footer border-0 justify-content-center">
-                <button type="button"
-                        class="btn btn-primary px-4"
-                        data-bs-dismiss="modal">
-                    Aceptar
-                </button>
-            </div>
+                    <td class="money">
+                    $ ${total.toLocaleString('es-AR')}
+                    </td>
 
-        </div>
-    </div>
-</div>
+                    <td>
+                    <a href="#" class="icon-btn btnEliminar">
+                    <i class="bi bi-trash"></i>
+                    </a>
+                    </td>
 
-@*MODAL FACTURAS*@
-<div class="modal fade" id="modalFacturas" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable">
-        <div class="modal-content">
+                    </tr>
+                `;
 
-            <div class="erp-modal-header">
-                <div class="d-flex align-items-center gap-2">
-                    <i class="bi bi-receipt-cutoff"></i>
-                    <span class="erp-modal-title">Facturas recientes</span>
-                </div>
-                <button class="erp-modal-close" type="button" data-bs-dismiss="modal" aria-label="Cerrar">
-                    <i class="bi bi-x-lg"></i>
-                </button>
-            </div>
+                $('#detalleFacturaBody').append(fila);// Agregar fila
+                actualizarResumen(); // Actualizo resumen
+                $('#cantidadInput').val(1);// Resetear formulario
+                $('#precioInput').val('');
+                $('#articuloSelect').val(null).trigger('change');
 
-            <div class="modal-body">
-                <table class="table table-hover align-middle">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Cliente</th>
-                            <th>DNI</th>
-                            <th>Fecha</th>
-                            <th>Total</th>
-                            <th>Detalle</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
+            });
 
-                    <tbody id="tbodyFacturas">
-                    </tbody>
-                </table>
-            </div>
+            // Evento para eliminar artículo
+            $(document).on('click', '.btnEliminar', function (e) {
+                e.preventDefault();
+                $(this).closest('tr').remove();
+                actualizarResumen();
+            });
+        });
 
-        </div>
-    </div>
-</div>
+        $('#clientSelect').select2({
+            placeholder: "Buscar Cliente...",
+            width: '100%',
+            allowClear: false
+        });
 
-@section Styles
-{
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
-}
+        $('#clientSelect').on('change', function () {
 
-@section Scripts
-{
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script>
-        window.clientes = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Clientes));
+            const clienteId = parseInt($(this).val());
+
+            const clientes = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Clientes));
+            const cliente = clientes.find(c => c.Id == clienteId);
+            console.log(cliente)
+
+            if (!cliente) {
+                $('#nombreCliente').val('');
+                $('#dniCliente').val('');
+                $('#listaPrecioCliente').val('');
+                return;
+            }
+
+            $('#nombreCliente').val(cliente.Nombre);
+            $('#dniCliente').val(cliente.DNI);
+            $('#listaPrecioClienteId').val(cliente.PriceListId);
+
+            console.log(cliente.PriceListId)
+        });
     </script>
-    <script src="~/js/facturacion.js"></script>
-    
 }
+
+                    <span class="product-icon">
+                    ${articuloTexto.charAt(0)}
+                    </span>
+
+                    <div>
+
+                    <p class="product-title">
+                    ${articuloTexto}
+                    </p>
+
+                    <p class="product-meta">
+                    Artículo agregado
+                    </p>
+
+                    </div>
+
+                    </div>
+                    </td>
+
+                    <td>
+                    <span class="qty-badge">
+                    ${cantidad}
+                    </span>
+                    </td>
+
+                    <td class="money">
+                    $ ${precioUnitario.toLocaleString('es-AR')}
+                    </td>
+
+                    <td class="money">
+                    $ ${total.toLocaleString('es-AR')}
+                    </td>
+
+                    <td>
+                    <a href="#" class="icon-btn btnEliminar">
+                    <i class="bi bi-trash"></i>
+                    </a>
+                    </td>
+
+                    </tr>
+                `;
+
+                $('#detalleFacturaBody').append(fila);// Agregar fila
+                actualizarResumen(); // Actualizo resumen
+                $('#cantidadInput').val(1);// Resetear formulario
+                $('#precioInput').val('');
+                $('#articuloSelect').val(null).trigger('change');
+
+            });
+
+            // Evento para eliminar artículo
+            $(document).on('click', '.btnEliminar', function (e) {
+                e.preventDefault();
+                $(this).closest('tr').remove();
+                actualizarResumen();
+            });
+        });
+
+        $('#clientSelect').select2({
+            placeholder: "Buscar Cliente...",
+            width: '100%',
+            allowClear: false
+        });
+
+        $('#clientSelect').on('change', function () {
+
+            const clienteId = parseInt($(this).val());
+
+            const clientes = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Clientes));
+            const cliente = clientes.find(c => c.Id == clienteId);
+            console.log(cliente)
+
+            if (!cliente) {
+                $('#nombreCliente').val('');
+                $('#dniCliente').val('');
+                $('#listaPrecioCliente').val('');
+                return;
+            }
+
+            $('#nombreCliente').val(cliente.Nombre);
+            $('#dniCliente').val(cliente.DNI);
+            $('#listaPrecioClienteId').val(cliente.PriceListId);
+
+            console.log(cliente.PriceListId)
+        });
+    </script>
+}
+
+
+                    <span class="product-icon">
+                    ${articuloTexto.charAt(0)}
+                    </span>
+
+                    <div>
+
+                    <p class="product-title">
+                    ${articuloTexto}
+                    </p>
+
+                    <p class="product-meta">
+                    Artículo agregado
+                    </p>
+
+                    </div>
+
+                    </div>
+                    </td>
+
+                    <td>
+                    <span class="qty-badge">
+                    ${cantidad}
+                    </span>
+                    </td>
+
+                    <td class="money">
+                    $ ${precioUnitario.toLocaleString('es-AR')}
+                    </td>
+
+                    <td class="money">
+                    $ ${total.toLocaleString('es-AR')}
+                    </td>
+
+                    <td>
+                    <a href="#" class="icon-btn btnEliminar">
+                    <i class="bi bi-trash"></i>
+                    </a>
+                    </td>
+
+                    </tr>
+                `;
+
+                $('#detalleFacturaBody').append(fila);// Agregar fila
+                actualizarResumen(); // Actualizo resumen
+                $('#cantidadInput').val(1);// Resetear formulario
+                $('#precioInput').val('');
+                $('#articuloSelect').val(null).trigger('change');
+
+            });
+
+            // Evento para eliminar artículo
+            $(document).on('click', '.btnEliminar', function (e) {
+                e.preventDefault();
+                $(this).closest('tr').remove();
+                actualizarResumen();
+            });
+        });
+
+        $('#clientSelect').select2({
+            placeholder: "Buscar Cliente...",
+            width: '100%',
+            allowClear: false
+        });
+
+        $('#clientSelect').on('change', function () {
+
+            const clienteId = parseInt($(this).val());
+
+            const clientes = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Clientes));
+            const cliente = clientes.find(c => c.Id == clienteId);
+            console.log(cliente)
+
+            if (!cliente) {
+                $('#nombreCliente').val('');
+                $('#dniCliente').val('');
+                $('#listaPrecioCliente').val('');
+                return;
+            }
+
+            $('#nombreCliente').val(cliente.Nombre);
+            $('#dniCliente').val(cliente.DNI);
+            $('#listaPrecioClienteId').val(cliente.PriceListId);
+
+            console.log(cliente.PriceListId)
+        });
+    </script>
+}
+
+                    ${articuloTexto.charAt(0)}
+                    </span>
+
+                    <div>
+
+                    <p class="product-title">
+                    ${articuloTexto}
+                    </p>
+
+                    <p class="product-meta">
+                    Artículo agregado
+                    </p>
+
+                    </div>
+
+                    </div>
+                    </td>
+
+                    <td>
+                    <span class="qty-badge">
+                    ${cantidad}
+                    </span>
+                    </td>
+
+                    <td class="money">
+                    $ ${precioUnitario.toLocaleString('es-AR')}
+                    </td>
+
+                    <td class="money">
+                    $ ${total.toLocaleString('es-AR')}
+                    </td>
+
+                    <td>
+                    <a href="#" class="icon-btn btnEliminar">
+                    <i class="bi bi-trash"></i>
+                    </a>
+                    </td>
+
+                    </tr>
+                `;
+
+                $('#detalleFacturaBody').append(fila);// Agregar fila
+                actualizarResumen(); // Actualizo resumen
+                $('#cantidadInput').val(1);// Resetear formulario
+                $('#precioInput').val('');
+                $('#articuloSelect').val(null).trigger('change');
+
+            });
+
+            // Evento para eliminar artículo
+            $(document).on('click', '.btnEliminar', function (e) {
+                e.preventDefault();
+                $(this).closest('tr').remove();
+                actualizarResumen();
+            });
+        });
+
+        $('#clientSelect').select2({
+            placeholder: "Buscar Cliente...",
+            width: '100%',
+            allowClear: false
+        });
+
+        $('#clientSelect').on('change', function () {
+
+            const clienteId = parseInt($(this).val());
+
+            const clientes = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Clientes));
+            const cliente = clientes.find(c => c.Id == clienteId);
+            console.log(cliente)
+
+            if (!cliente) {
+                $('#nombreCliente').val('');
+                $('#dniCliente').val('');
+                $('#listaPrecioCliente').val('');
+                return;
+            }
+
+            $('#nombreCliente').val(cliente.Nombre);
+            $('#dniCliente').val(cliente.DNI);
+            $('#listaPrecioClienteId').val(cliente.PriceListId);
+
+            console.log(cliente.PriceListId)
+        });
+    </script>
+} *@
 

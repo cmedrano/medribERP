@@ -25,6 +25,11 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                 ViewBag.Years = await _periodoService.GetAllYearsAsync();
                 ViewBag.Months = await _periodoService.GetAllMonthsAsync();
 
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return PartialView("_PeriodContent");
+                }
+
                 return View();
             }
             catch (Exception ex)

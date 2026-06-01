@@ -63,6 +63,12 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                 ViewBag.TotalGastos = totalGsstos;
                 ViewBag.itemsCount = resultadoPaginado.Datos.Count();
 
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest" &&
+                 Request.Query["partial"] == "diary")
+                {
+                    return PartialView("_DiaryContent");
+                }
+
                 return View();
             }
             catch (Exception ex)
