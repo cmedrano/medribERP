@@ -46,7 +46,8 @@
                 var isSalesSection =
                 currentController == "Articulos" ||
                 currentController == "Clientes" ||
-                currentController == "PriceList";
+                currentController == "PriceList" ||
+                currentController == "Facturacion";
             }
             <!-- Areas Accounting-->
             @if (modules.Contains("accounting"))
@@ -128,7 +129,7 @@
                                 Lista de precios
                             </a>
                             <!-- Facturacion -->
-                            <a asp-area="Ventas" asp-controller="Facturacion" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "PriceList" ? "active" : "")">
+                            <a asp-area="Ventas" asp-controller="Facturacion" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Facturacion" ? "active" : "")">
                                 Facturacion
                             </a>
                         </nav>

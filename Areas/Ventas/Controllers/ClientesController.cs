@@ -12,18 +12,21 @@ namespace PresupuestoMVC.Controllers
     public class ClientesController : Controller
     {
         private readonly IClienteService _clienteService;
-        private readonly ILocalidadPostalService _localidadPostalService;
+        private readonly ILocalidadService _localidadService;
         private readonly IPriceListService _priceListService;
+        private readonly IProvinciaService _provinciaService;
         private const int PageSize = 10;
 
         public ClientesController(
             IClienteService clienteService,
-            ILocalidadPostalService localidadPostalService,
-            IPriceListService priceListService)
+            ILocalidadService localidadService,
+            IPriceListService priceListService,
+            IProvinciaService provinciaService)
         {
             _clienteService = clienteService;
-            _localidadPostalService = localidadPostalService;
+            _localidadService = localidadService;
             _priceListService = priceListService;
+            _provinciaService = provinciaService;
         }
 
         public async Task<IActionResult> Index(int page = 1, string? searchNombre = null, string? searchFantasia = null)
@@ -44,7 +47,9 @@ namespace PresupuestoMVC.Controllers
                 var resultado = await _clienteService.ObtenerPaginadosAsync(filtro, page, PageSize);
 
                 var priceList = await _priceListService.GetAllAsync();
+                var provincia = await _provinciaService.ObtenerTodasAsync();
                 ViewBag.PriceList = priceList;
+                ViewBag.Provincia = provincia;
                 ViewData["CurrentPage"] = page;
                 ViewData["PageSize"] = PageSize;
                 ViewData["SearchNombre"] = searchNombre ?? "";
@@ -171,6 +176,15 @@ namespace PresupuestoMVC.Controllers
                 return Json(new { valido = false, mensaje = $"Error: {ex.Message}" });
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ObtenerLocalidadesPorProvincia(int provinciaId)
+        {
+            var localidades = await _localidadService.ObtenerPorProvinciaAsync(provinciaId);
+
+            return Json(localidades);
+        }
+
         [HttpGet(Name = "ObtenerLocalidadPorCodigoPostal")]
         [AllowAnonymous]
         public async Task<IActionResult> ObtenerLocalidadPorCodigoPostal(string codigoPostal)
@@ -190,7 +204,7 @@ namespace PresupuestoMVC.Controllers
                 }
 
                 // Buscar en la base de datos local
-                var localidades = await _localidadPostalService.ObtenerPorCodigoPostalAsync(cpLimpio);
+                var localidades = await _localidadService.ObtenerPorCodigoPostalAsync(cpLimpio);
 
                 if (localidades == null || localidades.Count == 0)
                 {
@@ -202,7 +216,7 @@ namespace PresupuestoMVC.Controllers
                 //var provincia = _provinciaService.GetNombreProvincia(idProvincia);
 
                 var localidadesList = localidades
-                    .Select(x => x.Localidad)
+                    .Select(x => x.Nombre)
                     .Where(x => !string.IsNullOrWhiteSpace(x))
                     .Distinct()
                     .ToList();

@@ -26,7 +26,7 @@ namespace PresupuestoMVC.Models.Entities
         public string? Domicilio { get; set; }
 
         [StringLength(100)]
-        [Display(Name = "Localidad")]
+        [Display(Name = "Nombre")]
         public string? Localidad { get; set; }
 
         [StringLength(100)]

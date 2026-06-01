@@ -7,6 +7,7 @@ using PresupuestoMVC.Repository;
 using PresupuestoMVC.Repository.Interfaces;
 using PresupuestoMVC.Services;
 using PresupuestoMVC.Services.Interfaces;
+using QuestPDF.Infrastructure;
 using System.Text;
 
 namespace PresupuestoMVC
@@ -15,10 +16,13 @@ namespace PresupuestoMVC
     {
         public static void Main(string[] args)
         {
+            // Licencia de QuestPDF
+            QuestPDF.Settings.License = LicenseType.Community;
+
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            builder.Services.AddControllersWithViews();
+            // Razor Runtime Compilation
+            builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
             var useProductionDatabase = builder.Configuration.GetValue<bool>("UseProductionDatabase");
 
@@ -50,9 +54,9 @@ namespace PresupuestoMVC
             builder.Services.AddScoped<IDiaryService, DiaryService>();
             builder.Services.AddScoped<IDiaryRepository, DiaryRepository>();
             builder.Services.AddScoped<IClienteService, ClienteService>();
-            builder.Services.AddScoped<ILocalidadPostalService, LocalidadPostalService>();
+            builder.Services.AddScoped<ILocalidadService, LocalidadService>();
             builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
-            builder.Services.AddScoped<ILocalidadPostalRepository, LocalidadPostalRepository>();
+            builder.Services.AddScoped<ILocalidadRepository, LocalidadRepository>();
             builder.Services.AddScoped<IArticuloService, ArticuloService>();
             builder.Services.AddScoped<IArticuloRepository, ArticuloRepository>();
             builder.Services.AddScoped<IPriceListService, PriceListService>();
@@ -67,12 +71,14 @@ namespace PresupuestoMVC
             builder.Services.AddScoped<IArticulosPreciosRepository, ArticulosPreciosRepository>();
             builder.Services.AddScoped<IPeriodoService, PeriodoService>();
             builder.Services.AddScoped<IPeriodRepository,PeriodRepository>();
+            builder.Services.AddScoped<IProvinciaService, ProvinciaService>();
+            builder.Services.AddScoped<IProvinciaRepository, ProvinciaRepository>();
+            builder.Services.AddScoped<IFacturacionService, FacturacionService>();
+            builder.Services.AddScoped<ISaleRepository, SaleRepository>();
+            builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
-
-            // Razor Runtime Compilation
-            builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
             // Configurar autenticación JWT
             builder.Services.AddAuthentication(options =>
