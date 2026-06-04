@@ -1,7 +1,8 @@
-﻿using PresupuestoMVC.Models.DTOs;
+﻿using PresupuestoMVC.Areas.Ventas.ViewModels.DTOs;
+using PresupuestoMVC.Models.DTOs;
 using PresupuestoMVC.Models.Entities;
 
-namespace PresupuestoMVC.Areas.Ventas.ViewModels.DTOs
+namespace PresupuestoMVC.Areas.Ventas.ViewModels
 {
     public class FacturacionViewModel
     {

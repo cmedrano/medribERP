@@ -58,7 +58,7 @@ namespace PresupuestoMVC.Controllers
                 // Si es una petición AJAX, retorna solo el partial view de la tabla
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
-                    return PartialView("_ClientesContent", resultado);
+                    return PartialView("_TablaClientesPartial", resultado);
                 }
 
                 return View(resultado);

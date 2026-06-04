@@ -28,12 +28,6 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                 ViewBag.Accounts = accounts;
                 ViewBag.TotalAccounts = totalAccounts;
 
-                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest" &&
-                 Request.Query["partial"] == "account")
-                {
-                    return PartialView("_AccountContent");
-                }
-
                 return View();
             }
             catch (Exception ex)

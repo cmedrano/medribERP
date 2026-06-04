@@ -25,11 +25,6 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                 ViewBag.Categories = categories;
                 ViewBag.TotalCategories = totalCategories;
 
-                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                {
-                    return PartialView("_CategoryContent");
-                }
-
                 return View();
             }
             catch (Exception ex)

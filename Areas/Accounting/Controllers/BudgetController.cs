@@ -97,10 +97,6 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                 ViewBag.TamañoPagina = tamañoPagina;
                 ViewBag.totalBudgets = totalBudgets;
 
-                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                {
-                    return PartialView("_BudgetContent");
-                }
                 return View();
             }
             catch (Exception ex)
