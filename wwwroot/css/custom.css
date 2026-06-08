@@ -1120,6 +1120,16 @@ body {
     overflow: hidden;
 }
 
+.erp-card-header {
+    background: linear-gradient(135deg, var(--erp-primary), #7c4dff);
+    color: #fff;
+    padding: 1.1rem 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
 .card-header {
     padding: 22px 24px 12px;
     display: flex;
