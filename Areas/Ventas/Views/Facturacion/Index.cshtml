@@ -16,8 +16,8 @@
         </div>
     </div>
     <div class="hero-actions">
-        <a href="#" class="btn btn-soft" id="btnFacturasRecientes"><i class="bi bi-clock-history"></i>Facturas recientes</a>
-        <a href="#" class="btn btn-primary"><i class="bi bi-plus-lg"></i>Nueva factura</a>
+        <a href="#" class="btn btn-primary" id="btnFacturasRecientes"><i class="bi bi-clock-history"></i>Facturas recientes</a>
+        @* <a href="#" class="btn btn-primary"><i class="bi bi-plus-lg"></i>Nueva factura</a> *@
     </div>
 </section>
 
@@ -181,7 +181,7 @@
             <div class="summary-line"><span>Lista aplicada</span><strong id="resumenLista">Sin seleccionar</strong></div>
             <div class="summary-line"><span>Artículos</span><strong id="resumenArticulos">0</strong></div>
             <div class="summary-line"><span>Subtotal</span><strong id="resumenSubtotal">$ 0</strong></div>
-            <div class="summary-line"><span>Descuento (10%)</span><strong id="resumenDescuento">$ 0</strong></div>
+            @* <div class="summary-line"><span>Descuento (10%)</span><strong id="resumenDescuento">$ 0</strong></div> *@
 
             <div class="summary-total">
                 <span>Total</span>
@@ -190,8 +190,8 @@
 
             <div class="summary-actions">
                 <button id="btnConfirmarFactura" class="btn btn-primary btn-block" type="button"><i class="bi bi-check2-circle"></i>Confirmar factura</button>
-                <button class="btn btn-soft btn-block" type="button"><i class="bi bi-file-earmark-text"></i>Guardar borrador</button>
-                <button class="btn btn-danger-soft btn-block" type="button"><i class="bi bi-x-circle"></i>Cancelar</button>
+                @* <button class="btn btn-soft btn-block" type="button"><i class="bi bi-file-earmark-text"></i>Guardar borrador</button>
+                <button class="btn btn-danger-soft btn-block" type="button"><i class="bi bi-x-circle"></i>Cancelar</button> *@
             </div>
             <div class="notice">
                 <strong>Nota:</strong> si seleccionás un cliente registrado, la lista de precios puede completarse automáticamente según su configuración.
@@ -276,14 +276,14 @@
     </div>
 </div>
 
-@section Styles
+@* @section Styles
 {
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
-}
+} *@
 
 @section Scripts
 {
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    @* <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> *@
     <script>
         window.clientes = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Clientes));
     </script>

@@ -140,7 +140,7 @@ $(document).ready(function () {
             priceListId: $('#listaPrecioSelect').val() || 0,
 
             subtotal: parseFloat($('#resumenSubtotal').text().replace('$', '').replace('.', '')),
-            descuento: parseFloat($('#resumenDescuento').text().replace('$', '').replace('.', '')),
+            // descuento: parseFloat($('#resumenDescuento').text().replace('$', '').replace('.', '')),
             total: parseFloat($('#resumenTotal').text().replace('$', '').replace('.', '')),
 
             detail: saleDetail
@@ -307,12 +307,13 @@ function actualizarResumen() {
     });
 
     // Descuento 10%
-    let descuento = subtotal * 0.10;
-    let total = subtotal - descuento;
+    // let descuento = subtotal * 0.10;
+    // let total = subtotal - descuento;
+    let total = subtotal
 
     $('#resumenArticulos').text(cantidadArticulos);
     $('#resumenSubtotal').text(`$ ${subtotal.toLocaleString('es-AR')}`);
-    $('#resumenDescuento').text(`$ ${descuento.toLocaleString('es-AR')}`);
+    // $('#resumenDescuento').text(`$ ${descuento.toLocaleString('es-AR')}`);
     $('#resumenTotal').text(`$ ${total.toLocaleString('es-AR')}`);
 }
 
