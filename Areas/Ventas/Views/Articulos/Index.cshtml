@@ -374,13 +374,13 @@
             document.getElementById('PurchasePrice').value = purchasePrice || '';
             document.getElementById('salePrice').value = salePrice || '';
 
-            let url = '@Url.Action("GetPreciosByArticulo", "Articulos", new { area = "Ventas" })';
+            // let url = '@Url.Action("GetPreciosByArticulo", "Articulos", new { area = "Ventas" })';
 
-            let response = await fetch(`${url}?articuloId=${id}`);
+            // let response = await fetch(`${url}?articuloId=${id}`);
 
-            let precios = await response.json();
+            // let precios = await response.json();
 
-            cargarPreciosEnSubModal(precios);
+            // cargarPreciosEnSubModal(precios);
 
             if (soloVer) {
                 document.getElementById('modalArticuloTitle').innerHTML = '<i class="bi bi-eye me-2"></i>Detalles del Articulo';
@@ -471,6 +471,7 @@
         $('#subModal').modal('hide');
         console.log(container);
     }
+
     document.addEventListener("DOMContentLoaded", function () {
 
         document.getElementById("formArticulo").addEventListener("submit", function () {

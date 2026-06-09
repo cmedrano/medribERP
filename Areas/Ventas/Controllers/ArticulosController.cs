@@ -106,8 +106,9 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Error"] = "Error al actualizar el artículo: " + ex.Message;
-                return View(model);
+                throw ex;
+                //TempData["Error"] = "Error al actualizar el artículo: " + ex.Message;
+                //return View(model);
             }
         }
 
