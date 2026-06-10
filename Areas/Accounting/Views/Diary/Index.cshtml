@@ -319,105 +319,117 @@
 
 <!-- Modal de Creación -->
 <div class="modal fade" id="modalCrearGastoId" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content border-success">
-            <!-- Header verde -->
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">
-                    <i class="bi bi-plus-circle me-2"></i>Nuevo Gasto
+    <div class="modal-dialog erp-modal">
+        <div class="modal-content border-0 shadow-lg">
+
+            <!-- Header -->
+            <div class="erp-modal-header">
+                <h5 class="erp-modal-title" id="modalArticuloTitle">
+                    <i class="bi bi-box"></i> Nuevo Gasto
                 </h5>
-                <button type="button" class="btn-close btn-close-white"
-                        data-bs-dismiss="modal"></button>
+                <button class="erp-modal-close"
+                        type="button"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
+
             <form asp-controller="Gasto" asp-action="Create" method="post">
-                <div class="modal-body">
 
-                    <!-- Fecha (hoy por defecto) -->
-                    <div class="mb-3">
-                        <label for="crearFecha" class="form-label">Fecha</label>
-                        <input type="date" id="crearFecha" name="Fecha"
-                               class="form-control" required
-                               value="@DateTime.Now.ToString("yyyy-MM-dd")" />
-                    </div>
+                <div class="modal-body d-flex gap-3 p-4">
+                    <div>
+                        <!-- Fecha (hoy por defecto) -->
+                        <div class="mb-3">
+                            <label for="crearFecha" class="form-label">Fecha</label>
+                            <input type="date" id="crearFecha" name="Fecha"
+                                   class="form-control" required
+                                   value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                        </div>
 
-                    <!-- Periodo de Imputación -->
-                    <div class="mb-3">
-                        <label for="crearPeriodoId" class="form-label">Período de Imputación</label>
-                        <select id="crearPeriodoId" name="PeriodoId" class="form-select" required>
-                            <option value="">Seleccionar período...</option>
-                            @if (periodos != null)
-                            {
-                                foreach (var periodo in periodos)
+                        <!-- Periodo de Imputación -->
+                        <div class="mb-3">
+                            <label for="crearPeriodoId" class="form-label">Período de Imputación</label>
+                            <select id="crearPeriodoId" name="PeriodoId" class="form-select" required>
+                                <option value="">Seleccionar período...</option>
+                                @if (periodos != null)
                                 {
-                                    <option value="@periodo.Id">@FormatPeriodo(periodo.Fecha)</option>
+                                    foreach (var periodo in periodos)
+                                    {
+                                        <option value="@periodo.Id">@FormatPeriodo(periodo.Fecha)</option>
+                                    }
                                 }
-                            }
-                        </select>
-                    </div>
+                            </select>
+                        </div>
 
-                    <!-- Monto -->
-                    <div class="mb-3">
-                        <label for="crearMonto" class="form-label">Monto</label>
-                        <input type="number" step="0.01" id="crearMonto"
-                               name="Monto" class="form-control" required
-                               placeholder="$ 0.00" />
-                    </div>
+                        <!-- Monto -->
+                        <div class="mb-3">
+                            <label for="crearMonto" class="form-label">Monto</label>
+                            <input type="number" step="0.01" id="crearMonto"
+                                   name="Monto" class="form-control" required
+                                   placeholder="$ 0.00" />
+                        </div>
+                   </div>
+                    <div>
 
-                    <!-- Rubro -->
-                    <div class="mb-3">
-                        <label for="crearRubroId" class="form-label">Rubro</label>
-                        <select id="crearRubroId" name="RubroTypeId"
-                                class="form-select" required>
-                            <option value="">Seleccionar rubro...</option>
-                            @if (rubros != null)
-                            {
-                                foreach (var rubro in rubros)
+                        <!-- Rubro -->
+                        <div class="mb-3">
+                            <label for="crearRubroId" class="form-label">Rubro</label>
+                            <select id="crearRubroId" name="RubroTypeId"
+                                    class="form-select" required>
+                                <option value="">Seleccionar rubro...</option>
+                                @if (rubros != null)
                                 {
-                                    <option value="@rubro.Id">@rubro.nombreRubro</option>
+                                    foreach (var rubro in rubros)
+                                    {
+                                        <option value="@rubro.Id">@rubro.nombreRubro</option>
+                                    }
                                 }
-                            }
-                        </select>
-                    </div>
+                            </select>
+                        </div>
 
-                    <!-- Cuenta -->
-                    <div class="mb-3">
-                        <label for="crearCuentaId" class="form-label">Cuenta</label>
-                        <select id="crearCuentaId" name="CuentaId"
-                                class="form-select" required>
-                            <option value="">Seleccionar cuenta...</option>
-                            @if (ViewBag.Cuentas != null)
-                            {
-                                foreach (var cuenta in ViewBag.Cuentas)
+                        <!-- Cuenta -->
+                        <div class="mb-3">
+                            <label for="crearCuentaId" class="form-label">Cuenta</label>
+                            <select id="crearCuentaId" name="CuentaId"
+                                    class="form-select" required>
+                                <option value="">Seleccionar cuenta...</option>
+                                @if (ViewBag.Cuentas != null)
                                 {
-                                    <option value="@cuenta.Id">@cuenta.nombreCuenta</option>
+                                    foreach (var cuenta in ViewBag.Cuentas)
+                                    {
+                                        <option value="@cuenta.Id">@cuenta.nombreCuenta</option>
+                                    }
                                 }
-                            }
-                        </select>
-                    </div>
+                            </select>
+                        </div>
 
-                    <!-- Nota -->
-                    <div class="mb-3">
-                        <label for="crearNota" class="form-label">Nota</label>
-                        <div class="input-group">
-                            <textarea id="crearNota"
-                                      name="Nota"
-                                      class="form-control"
-                                      rows="1"
-                                      placeholder="Descripción..."></textarea>
+                        <!-- Nota -->
+                        <div class="mb-3">
+                            <label for="crearNota" class="form-label">Nota</label>
+                            <div class="input-group">
+                                <textarea id="crearNota"
+                                          name="Nota"
+                                          class="form-control"
+                                          rows="1"
+                                          placeholder="Descripción..."></textarea>
+                            </div>
                         </div>
                     </div>
-
                     <input type="hidden" id="forzarSaldoNegativo"
-                           name="ForceNegativeBalance" value="false" />
-
+                          name="ForceNegativeBalance" value="false" />
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary"
+                    <button type="button"
+                            class="btn btn-soft btn-pill"
                             data-bs-dismiss="modal">
                         Cancelar
                     </button>
-                    <button type="button" class="btn btn-success" onclick="crearGasto()">
-                        <i class="bi bi-check-circle me-1"></i>Crear Gasto
+                    <button type="button"
+                            class="btn btn-primary btn-pill"
+                            onclick="crearGasto()">
+                        <i class="bi bi-check-circle me-1"></i>
+                        Crear Gasto
                     </button>
                 </div>
             </form>

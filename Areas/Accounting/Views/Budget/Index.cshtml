@@ -209,8 +209,37 @@
 
                             <td>@MonthHelper.MonthName(budget.Mes)</td>
                             <td>@budget.Anio</td>
+                            @if (subBudget.Count == 0)
+                            {
+                                <td>
+                                    <button class="btn btn-sm btn-primary me-1"
+                                            onclick="abrirModalEditar(
+                                                        '@budget.Id',
+                                                        '@budget.RubroTypeId',
+                                                        '@budget.valorInicial',
+                                                        '@budget.Mes',
+                                                        '@budget.Anio'
+                                                    )">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
 
-                            <td></td> <!-- padre sin acciones -->
+                                    <button class="btn btn-sm btn-danger"
+                                            onclick="abrirModalEliminar(
+                                                        '@budget.Id',
+                                                        '@budget.tipoRubro.nombreRubro',
+                                                        '@budget.valorInicial',
+                                                        '@budget.ValorGastado',
+                                                        '@budget.Mes',
+                                                        '@budget.Anio'
+                                                    )">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
                         </tr>
 
                         <!-- 🔽 FILA HIJOS -->
@@ -348,20 +377,27 @@
 
 <!-- Modal de Creación -->
 <div class="modal fade" id="modalCrear" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content border-success">
+    <div class="modal-dialog modal-lg erp-modal">
+        <div class="modal-content border-0 shadow-lg">
+
             <!-- Header verde -->
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">
-                    <i class="bi bi-plus-circle me-2"></i>Nuevo Presupuesto
+            <div class="erp-modal-header">
+                <h5 class="erp-modal-title">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    Nuevo Presupuesto
                 </h5>
-                <button type="button" class="btn-close btn-close-white" 
-                        data-bs-dismiss="modal"></button>
+                <button type="button"
+                        class="erp-modal-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
             
             <!-- Formulario -->
             <form action="@Url.Action("Create")" method="post">
                 <div class="modal-body">
+
                     <!-- Rubro -->
                     <div class="mb-3">
                         <label for="crearRubroId" class="form-label">Rubro</label>
@@ -449,10 +485,15 @@
                     </div>
                 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" 
-                                data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-success">
-                            <i class="bi bi-check-circle me-1"></i>Crear Presupuesto
+                        <button type="button"
+                                class="btn btn-soft btn-pill"
+                                data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+                        <button type="submit"
+                                class="btn btn-primary btn-pill">
+                            <i class="bi bi-check-circle me-1"></i>
+                            Crear
                         </button>
                     </div>
                </div>
@@ -499,7 +540,7 @@
                         <label for="editValorInicial" class="form-label">Valor Inicial</label>
                         <div class="input-group">
                             <span class="input-group-text">$</span>
-                            <input type="number" id="editValorInicial" name="ValorInicial" 
+                            <input type="number" id="editValorInicial" name="valorInicial" 
                                    class="form-control" 
                                    min="0" 
                                    step="1" 
@@ -516,7 +557,7 @@
                             <option value="">Seleccionar mes...</option>
                             @if (ViewBag.Meses != null)
                             {
-                                foreach (var mes in ViewBag.Meses)
+                                foreach (var mes in meses)
                                 {
                                     <option value="@mes.Numero"
                                             selected="@(ViewBag.FiltroMes?.ToString() == mes.Numero.ToString())">
@@ -588,9 +629,9 @@
                         <!-- Información del gasto a eliminar -->
                         <div class="alert alert-light mt-3 text-start" id="deleteRubroInfo">
                             <div class="row">
-                                <div class="col-6"><strong>ID:</strong> <span id="deleteRubroIdText">-</span></div>
                                 <div class="col-6"><strong>Rubro:</strong> <span id="deleteRubroType">-</span></div>
                                 <div class="col-6 mt-2"><strong>Valor Inicial:</strong> $<span id="deleteValorInicial">-</span></div>
+                                <div class="col-6 mt-2"><strong>Valor Gastado:</strong> $<span id="deleteValorGastado">-</span></div>
                                 <div class="col-6 mt-2"><strong>Mes:</strong> <span id="deleteMes">-</span></div>
                                 <div class="col-6 mt-3"><strong>Año:</strong> <span id="deleteAnio">-</span></div>
                             </div>
@@ -616,6 +657,7 @@
         // Llenar formulario
         document.getElementById('editRubroId').value = id;
         document.getElementById('editRubroTypeId').value = rubroId;
+        console.log(valorInicial)
         document.getElementById('editValorInicial').value = valorInicial;
         document.getElementById('editMes').value = mes;
         document.getElementById('editAnio').value = anio;
@@ -637,7 +679,7 @@
         modal.show();
     }
 
-    function abrirModalEliminar(id, rubroId, valorInicial, mes, anio) {
+    function abrirModalEliminar(id, rubroId, valorInicial, valorGastado, mes, anio) {
         // Llenar formulario
         document.getElementById('deleteRubroId').value = id;
 
@@ -649,9 +691,9 @@
         // Convertir número a nombre
         const mesNombre = meses[mes - 1] || `Mes ${mes}`;
 
-        document.getElementById('deleteRubroIdText').innerText = id;
         document.getElementById('deleteRubroType').innerText = rubroId;
         document.getElementById('deleteValorInicial').innerText = valorInicial;
+        document.getElementById('deleteValorGastado').innerText = valorGastado;
         document.getElementById('deleteMes').innerText = mesNombre;
         document.getElementById('deleteAnio').innerText = anio;
     

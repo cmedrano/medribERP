@@ -12,6 +12,7 @@
         public int CreateByUserId { get; set; }
         public int CompanyId { get; set; }
         public DateTime CreateDate { get; set; }
+        public DateTime? UpdateDate { get; set; }
 
         // Navegación
         public RubroType tipoRubro { get; set; }

@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using PresupuestoMVC.Data;
+using PresupuestoMVC.Migrations;
 using PresupuestoMVC.Models.DTOs;
 using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Models.ViewModels;
@@ -129,36 +131,60 @@ namespace PresupuestoMVC.Services
 
         public async Task<BudgetResponseDTO> UpdateAsync(int id, UpdateBudgetViewRequest updateDto)
         {
-            // Validar existencia
-            var existingRubro = await _context.Budget
-                .Include(r => r.tipoRubro)
-                .FirstOrDefaultAsync(g => g.Id == id);
+            try
+            {
+                // Validar existencia
+                var existingRubro = await _context.Budget
+                    .Include(r => r.tipoRubro)
+                    .FirstOrDefaultAsync(g => g.Id == id);
 
-            if (existingRubro == null)
-                throw new Exception($"Rubro con ID {id} no encontrado.");
+                if (existingRubro == null)
+                    throw new Exception($"Rubro con ID {id} no encontrado.");
 
-            // Validaciones
-            var tipoExiste = await _context.RubroType.AnyAsync(rt => rt.Id == updateDto.RubroTypeId);
+                // Validaciones
+                var tipoExiste = await _context.RubroType.AnyAsync(rt => rt.Id == updateDto.RubroTypeId);
 
-            if (!tipoExiste)
-                throw new Exception($"Tipo de rubro con ID {updateDto.RubroTypeId} no existe.");
+                if (!tipoExiste)
+                    throw new Exception($"Tipo de rubro con ID {updateDto.RubroTypeId} no existe.");
 
-            if (updateDto.valorInicial < 0)
-                throw new Exception("El valor inicial no puede ser negativo.");
+                if (updateDto.valorInicial < 0)
+                    throw new Exception("El valor inicial no puede ser negativo.");
 
-            if (updateDto.Mes < 1 || updateDto.Mes > 12)
-                throw new Exception("El mes debe estar entre 1 y 12.");
+                if (updateDto.Mes < 1 || updateDto.Mes > 12)
+                    throw new Exception("El mes debe estar entre 1 y 12.");
 
-            // Actualizar
-            existingRubro.RubroTypeId = updateDto.RubroTypeId;
-            existingRubro.valorInicial = updateDto.valorInicial;
-            existingRubro.Mes = updateDto.Mes;
-            existingRubro.Anio = updateDto.Anio;
+                // Actualizar
 
-            var result = _context.Budget.Update(existingRubro);
-            await _context.SaveChangesAsync();
+                existingRubro.CreateDate = DateTime.SpecifyKind(
+                    existingRubro.CreateDate,
+                     DateTimeKind.Utc
+                );
 
-            return _mapper.Map<BudgetResponseDTO>(result);
+                existingRubro.RubroTypeId = updateDto.RubroTypeId;
+                existingRubro.valorInicial = updateDto.valorInicial;
+                existingRubro.Mes = updateDto.Mes;
+                existingRubro.Anio = updateDto.Anio;
+                existingRubro.UpdateDate = DateTime.UtcNow;
+
+                var result = _context.Budget.Update(existingRubro);
+                await _context.SaveChangesAsync();
+
+                var response = new BudgetResponseDTO()
+                {
+                    Id = existingRubro.Id,
+                    tipoRubroNombre = existingRubro.tipoRubro.nombreRubro,
+                    valorInicial = existingRubro.valorInicial,
+                    valorGastado = existingRubro.ValorGastado,
+                    Mes = existingRubro.Mes,
+                    Anio = existingRubro.Anio
+                };
+                return response;
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+
         }
 
         public async Task<bool> DeleteAsync(int id)
