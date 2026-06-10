@@ -172,7 +172,6 @@ namespace PresupuestoMVC.Services
                 var response = new BudgetResponseDTO()
                 {
                     Id = existingRubro.Id,
-                    tipoRubroNombre = existingRubro.tipoRubro.nombreRubro,
                     valorInicial = existingRubro.valorInicial,
                     valorGastado = existingRubro.ValorGastado,
                     Mes = existingRubro.Mes,
