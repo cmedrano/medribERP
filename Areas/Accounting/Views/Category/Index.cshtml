@@ -17,6 +17,9 @@
         <i class="bi bi-search"></i>
         <input class="form-control" type="text" placeholder="Buscar nombre de rubro..." />
     </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <button class="btn btn-success-soft" onclick="abrirModalCrear('',false)"><i class=" bi bi-plus-lg me-2" id="btnNuevoGasto"></i>Rubro</button>
+    </div>
 </div>
 <div class="page-head">
     <div>
@@ -36,9 +39,6 @@
             <p class="section-subtitle">
                 Mostrando @totalCategories
             </p>
-        </div>
-        <div class="d-flex gap-2 flex-wrap">
-            <button class="btn btn-success-soft" onclick="abrirModalCrear('',false)"><i class=" bi bi-plus-lg me-2" id="btnNuevoGasto"></i>Rubro</button>
         </div>
     </div>
     <div class="table-responsive">
@@ -71,13 +71,13 @@
                             <strong>@category.nombreRubro</strong>
                         </td>
                         <td class="text-end pe-3">
-                            <button class="btn btn-outline-success" id="btnNuevoSubRubro"
+                            <button class="icon-btn-success-custom icon-btn-success" id="btnNuevoSubRubro"
                                     onclick="abrirModalCrear(@category.Id, true)">
                                 <i class="bi bi-plus-circle"></i>
                             </button>
-                            <button class="btn btn-sm btn-danger"
+                            <button class="icon-btn icon-btn-danger"
                                     onclick="abrirModalEliminar('@category.Id', '@category.nombreRubro')">
-                                <i class="bi bi-trash"></i>
+                                <i class="bi bi-trash text-danger"></i>
                             </button>
                         </td>
                     </tr>
@@ -97,9 +97,9 @@
                                                     @sub.nombreRubro
                                                 </td>
                                                 <td class="text-end pe-3">
-                                                    <button class="btn btn-sm btn-danger"
+                                                    <button class="icon-btn icon-btn-danger"
                                                             onclick="abrirModalEliminar('@sub.Id', '@sub.nombreRubro')">
-                                                        <i class="bi bi-trash"></i>
+                                                        <i class="bi bi-trash text-danger"></i>
                                                     </button>
                                                 </td>
                                             </tr>
@@ -175,20 +175,25 @@
     }
     </li>
     </ul>
-    </nav> *@
-</div>
+    </nav> 
+</div> *@
 
 <!-- Modal de Creación -->
 <div class="modal fade" id="modalCrear" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content border-success">
-            <!-- Header verde -->
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">
-                    <i class="bi bi-plus-circle me-2"></i>Nuevo Rubro
+    <div class="modal-dialog erp-modal">
+        <div class="modal-content border-0 shadow-lg">
+
+            <!-- Header -->
+            <div class="erp-modal-header">
+                <h5 class="erp-modal-title" id="modalArticuloTitle">
+                    <i class="bi bi-box"></i> Nuevo Rubro
                 </h5>
-                <button type="button" class="btn-close btn-close-white"
-                        data-bs-dismiss="modal"></button>
+                <button class="erp-modal-close"
+                        type="button"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
 
             <!-- Formulario -->
@@ -209,14 +214,18 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"
+                        <button type="button"
+                                class="btn btn-soft btn-pill"
                                 data-bs-dismiss="modal">
                             Cancelar
                         </button>
-                        <button type="submit" class="btn btn-success">
-                            <i class="bi bi-check-circle me-1"></i>Crear Rubro
+                        <button type="submit"
+                                class="btn btn-primary btn-pill"
+                            <i class="bi bi-check-circle me-1"></i>
+                            Crear Rubro
                         </button>
                     </div>
+
                 </div>
             </form>
         </div>
@@ -225,15 +234,21 @@
 
 <!-- Modal de Creación SubCategory-->
 <div class="modal fade" id="modalCrearSubCategory" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content border-success">
-            <!-- Header verde -->
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">
-                    <i class="bi bi-plus-circle me-2"></i>Nuevo Sub Rubro
+    <div class="modal-dialog erp-modal">
+        <div class="modal-content border-0 shadow-lg">
+
+            <!-- Header -->
+            <div class="erp-modal-header">
+                <h5 class="erp-modal-title">
+                    <i class="bi bi-box"></i>Nuevo Sub Rubro
                 </h5>
-                <button type="button" class="btn-close btn-close-white"
-                        data-bs-dismiss="modal"></button>
+
+                <button class="erp-modal-close"
+                        type="button"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
 
             <!-- Formulario -->
@@ -246,7 +261,7 @@
                             <input type="hidden" id="categoryId" name="RubroPadreId"
                                    class="form-control"
                                    min="0"
-                                   step="1"
+                                   step="1" />
                         </div>
                     </div>
 
@@ -254,7 +269,7 @@
                     <div class="mb-3">
                         <label for="createSubCategory" class="form-label">Sub Rubro</label>
                         <div class="input-group">
-                            <input type="string" id="createSubCategory" name="SubCategory"
+                            <input type="text" id="createSubCategory" name="SubCategory"
                                    class="form-control"
                                    min="0"
                                    step="1"
@@ -264,11 +279,11 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"
+                        <button type="button" class="btn btn-soft btn-pill"
                                 data-bs-dismiss="modal">
                             Cancelar
                         </button>
-                        <button type="submit" class="btn btn-success">
+                        <button type="submit" class="btn btn-primary btn-pill">
                             <i class="bi bi-check-circle me-1"></i>Crear Sub Rubro
                         </button>
                     </div>
@@ -277,50 +292,6 @@
         </div>
     </div>
 </div>
-
-<!-- Modal de Edición -->
-@* <div class="modal fade" id="modalEditar" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <form asp-controller="User" asp-action="Edit" method="post">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">
-                        <i class="bi bi-pencil-square me-2"></i>Editar Usuario
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white"
-                            data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body">
-                    <!-- Campo oculto para el ID -->
-                    <input type="hidden" id="editUserId" name="Id" value="" />
-
-                    <!-- Cuenta -->
-                    <div class="mb-3">
-                        <label for="editUsernameId" class="form-label">Nombre de usuario</label>
-                        <div class="input-group">
-                            <input type="string" id="editUsernameId" name="Username"
-                                   class="form-control"
-                                   min="0"
-                                   step="1"
-                                   placeholder="Ryoma"
-                                   required />
-                        </div>
-                    </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary"
-                            data-bs-dismiss="modal">
-                        Cancelar
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-check-circle me-1"></i>Guardar Cambios
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div> *@
 
 <!-- Modal de Eliminación -->
 <div class="modal fade" id="modalEliminar" tabindex="-1">
@@ -336,7 +307,7 @@
             </div>
 
             <!-- Formulario -->
-            <form action="@Url.Action("DeleteCategory")" method="delete">
+            <form action="@Url.Action("DeleteCategory")" method="post">
                 <div class="modal-body">
                     <!-- Campo oculto para el ID -->
                     <input type="hidden" id="deleteCategoryId" name="Id" />
@@ -352,7 +323,7 @@
                         <!-- Información del rubro a eliminar -->
                         <div class="alert alert-light mt-3 text-start" id="deleteCategoryInfo">
                             <div class="row">
-                                <div class="col-6"><strong>id:</strong> <span id="deleteCategory">-</span></div>
+                                @* <div class="col-6"><strong>id:</strong> <span id="deleteCategory">-</span></div> *@
                                 <div class="col-6"><strong>Rubro:</strong> <span id="deleteCategoryName">-</span></div>
                             </div>
                         </div>
@@ -372,7 +343,6 @@
         </div>
     </div>
 </div>
-
 
  <script>
     // function abrirModalEditar(id, user, rol) {
@@ -404,7 +374,7 @@
     function abrirModalEliminar(id, subCategory) {
         document.getElementById('deleteCategoryId').value = id;
         document.getElementById('deleteCategoryName').innerText = subCategory;
-        document.getElementById('deleteCategory').innerText = id;
+        // document.getElementById('deleteCategory').innerText = id;
 
         const modal = new bootstrap.Modal(document.getElementById('modalEliminar'));
         modal.show();

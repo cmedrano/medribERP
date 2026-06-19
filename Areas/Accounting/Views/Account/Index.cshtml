@@ -10,20 +10,17 @@
     ViewData["Title"] = "Cuentas";
     var accounts = ViewBag.Accounts as IEnumerable<CuentaResponseDto>;
     var totalAccounts = ViewBag.TotalAccounts;
-    // var roles = ViewBag.Roles;
-    // var meses = ViewBag.Meses as IEnumerable<int>;
-    // var anios = ViewBag.Anios as IEnumerable<int>;
-    // var paginacion = ViewBag.Paginacion as PaginacionRespuestaDto<RubroResponseDto>;
-
-    // int totalPaginas = (int)Math.Ceiling((double)paginacion.TotalRegistros / ViewBag.TamañoPagina);
-    // int inicio = Math.Max(1, ViewBag.PaginaActual - 2);
-    // int fin = Math.Min(totalPaginas, ViewBag.PaginaActual + 2);
 }
 <!-- Header -->
 <div class="topbar">
     <div class="searchbox">
         <i class="bi bi-search"></i>
         <input class="form-control" type="text" placeholder="Buscar nombre de cuenta..." />
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <button class="btn btn-success-soft" onclick="abrirModalCrear()"><i class=" bi bi-plus-lg me-2" id="btnNuevoGasto"></i>Cuenta</button>
+        <button class="btn btn-success-soft" onclick="abrirModalIngresar()"><i class="bi bi-arrow-down" id="btnNuevoGasto"></i>Ingresar</button>
+        <button class="btn btn-success-soft" onclick="abrirModalTransferir()"><i class=" bi bi-arrow-up" id="btnNuevoGasto"></i>Transferir</button>
     </div>
 </div>
 <div class="page-head">
@@ -42,11 +39,6 @@
                 <p class="section-subtitle">
                     Mostrando @totalAccounts
                 </p>
-            </div>
-            <div class="d-flex gap-2 flex-wrap">
-                <button class="btn btn-success-soft" onclick="abrirModalCrear()"><i class=" bi bi-plus-lg me-2" id="btnNuevoGasto"></i>Cuenta</button>
-                <button class="btn btn-warning" onclick="abrirModalIngresar()"><i class="bi bi-arrow-down" id="btnNuevoGasto"></i>Ingresar</button>
-                <button class="btn btn-secondary" onclick="abrirModalTransferir()"><i class=" bi bi-arrow-up" id="btnNuevoGasto"></i>Transferir</button>
             </div>
         </div>
 
@@ -80,12 +72,13 @@
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
  *@
-                                    <button class="btn btn-sm btn-danger btn-delete-user"
+                                <button class="icon-btn icon-btn-danger"
                                             onclick="abrirModalEliminar(
                                             '@account.Id',
                                             '@account.nombreCuenta',
+                                            '@account.SaldoActual',
                                         )">
-                                        <i class="bi bi-trash"></i>
+                                    <i class="bi bi-trash text-danger"></i>
                                     </button>
                                 </td>
                             </tr>
@@ -108,15 +101,20 @@
 
 <!-- Modal de Creación -->
 <div class="modal fade" id="modalCrear" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content border-success">
-            <!-- Header verde -->
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">
-                    <i class="bi bi-plus-circle me-2"></i>Nueva Cuenta
+    <div class="modal-dialog erp-modal">
+        <div class="modal-content border-0 shadow-lg">
+
+            <!-- Header -->
+            <div class="erp-modal-header">
+                <h5 class="erp-modal-title">
+                    <i class="bi bi-plus-lg me-2"></i>Nueva Cuenta
                 </h5>
-                <button type="button" class="btn-close btn-close-white"
-                        data-bs-dismiss="modal"></button>
+                <button type="button"
+                        class="erp-modal-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar">
+                         <i class="bi bi-x-lg"></i>
+                    </button>
             </div>
 
             <!-- Formulario -->
@@ -150,11 +148,13 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"
+                        <button type="button"
+                                class="btn btn-soft btn-pill"
                                 data-bs-dismiss="modal">
                             Cancelar
                         </button>
-                        <button type="submit" class="btn btn-success">
+                        <button type="submit"
+                                class="btn btn-primary btn-pill">
                             <i class="bi bi-check-circle me-1"></i>Crear Cuenta
                         </button>
                     </div>
@@ -186,16 +186,16 @@
                     <!-- Mensaje de confirmación -->
                     <div class="text-center">
                         <i class="bi bi-trash text-danger" style="font-size: 3rem;"></i>
-                        <h5 class="mt-3">¿Estás seguro de eliminar el usuario?</h5>
+                        <h5 class="mt-3">¿Estás seguro de eliminar la cuenta?</h5>
                         <p class="text-muted">
-                            Esta acción no se puede deshacer. El usuario será eliminado permanentemente.
+                            Esta acción no se puede deshacer. La cuenta será eliminado permanentemente.
                         </p>
 
                         <!-- Información del usuario a eliminar -->
                         <div class="alert alert-light mt-3 text-start" id="deleteRubroInfo">
                             <div class="row">
-                                <div class="col-6"><strong>Usuario:</strong> <span id="deleteUsernameId">-</span></div>
-                                <div class="col-6 mt-2"><strong>Rol:</strong> <span id="deleteRol">-</span></div>
+                                <div class="col-6"><strong>Cuenta:</strong> <span id="deleteUsernameId">-</span></div>
+                                <div class="col-6"><strong>Monto:</strong> <span id="deleteMonto">-</span></div>
                             </div>
                         </div>
                     </div>
@@ -217,15 +217,20 @@
 
 <!-- Modal Ingresar -->
 <div class="modal fade" id="modalIngresar" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content border-danger">
-            <!-- Header rojo -->
-            <div class="modal-header bg-warning text-white">
-                <h5 class="modal-title">
+    <div class="modal-dialog erp-modal">
+        <div class="modal-content border-0 shadow-lg">
+
+            <!-- Header -->
+            <div class="erp-modal-header">
+                <h5 class="erp-modal-title">
                     <i class="bi bi-arrow-down"></i> Nuevo Ingreso
                 </h5>
-                <button type="button" class="btn-close btn-close-white"
-                        data-bs-dismiss="modal"></button>
+                <button type="button"
+                        class="erp-modal-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
 
             <!-- Formulario -->
@@ -274,11 +279,13 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"
+                        <button type="button"
+                                class="btn btn-soft btn-pill"
                                 data-bs-dismiss="modal">
                             Cancelar
                         </button>
-                        <button type="submit" class="btn bg-warning ">
+                        <button type="submit"
+                                class="btn btn-primary btn-pill">
                             <i class="bi bi-check-circle me-1"></i>Confirmar Ingreso
                         </button>
                     </div>  
@@ -290,15 +297,20 @@
 
 <!-- Modal Transferir -->
 <div class="modal fade" id="modalTransferir" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content border-danger">
-            <!-- Header rojo -->
-            <div class="modal-header bg-secondary text-white">
-                <h5 class="modal-title">
+    <div class="modal-dialog erp-modal">
+        <div class="modal-content border-0 shadow-lg">
+
+            <!-- Header -->
+            <div class="erp-modal-header">
+                <h5 class="erp-modal-title" id="modalArticuloTitle">
                     <i class="bi bi-arrow-up"></i> Transferir
                 </h5>
-                <button type="button" class="btn-close btn-close-white"
-                        data-bs-dismiss="modal"></button>
+                <button class="erp-modal-close"
+                        type="button"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
 
             <!-- Formulario -->
@@ -351,14 +363,18 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"
+                        <button type="button"
+                                class="btn btn-soft btn-pill"
                                 data-bs-dismiss="modal">
                             Cancelar
                         </button>
-                        <button type="submit" class="btn btn-secondary">
-                            <i class="bi bi-check-circle me-1"></i> Transferir
+                        <button type="submit"
+                                class="btn btn-primary btn-pill"
+                            <i class="bi bi-check-circle me-1"></i>
+                            Transferir
                         </button>
                     </div>
+
                 </div>
             </form>
         </div>
@@ -375,12 +391,11 @@
         modal.show();
     }
 
-    function abrirModalEliminar(id, user, rol) {
+    function abrirModalEliminar(id, user, monto) {
         // Llenar formulario
         document.getElementById('deleteUserId').value = id;
         document.getElementById('deleteUsernameId').innerText = user;
-        document.getElementById('deleteRol').innerText = rol;
-
+        document.getElementById('deleteMonto').innerText = monto;
         // Mostrar modal
         const modal = new bootstrap.Modal(document.getElementById('modalEliminar'));
         modal.show();
