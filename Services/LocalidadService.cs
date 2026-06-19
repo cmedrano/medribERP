@@ -13,6 +13,11 @@ namespace PresupuestoMVC.Services
             _repository = repository;
         }
 
+        public async Task<List<Localidad>> ObtenerTodasAsync()
+        {
+            return await _repository.ObtenerTodasAsync();
+        }
+
         public async Task<List<Localidad>> ObtenerPorCodigoPostalAsync(string codigoPostal)
         {
             return await _repository.ObtenerPorCodigoPostalAsync(codigoPostal);
@@ -21,6 +26,11 @@ namespace PresupuestoMVC.Services
         public async Task<Localidad?> ObtenerPorCodigoPostalPrimeroAsync(string codigoPostal)
         {
             return await _repository.ObtenerPorCodigoPostalPrimeroAsync(codigoPostal);
+        }
+
+        public async Task<List<Localidad>> ObtenerPorProvinciaAsync(int provinciaId)
+        {
+            return await _repository.ObtenerPorProvinciaAsync(provinciaId);
         }
     }
 }

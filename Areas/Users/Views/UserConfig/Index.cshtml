@@ -1,0 +1,223 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Configuración";
+}
+
+<div class="container-fluid">
+
+    <div class="hero-card mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <div class="hero-icon">
+                <i class="bi bi-gear-fill"></i>
+            </div>
+
+            <div>
+                <h1 class="h3 mb-1">Configuración de Cuenta</h1>
+                <p class="text-muted mb-0">
+                    Administrá tus preferencias personales.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Foto de Perfil -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="erp-card-header">
+                    <i class="bi bi-image me-2"></i>
+                    <span class="erp-modal-title">Foto de perfil</span>
+                </div>
+
+                <div class="card-body text-center">
+
+                    <img src="~/images/default-user.jpg"
+                         class="rounded-circle border mb-3"
+                         width="120"
+                         height="120"
+                         alt="Foto de perfil">
+
+                    <div class="mb-3">
+                        <input type="file"
+                               class="form-control">
+                    </div>
+
+                    <button class="btn btn-primary">
+                        Actualizar foto
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Datos Personales -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="erp-card-header">
+                    <i class="bi bi-person-circle me-2"></i>
+                    <span class="erp-modal-title">Datos personales</span>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                        <input type="text"
+                               class="form-control"
+                               value="Cristian" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email"
+                               class="form-control"
+                               value="cristian@email.com" />
+                    </div>
+
+                    <button class="btn btn-primary">
+                        Guardar cambios
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Seguridad -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="erp-card-header">
+                    <i class="bi bi-shield-lock me-2"></i>
+                    <span class="erp-modal-title">Seguridad</span>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Contraseña actual
+                        </label>
+
+                        <input type="password"
+                               class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Nueva contraseña
+                        </label>
+
+                        <input type="password"
+                               class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Confirmar contraseña
+                        </label>
+
+                        <input type="password"
+                               class="form-control" />
+                    </div>
+
+                    <button class="btn btn-primary">
+                        Cambiar contraseña
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Idioma y Zona Horaria -->
+        <div class="col-lg-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="erp-card-header">
+                    <i class="bi bi-globe-americas me-2"></i>
+                    <span class="erp-modal-title">Regionalización</span>
+                </div>
+
+                <div class="card-body">
+
+                    <form asp-area="Users" asp-controller="UserConfig" asp-action="SetLanguage" method="post">
+
+                        <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+
+                        <div class="mb-3">
+                            <label class="form-label">Idioma</label>
+                            <select name="culture" class="form-select">
+                                <option value="es">Español</option>
+                                <option value="en">English</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Zona horaria</label>
+                            <select class="form-select">
+                                <option selected>(UTC-03:00) Buenos Aires</option>
+                                <option>(UTC-04:00) Santiago</option>
+                                <option>(UTC-05:00) Bogotá</option>
+                                <option>(UTC-06:00) Ciudad de México</option>
+                                <option>(UTC+00:00) Londres</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            Guardar configuración
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Preferencias -->
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+
+                <div class="erp-card-header">
+                    <i class="bi bi-sliders me-2"></i>
+                    <span class="erp-modal-title">Preferencias</span>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               id="modoOscuro">
+
+                        <label class="form-check-label"
+                               for="modoOscuro">
+                            Activar modo oscuro
+                        </label>
+                    </div>
+
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               id="notificaciones">
+
+                        <label class="form-check-label"
+                               for="notificaciones">
+                            Recibir notificaciones
+                        </label>
+                    </div>
+
+                    <button class="btn btn-primary">
+                        Guardar preferencias
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

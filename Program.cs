@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using PresupuestoMVC.Data;
 using PresupuestoMVC.Repositories;
@@ -7,6 +9,8 @@ using PresupuestoMVC.Repository;
 using PresupuestoMVC.Repository.Interfaces;
 using PresupuestoMVC.Services;
 using PresupuestoMVC.Services.Interfaces;
+using QuestPDF.Infrastructure;
+using System.Globalization;
 using System.Text;
 
 namespace PresupuestoMVC
@@ -15,10 +19,34 @@ namespace PresupuestoMVC
     {
         public static void Main(string[] args)
         {
+            // Licencia de QuestPDF
+            QuestPDF.Settings.License = LicenseType.Community;
+
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            builder.Services.AddControllersWithViews();
+            // Razor Runtime Compilation
+            builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+
+            // Agregar servicios de localización
+            builder.Services.AddLocalization(options =>
+            {
+                options.ResourcesPath = "Resources";
+            });
+
+            // Configurar las culturas soportadas
+            builder.Services.Configure<RequestLocalizationOptions>(options =>
+            {
+                var supportedCultures = new[]
+                {
+                    new CultureInfo("es"),
+                    new CultureInfo("en")
+                };
+
+                options.DefaultRequestCulture = new RequestCulture("es");
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+                options.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider());
+            });
 
             var useProductionDatabase = builder.Configuration.GetValue<bool>("UseProductionDatabase");
 
@@ -67,12 +95,14 @@ namespace PresupuestoMVC
             builder.Services.AddScoped<IArticulosPreciosRepository, ArticulosPreciosRepository>();
             builder.Services.AddScoped<IPeriodoService, PeriodoService>();
             builder.Services.AddScoped<IPeriodRepository,PeriodRepository>();
+            builder.Services.AddScoped<IProvinciaService, ProvinciaService>();
+            builder.Services.AddScoped<IProvinciaRepository, ProvinciaRepository>();
+            builder.Services.AddScoped<IFacturacionService, FacturacionService>();
+            builder.Services.AddScoped<ISaleRepository, SaleRepository>();
+            builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
-
-            // Razor Runtime Compilation
-            builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
             // Configurar autenticación JWT
             builder.Services.AddAuthentication(options =>
@@ -123,9 +153,13 @@ namespace PresupuestoMVC
                 app.UseHsts();
             }
 
+            // Middleware de localización
+            var localizationOptions = app.Services.GetService<IOptions<RequestLocalizationOptions>>().Value;
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
+            app.UseRequestLocalization(localizationOptions);
             app.UseAuthentication();
             app.UseAuthorization();
 

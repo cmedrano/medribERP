@@ -1,4 +1,4 @@
-﻿@using static PresupuestoMVC.Areas.Ventas.Controllers.FacturacionController
+﻿@using PresupuestoMVC.Areas.Ventas.ViewModels
 
 @{
     @model FacturacionViewModel
@@ -16,8 +16,8 @@
         </div>
     </div>
     <div class="hero-actions">
-        <a href="#" class="btn btn-soft"><i class="bi bi-clock-history"></i>Facturas recientes</a>
-        <a href="#" class="btn btn-primary"><i class="bi bi-plus-lg"></i>Nueva factura</a>
+        <a href="#" class="btn btn-primary" id="btnFacturasRecientes"><i class="bi bi-clock-history"></i>Facturas recientes</a>
+        @* <a href="#" class="btn btn-primary"><i class="bi bi-plus-lg"></i>Nueva factura</a> *@
     </div>
 </section>
 
@@ -117,8 +117,13 @@
                             {
                                 foreach (var lista in Model.Articulos)
                                 {
-                                    <option value="@lista.Id" data-price="@lista.SalePrice">
+                                    <option value="@lista.Id" 
+                                            data-code="@lista.Codigo"
+                                            data-name="@lista.Nombre"
+                                            data-price="@lista.SalePrice">
+
                                         @lista.Codigo - @lista.Nombre
+
                                     </option>
                                 }
                             }
@@ -176,7 +181,7 @@
             <div class="summary-line"><span>Lista aplicada</span><strong id="resumenLista">Sin seleccionar</strong></div>
             <div class="summary-line"><span>Artículos</span><strong id="resumenArticulos">0</strong></div>
             <div class="summary-line"><span>Subtotal</span><strong id="resumenSubtotal">$ 0</strong></div>
-            <div class="summary-line"><span>Descuento (10%)</span><strong id="resumenDescuento">$ 0</strong></div>
+            @* <div class="summary-line"><span>Descuento (10%)</span><strong id="resumenDescuento">$ 0</strong></div> *@
 
             <div class="summary-total">
                 <span>Total</span>
@@ -184,9 +189,9 @@
             </div>
 
             <div class="summary-actions">
-                <button class="btn btn-primary btn-block" type="button"><i class="bi bi-check2-circle"></i>Confirmar factura</button>
-                <button class="btn btn-soft btn-block" type="button"><i class="bi bi-file-earmark-text"></i>Guardar borrador</button>
-                <button class="btn btn-danger-soft btn-block" type="button"><i class="bi bi-x-circle"></i>Cancelar</button>
+                <button id="btnConfirmarFactura" class="btn btn-primary btn-block" type="button"><i class="bi bi-check2-circle"></i>Confirmar factura</button>
+                @* <button class="btn btn-soft btn-block" type="button"><i class="bi bi-file-earmark-text"></i>Guardar borrador</button>
+                <button class="btn btn-danger-soft btn-block" type="button"><i class="bi bi-x-circle"></i>Cancelar</button> *@
             </div>
             <div class="notice">
                 <strong>Nota:</strong> si seleccionás un cliente registrado, la lista de precios puede completarse automáticamente según su configuración.
@@ -195,199 +200,94 @@
     </aside>
 </div>
 
-@section Styles
+@*Alert*@
+<div class="modal fade" id="mensajeModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title" id="mensajeTitulo">
+                    Mensaje
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+            </div>
+
+            <div class="modal-body text-center py-4">
+
+                <div id="mensajeIcono" class="mb-3 fs-1">
+                </div>
+
+                <p id="mensajeTexto" class="mb-0 fs-5">
+                </p>
+
+            </div>
+
+            <div class="modal-footer border-0 justify-content-center">
+                <button type="button"
+                        class="btn btn-primary px-4"
+                        data-bs-dismiss="modal">
+                    Aceptar
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@*MODAL FACTURAS*@
+<div class="modal fade" id="modalFacturas" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="erp-modal-header">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-receipt-cutoff"></i>
+                    <span class="erp-modal-title">Facturas recientes</span>
+                </div>
+                <button class="erp-modal-close" type="button" data-bs-dismiss="modal" aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Cliente</th>
+                            <th>DNI</th>
+                            <th>Fecha</th>
+                            <th>Total</th>
+                            <th>Detalle</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tbodyFacturas">
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@* @section Styles
 {
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
-}
+} *@
 
 @section Scripts
 {
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
+    @* <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> *@
     <script>
-
-        // Función para actualizar el precio cada vez que se cambia el artículo o la cantidad
-        function actualizarPrecio() {
-
-            const articulo = document.getElementById("articuloSelect");
-            const cantidad = document.getElementById("cantidadInput");
-            const precio = document.getElementById("precioInput");
-
-            const selectedOption = articulo.options[articulo.selectedIndex];
-            const salePrice = parseFloat(selectedOption.dataset.price || 0);
-            const cantidadValor = parseInt(cantidad.value || 1);
-            const total = salePrice * cantidadValor;
-
-            precio.value = `$ ${total.toLocaleString('es-AR')}`;
-        }
-
-        // Función para actualizar el resumen cada vez que se agrega o elimina un artículo
-        function actualizarResumen() {
-            let cantidadArticulos = 0;
-            let subtotal = 0;
-
-            $('#detalleFacturaBody tr').each(function () {
-                cantidadArticulos += parseInt($(this).data('cantidad'));
-                subtotal += parseFloat($(this).data('total'));
-            });
-
-            // Descuento 10%
-            let descuento = subtotal * 0.10;
-            let total = subtotal - descuento;
-
-            $('#resumenArticulos').text(cantidadArticulos);
-            $('#resumenSubtotal').text(`$ ${subtotal.toLocaleString('es-AR')}`);
-            $('#resumenDescuento').text(`$ ${descuento.toLocaleString('es-AR')}`);
-            $('#resumenTotal').text(`$ ${total.toLocaleString('es-AR')}`);
-        }
-
-        // Inicialización de select2 y eventos
-        $(document).ready(function () {
-
-            // Articulos
-            $('#articuloSelect').select2({
-                placeholder: "Buscar artículo...",
-                width: '100%',
-                allowClear: false
-            });
-
-            // Cuando cambia articulo
-            $('#articuloSelect').on('change', function () {
-                actualizarPrecio();
-            });
-
-            // Cuando cambia cantidad
-            document
-            .getElementById("cantidadInput")
-            .addEventListener("input", actualizarPrecio);
-
-            // Inicializar precio
-            actualizarPrecio();
-
-            $('#btnAgregarArticulo').on('click', function () {
-
-                const articuloSelect = $('#articuloSelect');
-                const articuloId = articuloSelect.val();
-
-                // Validar
-                if (!articuloId) {
-                    alert('Seleccione un artículo');
-                    return;
-                }
-                
-                // Option seleccionada
-                const selectedOption = articuloSelect.find(':selected');
-                const articuloTexto = selectedOption.text();
-                const precioUnitario = parseFloat(selectedOption.data('price')) || 0;
-                const cantidad = parseInt($('#cantidadInput').val()) || 1;
-                const total = precioUnitario * cantidad;
-
-                // Crear fila
-                const fila = `
-                    <tr data-total="${total}" data-cantidad="${cantidad}">
-
-                    <td>
-                    <div class="product-cell">
-
-                    <span class="product-icon">
-                    ${articuloTexto.charAt(0)}
-                    </span>
-
-                    <div>
-
-                    <p class="product-title">
-                    ${articuloTexto}
-                    </p>
-
-                    <p class="product-meta">
-                    Artículo agregado
-                    </p>
-
-                    </div>
-
-                    </div>
-                    </td>
-
-                    <td>
-                    <span class="qty-badge">
-                    ${cantidad}
-                    </span>
-                    </td>
-
-                    <td class="money">
-                    $ ${precioUnitario.toLocaleString('es-AR')}
-                    </td>
-
-                    <td class="money">
-                    $ ${total.toLocaleString('es-AR')}
-                    </td>
-
-                    <td>
-                    <a href="#" class="icon-btn btnEliminar">
-                    <i class="bi bi-trash"></i>
-                    </a>
-                    </td>
-
-                    </tr>
-                `;
-
-                $('#detalleFacturaBody').append(fila);// Agregar fila
-                actualizarResumen(); // Actualizo resumen
-                $('#cantidadInput').val(1);// Resetear formulario
-                $('#precioInput').val('');
-                $('#articuloSelect').val(null).trigger('change');
-
-            });
-
-            // Evento para eliminar artículo
-            $(document).on('click', '.btnEliminar', function (e) {
-                e.preventDefault();
-                $(this).closest('tr').remove();
-                actualizarResumen();
-            });
-        });
-
-        $('#clientSelect').select2({
-            placeholder: "Buscar Cliente...",
-            width: '100%',
-            allowClear: false
-        });
-
-        $('#clientSelect').on('change', function () {
-
-            const clienteId = parseInt($(this).val());
-            const option = this.options[this.selectedIndex];
-
-            $('#nombreCliente').val(option.dataset.nombre || '');
-            $('#dniCliente').val(option.dataset.dni || '');
-            $('#resumenCliente').text(option.text || 'Sin seleccionar');
-
-            const clientes = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Clientes));
-            const cliente = clientes.find(c => c.Id == clienteId);
-
-            console.log(cliente)
-
-            if (!cliente) {
-                $('#nombreCliente').val('');
-                $('#dniCliente').val('');
-                $('#listaPrecioCliente').val('');
-                return;
-            }
-
-            $('#nombreCliente').val(cliente.Nombre);
-            $('#dniCliente').val(cliente.DNI);
-            $('#listaPrecioClienteId').val(cliente.PriceListId);
-
-            console.log(cliente.PriceListId)
-        });
-
-        $('#listaPrecioSelect').on('change', function () {
-
-            const texto = $(this).find(':selected').text();
-
-            $('#resumenLista').text(texto || 'Sin seleccionar');
-        });
-
+        window.clientes = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Clientes));
     </script>
+    <script src="~/js/facturacion.js"></script>
+    
 }
 
