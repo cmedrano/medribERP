@@ -30,9 +30,13 @@
             <input class="form-control" type="text" placeholder="Buscar presupuesto..." />
         </div>
         <div class="d-flex gap-2 flex-wrap">
-            <button class="btn btn-success-soft" id="btnNuevoRubro"
+            <button class="btn btn-success-soft" id="btnNuevoPresupuesto"
                     onclick="abrirModalCrear()">
                 <i class="bi bi-plus-lg me-2"></i>Presupuesto
+            </button> 
+            <button class="btn btn-success-soft" id="btnClonarPresupuesto"
+                    onclick="abrirModalCLonar()">
+                <i class="bi bi-copy me-2"></i>Clonar
             </button>
         </div>
     </div>
@@ -214,7 +218,7 @@
                                 @if (subBudget.Count == 0)
                                 {
                                     <td>
-                                        <button class="icon-btn"
+                                        <button class="icon-btn-success-custom"
                                                 onclick="abrirModalEditar(
                                                         '@budget.Id',
                                                         '@budget.RubroTypeId',
@@ -655,6 +659,121 @@
     </div>
 </div>
 
+<!-- Modal de Clonacion -->
+<div class="modal fade" id="modalClonar" tabindex="-1">
+    <div class="modal-dialog modal-lg erp-modal">
+        <div class="modal-content border-0 shadow-lg">
+
+            <!-- Header -->
+            <div class="erp-modal-header">
+                <h5 class="erp-modal-title">
+                    <i class="bi bi-copy me-2"></i>
+                    Clonar Presupuesto
+                </h5>
+                <button type="button"
+                        class="erp-modal-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            
+            <!-- Formulario -->
+            <form action="@Url.Action("CreateClone")" method="post">
+                <div class="modal-body">
+
+                    <!-- Periodo origen -->
+                    <h3 class="erp-form-section-title">PERIODO DE ORIGEN</h3>
+                    <div class="d-inline-flex gap-2 mb-3">
+                        <!-- Año -->
+                        <div class="">
+                            <label for="perOriAnio" class="form-label">Año</label>
+                            <select id="perOriAnio" name="OrigenAnio"
+                                    class="form-select" required>
+                                <option value="-1">Seleccionar año...</option>
+                                @if (ViewBag.Anios != null)
+                                {
+                                    foreach (var anio in ViewBag.Anios)
+                                    {
+                                        <option value="@anio" selected="@(ViewBag.FiltroAnio?.ToString() == anio.ToString())">
+                                            @anio
+                                        </option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <!-- Mes -->
+                        <div class="">
+                            <label for="crearMes" class="form-label">Mes</label>
+                            <select id="perOriMes" name="OrigenMes"
+                                    class="form-select" required>
+                                <option value="-1">Seleccionar mes...</option>
+                                @if (ViewBag.Meses != null)
+                                {
+                                    foreach (var mes in ViewBag.Meses)
+                                    {
+                                        <option value="@mes.Numero">@mes.Nombre</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Periodo destino -->
+                    <h3 class="erp-form-section-title">PERIODO DE DESTINO</h3>
+                    <div class="d-inline-flex gap-2 mb-3">
+                        <!-- Año -->
+                        <div class="">
+                            <label for="perDesAnio" class="form-label">Año</label>
+                            <select id="perDesAnio" name="DestinoAnio"
+                                    class="form-select" required>
+                                <option value="-1">Seleccionar año...</option>
+                                @if (ViewBag.Anios != null)
+                                {
+                                    foreach (var anio in ViewBag.Anios)
+                                    {
+                                        <option value="@anio" selected="@(ViewBag.FiltroAnio?.ToString() == anio.ToString())">
+                                            @anio
+                                        </option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <!-- Mes -->
+                        <div class="">
+                            <label for="perDesMes" class="form-label">Mes</label>
+                            <select id="perDesMes" name="DestinoMes"
+                                    class="form-select" required>
+                                <option value="-1">Seleccionar mes...</option>
+                                @if (ViewBag.Meses != null)
+                                {
+                                    foreach (var mes in ViewBag.Meses)
+                                    {
+                                        <option value="@mes.Numero">@mes.Nombre</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+         
+                    <div class="modal-footer">
+                        <button type="button"
+                                class="btn btn-soft btn-pill"
+                                data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+                        <button type="submit"
+                                class="btn btn-primary btn-pill">
+                            <i class="bi bi-check-circle me-1"></i>
+                            CLonar
+                        </button>
+                    </div>
+               </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
 
     function abrirModalEditar(id, rubroId, valorInicial, mes, anio) {
@@ -705,6 +824,16 @@
         modal.show();
     }
 
+    function abrirModalCLonar() {
+        document.getElementById('perOriAnio').value = '';
+        document.getElementById('perOriMes').value = '';
+        document.getElementById('perDesAnio').value = '';
+        document.getElementById('perDesMes').value = '';
+    
+        const modal = new bootstrap.Modal(document.getElementById('modalClonar'));
+        modal.show();
+    }
+
     function limpiarFiltros() {
         window.location.href = '@Url.Action("Index", "Budget")';
     }
@@ -742,7 +871,7 @@
 
     const rubrosData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.Rubros));
 
-    document.getElementById("crearRubroId").addEventListener("change", function () {
+@*     document.getElementById("crearRubroId").addEventListener("change", function () {
 
         const rubroId = parseInt(this.value);
         const subRubroSelect = document.getElementById("crearSubRubroId");
@@ -763,7 +892,7 @@
                 subRubroSelect.appendChild(option);
             });
         }
-    });
+    }); *@
 
     document.getElementById("crearRubroId").addEventListener("change", function () {
 

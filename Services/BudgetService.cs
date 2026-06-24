@@ -352,5 +352,34 @@ namespace PresupuestoMVC.Services
                 .CountAsync();
             return totalBudget;
         }
+
+        public async Task<IEnumerable<BudgetResponseDTO>> SearchBudgetByYearAndMonth(int anio, int mes)
+        {
+            try
+            {
+                var listBudget = await _context.Budget
+                    .Include(b => b.tipoRubro)
+                    .Where(b => b.Anio == anio && b.Mes == mes)
+                    .Select(b => new BudgetResponseDTO
+                    {
+                        Id = b.tipoRubro.Id,
+                        RubroTypeId = b.tipoRubro.Id,
+                        tipoRubroNombre = b.tipoRubro.nombreRubro,
+                        valorInicial = b.valorInicial,
+                        valorGastado = b.ValorGastado,
+                        Mes = b.Mes,
+                        Anio = b.Anio
+                    })
+                    .ToListAsync();
+
+                return listBudget;
+            }
+
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+
+        }
     }
 }

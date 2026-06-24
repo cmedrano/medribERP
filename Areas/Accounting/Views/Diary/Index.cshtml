@@ -212,7 +212,7 @@
                                 </span></td>
                                 <td class="note-cell"><div class="truncate">@(gasto.Nota ?? "")</div></td>
                             <td class="text-end">
-                                    <button class="icon-btn"
+                                    <button class="icon-btn-success-custom"
                                             onclick="AbrirModalEditarGasto(
                                             '@gasto.Id',
                                             '@gasto.Fecha.ToString("yyyy-MM-dd")',
@@ -352,9 +352,9 @@
                         </div>
 
                         <!-- Periodo de Imputación -->
-                        <div class="mb-3">
+                        <div class="mb-3 d-none">
                             <label for="crearPeriodoId" class="form-label">Período de Imputación</label>
-                            <select id="crearPeriodoId" name="PeriodoId" class="form-select" required>
+                            <select id="crearPeriodoId" name="PeriodoId" class="form-select">
                                 <option value="">Seleccionar período...</option>
                                 @if (periodos != null)
                                 {
@@ -473,9 +473,9 @@
                         </div>
 
                         <!-- Periodo de Imputación -->
-                        <div class="mb-3">
+                        <div class="mb-3 d-none">
                             <label for="editPeriodoId" class="form-label">Periodo de Imputación</label>
-                            <select id="editPeriodoId" name="PeriodoId" class="form-select" required>
+                            <select id="editPeriodoId" name="PeriodoId" class="form-select">
                                 <option value="">Seleccionar Periodo...</option>
                                 @if (ViewBag.Periodos != null)
                                 {
