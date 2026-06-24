@@ -15,5 +15,6 @@ namespace PresupuestoMVC.Services.Interfaces
         Task<PaginacionRespuestaDto<BudgetGroupedDto>> GetFiltradosAsync(FiltroBudgetViewRequest filtro, int pagina, int tamañoPagina, int companyId);
         Task<IEnumerable<CategoryResponseDto>> GetCategoriesbyDateAsync(DateTime date);
         Task<int> GetBudgetCountAsync(int companyId);
+        Task<IEnumerable<BudgetResponseDTO>> SearchBudgetByYearAndMonth(int anio, int mes);
     }
 }
