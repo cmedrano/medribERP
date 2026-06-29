@@ -10,5 +10,6 @@ namespace PresupuestoMVC.Services.Interfaces
         Task<CuentaResponseDto> CreateIncomeAsync(CreateIncomeViewRequest income);
         Task<CuentaResponseDto> CreateTransferAsync(CreateTransferViewRequest transfer);
         Task<int> GetAccountsCountAsync(int companyId);
+        Task<CuentaResponseDto> GetAccountByIdAsync(int companyId, int cuentaId);
     }
 }

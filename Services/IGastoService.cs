@@ -14,6 +14,7 @@ namespace PresupuestoMVC.Services
         Task<IEnumerable<CuentaResponseDto>> GetAllCuentasAsync();
         Task<PaginacionRespuestaDto<GastoResponseDto>> GetFiltradosAsync(FiltroGastoViewRequest filtro, int pagina, int tamañoPagina, int companyId);
         Task<int> GetGastosCountAsync(int companyId);
-
+        Task<decimal> ObtenerGastoPorFecha(DateTime date);
+        Task<int> GetGastosCountByMonthAsync(int companyId);
     }
 }
