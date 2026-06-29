@@ -6,6 +6,7 @@ using PresupuestoMVC.Models.DTOs;
 using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Models.ViewModels;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PresupuestoMVC.Services
 {
@@ -256,6 +257,16 @@ namespace PresupuestoMVC.Services
             return totalGastos;
         }
 
+        public async Task<int> GetGastosCountByMonthAsync(int companyId)
+        {
+            var hoy = DateTime.Today;
+            var totalGastos = await _context.Gastos
+                .Where(g => g.CompanyId == companyId && g.Fecha.Month == hoy.Month &&
+                                g.Fecha.Year == hoy.Year)
+                .CountAsync();
+            return totalGastos;
+        }
+
         public async Task<PaginacionRespuestaDto<GastoResponseDto>> GetFiltradosAsync(FiltroGastoViewRequest filtro, int pagina, int tamañoPagina, int companyId)
         {
             try
@@ -360,6 +371,24 @@ namespace PresupuestoMVC.Services
             {
                 throw ex;
             }
+        }
+
+        public async Task<decimal> ObtenerGastoPorFecha(DateTime date)
+        {
+            try
+            {
+                var totalSemana = await _context.Gastos
+                    .Where(g => g.Fecha.Month == date.Month &&
+                                g.Fecha.Year == date.Year)
+                    .SumAsync(g => g.Monto);
+
+                return totalSemana;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
         }
     }
 }

@@ -46,7 +46,8 @@
                 currentController == "Category" ||
                 currentController == "Account" ||
                 currentController == "Statistics" ||
-                currentController == "Period";
+                currentController == "Period" ||
+                currentController == "ImportFile";
                 var isSalesSection =
                 currentController == "Articulos" ||
                 currentController == "Clientes" ||
@@ -95,6 +96,10 @@
                             <!-- Periodos -->
                             <a asp-area="Accounting" asp-controller="Period" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Period" ? "active" : "")">
                                 @Localizer["Periodos"]
+                            </a>
+                            <!-- Importar -->
+                            <a asp-area="Accounting" asp-controller="ImportFile" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ImportFile" ? "active" : "")">
+                                @Localizer["Importar"]
                             </a>
                         </div>
                     </div>

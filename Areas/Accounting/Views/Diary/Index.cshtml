@@ -10,6 +10,9 @@
     var paginacion = ViewBag.Paginacion as PaginacionRespuestaDto<GastoResponseDto>;
     var items = ViewBag.itemsCount;
     var totalGastos = ViewBag.TotalGastos;
+    decimal gastoTotalMes = ViewBag.GastoTotalMes;
+    decimal gastoTotalSemana = ViewBag.GastoTotalSemana;
+    decimal totalGastosPorMes = ViewBag.TotalGsstosporMes;
 
     int totalPaginas = (int)Math.Ceiling((double)paginacion.TotalRegistros / ViewBag.TamañoPagina);
     int inicio = Math.Max(1, ViewBag.PaginaActual - 2);
@@ -50,22 +53,22 @@
         <div class="col-md-6 col-xl-3">
             <div class="erp-card metric-card">
                 <div class="metric-icon"><i class="bi bi-journal-text"></i></div>
-                <div class="metric-label">Movimientos del mes</div>
-                <div class="metric-value">148</div>
+                <div class="metric-label">Cantidad de gastos</div>
+                <div class="metric-value">@totalGastosPorMes</div>
             </div>
         </div>
         <div class="col-md-6 col-xl-3">
             <div class="erp-card metric-card">
                 <div class="metric-icon"><i class="bi bi-cash-stack"></i></div>
-                <div class="metric-label">Total del período</div>
-                <div class="metric-value">$ 1.245.800</div>
+                <div class="metric-label">Total gastos del mes</div>
+                <div class="metric-value">$ @gastoTotalMes</div>
             </div>
         </div>
         <div class="col-md-6 col-xl-3">
             <div class="erp-card metric-card">
                 <div class="metric-icon"><i class="bi bi-credit-card-2-front"></i></div>
-                <div class="metric-label">Cuenta principal</div>
-                <div class="metric-value">Mercado Pago</div>
+                <div class="metric-label">Gastos de la semana</div>
+                <div class="metric-value">$ @gastoTotalSemana</div>
             </div>
         </div>
         <div class="col-md-6 col-xl-3">

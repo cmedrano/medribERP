@@ -170,8 +170,8 @@
                             // 👉 Totales del padre + hijos
                             @* var total = budget.valorInicial + subBudget.Sum(x => x.valorInicial); *@
                             var total = budget.valorInicial;
-                            @* var gastado = budget.ValorGastado + subBudget.Sum(x => x.ValorGastado); *@
-                            var gastado = subBudget.Sum(x => x.ValorGastado);
+                            var gastado = budget.ValorGastado + subBudget.Sum(x => x.ValorGastado);
+                            @* var gastado = subBudget.Sum(x => x.ValorGastado); *@
                             var disponible = total - gastado;
 
                             var porcentajeGastado = total > 0

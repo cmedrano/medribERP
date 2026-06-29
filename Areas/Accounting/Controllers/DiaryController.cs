@@ -32,6 +32,7 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                 var rubros = await _categoryService.GetAllCategoriesAsync(companyId);
                 var cuentas = await _accountService.GetAllAccountAsync(companyId);
                 var totalGsstos = await _gastoService.GetGastosCountAsync(companyId);
+                var totalGsstosporMes = await _gastoService.GetGastosCountByMonthAsync(companyId);
                 var periodos = await _periodoService.GetAllPeriodosAsync();
 
                 // Crear filtro para el servicio
@@ -48,6 +49,11 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                 // Obtener datos paginados y filtrados
                 var resultadoPaginado = await _gastoService.GetFiltradosAsync(filtro, pagina, tamañoPagina, companyId);
 
+                var hoy = DateTime.Today;
+                var fechaUnaSemana = DateTime.UtcNow.Date.AddDays(-7);
+                var gastoPorMes = await _gastoService.ObtenerGastoPorFecha(hoy);
+                var gastoPorSemana = await _gastoService.ObtenerGastoPorFecha(fechaUnaSemana);
+                
                 // Pasar datos a la vista
                 ViewBag.Rubros = rubros;
                 ViewBag.Cuentas = cuentas;
@@ -62,6 +68,9 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                 ViewBag.TamañoPagina = tamañoPagina;
                 ViewBag.TotalGastos = totalGsstos;
                 ViewBag.itemsCount = resultadoPaginado.Datos.Count();
+                ViewBag.GastoTotalMes = gastoPorMes;
+                ViewBag.GastoTotalSemana = gastoPorSemana;
+                ViewBag.TotalGsstosporMes = totalGsstosporMes;
 
                 return View();
             }

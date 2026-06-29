@@ -1,0 +1,416 @@
+﻿@using PresupuestoMVC.Models.DTOs
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Importar";
+    var accounts = ViewBag.Cuentas as IEnumerable<CuentaResponseDto>;
+    var categories = ViewBag.Rubros as IEnumerable<CategoryResponseDto>;
+}
+<!-- Header -->
+<div class="topbar">
+</div>
+<div class="page-head">
+    <div>
+        <h1 class="page-title">@ViewData["Title"]</h1>
+        <p class="page-subtitle">cargar gastos desde un arvhivo.</p>
+    </div>
+</div>
+<div>
+    <div class="d-flex gap-2 flex-wrap">
+        <button class="btn btn-success-soft" onclick="abrirModalCrearImportar()"><i class=" bi bi-plus-lg me-2" id="btnNuevoGasto"></i>Nuevo</button>
+    </div>
+</div>
+
+<!-- Modal de Creación -->
+<div class="modal fade" id="modalCrearImportar" tabindex="-1">
+    <div class="modal-dialog modal-xl erp-modal">
+        <div class="modal-content border-0 shadow-lg">
+
+            <!-- Header -->
+            <div class="erp-modal-header">
+                <h5 class="erp-modal-title">
+                    <i class="bi bi-plus-lg me-2"></i>Importar
+                </h5>
+                <button type="button"
+                        class="erp-modal-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <!-- Formulario -->
+            <form action="@Url.Action("CreateImport")" method="post">
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label for="fileInput" class="form-label">Seleccionar archivo Excel</label>
+                        <input class="form-control" type="file" id="fileInput" accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped" id="previewTable">
+                            <thead id="previewHead"></thead>
+                            <tbody id="previewBody"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button"
+                                class="btn btn-soft btn-pill"
+                                data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+                        <button type="submit"
+                                class="btn btn-primary btn-pill" id="submitBtn" disabled>
+                            <i class="bi bi-check-circle me-1"></i>Confirmar
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function abrirModalCrearImportar() {
+        // limpiar vista previa y estado
+        const fileInput = document.getElementById('fileInput');
+        const previewHead = document.getElementById('previewHead');
+        const previewBody = document.getElementById('previewBody');
+        const submitBtn = document.getElementById('submitBtn');
+        if (fileInput) fileInput.value = '';
+        if (previewHead) previewHead.innerHTML = '';
+        if (previewBody) previewBody.innerHTML = '';
+        if (submitBtn) submitBtn.disabled = true;
+
+        const modal = new bootstrap.Modal(document.getElementById('modalCrearImportar'));
+        modal.show();
+    }
+</script>
+
+<!-- Dependencias para parseo: PapaParse para CSV y SheetJS para Excel -->
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<script>
+    (function () {
+        const fileInput = document.getElementById('fileInput');
+        const previewHead = document.getElementById('previewHead');
+        const previewBody = document.getElementById('previewBody');
+        const submitBtn = document.getElementById('submitBtn');
+
+        const rubrosList = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(categories ?? Enumerable.Empty<CategoryResponseDto>()));
+        const cuentasList = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(accounts ?? Enumerable.Empty<CuentaResponseDto>()));
+
+        function stripDiacritics(s) {
+            return s ? s.normalize('NFD').replace(/\p{Diacritic}/gu, '') : s;
+        }
+
+        function normalizeHeader(s) {
+            return stripDiacritics((s || '').toString()).trim().toLowerCase();
+        }
+
+        function findIndex(headers, predicate) {
+            for (let i = 0; i < headers.length; i++) {
+                if (predicate(normalizeHeader(headers[i]), headers[i])) return i;
+            }
+            return -1;
+        }
+
+        function buildTable(data) {
+            previewHead.innerHTML = '';
+            previewBody.innerHTML = '';
+            if (!data || !data.length) return;
+
+            const headers = data[0].map(h => h || '');
+
+            // localizar índices de columnas relevantes
+            const idxFecha = findIndex(headers, (n) => n.includes('fecha') && n.includes('liquid'));
+            const idxTipo = findIndex(headers, (n) => n.includes('tipo') && n.includes('oper'));
+            const idxMonto = findIndex(headers, (n) => n.includes('monto') && n.includes('neto'));
+
+            // crear cabecera
+            const theadRow = document.createElement('tr');
+            ['Fecha', 'Rubro', 'Cuenta', 'Note', 'Monto'].forEach(h => {
+                const th = document.createElement('th');
+                th.textContent = h;
+                theadRow.appendChild(th);
+            });
+            previewHead.appendChild(theadRow);
+
+            if (idxFecha === -1 || idxMonto === -1) {
+                alert('No se encontraron las columnas obligatorias en el archivo (FECHA DE LIQUIDACIÓN DEL DINERO / MONTO NETO DE LA OPERACIÓN).');
+                return;
+            }
+
+            for (let r = 1; r < data.length; r++) {
+                const row = data[r];
+                if (!row || row.length === 0) continue;
+
+                const tipoVal = (idxTipo >= 0 ? (row[idxTipo] || '').toString().trim().toLowerCase() : '');
+                const fechaVal = (row[idxFecha] || '').toString().trim();
+                let montoVal = (row[idxMonto] || '').toString().trim();
+                
+                // Parsing robusto del monto: detectar separador decimal y de miles
+                // Lógica: si hay coma después del último punto, punto=miles y coma=decimal
+                // Si hay punto después de la última coma, coma=miles y punto=decimal
+                const lastDot = montoVal.lastIndexOf('.');
+                const lastComma = montoVal.lastIndexOf(',');
+                
+                if (lastComma > lastDot) {
+                    // Formato: 1.234,56 (punto=miles, coma=decimal)
+                    montoVal = montoVal.replace(/\./g, '').replace(',', '.');
+                } else if (lastDot > lastComma) {
+                    // Formato: 1,234.56 (coma=miles, punto=decimal)
+                    montoVal = montoVal.replace(/,/g, '');
+                } else if (lastDot > -1) {
+                    // Solo puntos: asumir decimal
+                    montoVal = montoVal.replace(/\./g, '');
+                } else if (lastComma > -1) {
+                    // Solo comas: asumir decimal
+                    montoVal = montoVal.replace(',', '.');
+                }
+                
+                const montoNum = parseFloat(montoVal) || 0;
+
+                if (!fechaVal) continue; // fecha obligatorio
+                if (idxTipo >= 0 && tipoVal !== 'pago aprobado') continue; // filtrar por tipo
+                if (montoNum > 0) continue; // filtrar positivos: solo negativos
+
+                const tr = document.createElement('tr');
+
+                // Fecha -> input date (editable)
+                const tdFecha = document.createElement('td');
+                const inputFecha = document.createElement('input');
+                inputFecha.type = 'date';
+                const parsed = new Date(fechaVal);
+                if (!isNaN(parsed)) {
+                    const yyyy = parsed.getFullYear();
+                    const mm = String(parsed.getMonth() + 1).padStart(2, '0');
+                    const dd = String(parsed.getDate()).padStart(2, '0');
+                    inputFecha.value = `${yyyy}-${mm}-${dd}`;
+                } else {
+                    inputFecha.value = '';
+                }
+                inputFecha.className = 'form-control form-control-sm';
+                tdFecha.appendChild(inputFecha);
+                tr.appendChild(tdFecha);
+
+                // Rubro -> select
+                const tdRubro = document.createElement('td');
+                tdRubro.style.minWidth = '200px';
+                const selectRubro = document.createElement('select');
+                selectRubro.className = 'form-select form-select-sm';
+                selectRubro.style.minWidth = '100%';
+                selectRubro.required = true;
+                const optEmpty = document.createElement('option');
+                optEmpty.value = '';
+                optEmpty.textContent = '-- seleccionar --';
+                selectRubro.appendChild(optEmpty);
+                rubrosList.forEach(r => {
+                    const opt = document.createElement('option');
+                    opt.value = r.id ?? r.Id ?? r.RubroTypeId ?? r.rubroTypeId ?? '';
+                    opt.textContent = r.nombreRubro || r.nombre || r.name || r.Nombre || r.nombreCategoria || '';
+                    selectRubro.appendChild(opt);
+                });
+                tdRubro.appendChild(selectRubro);
+                tr.appendChild(tdRubro);
+
+                // Cuenta -> select
+                const tdCuenta = document.createElement('td');
+                tdCuenta.style.minWidth = '200px';
+                const selectCuenta = document.createElement('select');
+                selectCuenta.className = 'form-select form-select-sm';
+                selectCuenta.style.minWidth = '100%';
+                selectCuenta.required = true;
+                const optEmptyC = document.createElement('option');
+                optEmptyC.value = '';
+                optEmptyC.textContent = '-- seleccionar --';
+                selectCuenta.appendChild(optEmptyC);
+                cuentasList.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.id ?? c.Id ?? c.cuentaId ?? c.IdCuenta ?? '';
+                    opt.textContent = c.nombreCuenta || c.nombre || c.name || c.Nombre || '';
+                    selectCuenta.appendChild(opt);
+                });
+                tdCuenta.appendChild(selectCuenta);
+                tr.appendChild(tdCuenta);
+
+                // listeners para validación en vivo
+                selectRubro.addEventListener('change', validateRows);
+                selectCuenta.addEventListener('change', validateRows);
+
+                // Note -> input text (opcional)
+                const tdNote = document.createElement('td');
+                tdNote.style.minWidth = '180px';
+                const inputNote = document.createElement('input');
+                inputNote.type = 'text';
+                inputNote.className = 'form-control form-control-sm';
+                inputNote.style.minWidth = '100%';
+                inputNote.value = '';
+                tdNote.appendChild(inputNote);
+                tr.appendChild(tdNote);
+
+                // Monto -> precargar (como absoluto si es negativo)
+                const tdMonto = document.createElement('td');
+                const inputMonto = document.createElement('input');
+                inputMonto.type = 'number';
+                inputMonto.step = '0.01';
+                inputMonto.className = 'form-control form-control-sm';
+                const montoAbsoluto = Math.abs(montoNum);
+                inputMonto.value = montoAbsoluto.toFixed(2);
+                tdMonto.appendChild(inputMonto);
+                tr.appendChild(tdMonto);
+
+                previewBody.appendChild(tr);
+            }
+
+            // validar filas para habilitar botón solo si todas tienen rubro y cuenta
+            validateRows();
+        }
+
+        function handleCSV(file) {
+            Papa.parse(file, {
+                complete: function (results) {
+                    buildTable(results.data);
+                },
+                error: function (err) {
+                    alert('Error al parsear CSV: ' + err.message);
+                }
+            });
+        }
+
+        function handleExcel(file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                buildTable(json);
+            };
+            reader.onerror = function () {
+                alert('Error al leer archivo Excel');
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+
+        function validateRows() {
+            const rows = previewBody.querySelectorAll('tr');
+            if (!rows || rows.length === 0) {
+                submitBtn.disabled = true;
+                return false;
+            }
+            for (let i = 0; i < rows.length; i++) {
+                const selR = rows[i].querySelector('select');
+                const selC = rows[i].querySelectorAll('select')[1];
+                if (!selR || !selC) {
+                    submitBtn.disabled = true;
+                    return false;
+                }
+                if (!selR.value || !selC.value) {
+                    submitBtn.disabled = true;
+                    return false;
+                }
+            }
+            submitBtn.disabled = false;
+            return true;
+        }
+
+        function buildPayload() {
+            const rows = previewBody.querySelectorAll('tr');
+            const items = [];
+            rows.forEach(row => {
+                const fechaInput = row.querySelector('input[type="date"]');
+                const selectRubro = row.querySelectorAll('select')[0];
+                const selectCuenta = row.querySelectorAll('select')[1];
+                const noteInput = row.querySelector('input[type="text"]');
+                const montoInput = row.querySelector('input[type="number"]');
+
+                if (!selectRubro || !selectCuenta) return;
+
+                items.push({
+                    RubroTypeId: parseInt(selectRubro.value, 10) || 0,
+                    CuentaId: parseInt(selectCuenta.value, 10) || 0,
+                    Fecha: fechaInput ? fechaInput.value : null,
+                    Nota: noteInput ? noteInput.value : null,
+                    Monto: montoInput ? parseFloat(montoInput.value) || 0 : 0,
+                    ForceNegativeBalance: false
+                });
+            });
+            return items;
+        }
+
+        // prevenir envío si hay filas inválidas
+        const form = document.querySelector('#modalCrearImportar form');
+        if (form) {
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                if (!validateRows()) {
+                    alert('Complete Rubro y Cuenta en todas las filas antes de confirmar.');
+                    return;
+                }
+
+                const payload = buildPayload();
+                if (!payload.length) {
+                    alert('No hay datos para enviar.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(errorText || 'Error en la petición');
+                    }
+
+                    const result = await response.json();
+                    if (result.success) {
+                        const failedItems = (result.items || []).filter(item => item.success === false);
+                        if (failedItems.length) {
+                            const saldoMessages = failedItems
+                                .map(item => item.result?.CreateGastoResult?.Message || item.result?.message)
+                                .filter(Boolean);
+                            const message = saldoMessages.length
+                                ? 'Algunos registros no se importaron: ' + saldoMessages[0]
+                                : 'Uno o más registros no se importaron. Revise los datos y vuelva a intentar.';
+                            alert(message);
+                            return;
+                        }
+                        alert('Importación completada correctamente.');
+                        window.location.reload();
+                    } else {
+                        alert(result.message || 'Hubo un error al importar los registros.');
+                    }
+                } catch (ex) {
+                    console.error(ex);
+                    alert('Error al enviar los datos: ' + ex.message);
+                }
+            });
+        }
+
+        if (fileInput) {
+            fileInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const name = file.name.toLowerCase();
+                if (name.endsWith('.csv')) {
+                    handleCSV(file);
+                } else if (name.endsWith('.xls') || name.endsWith('.xlsx')) {
+                    handleExcel(file);
+                } else {
+                    alert('Formato no soportado. Use CSV o Excel.');
+                }
+            });
+        }
+    })();
+</script>

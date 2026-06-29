@@ -45,5 +45,11 @@ namespace PresupuestoMVC.Services
             var totalAccounts = await _accountRepository.GetAccountsCountAsync(companyId);
             return totalAccounts;
         }
+
+        public async Task<CuentaResponseDto> GetAccountByIdAsync(int companyId, int cuentaId)
+        {
+            var accounts = await _accountRepository.GetAllAccountAsync(companyId);
+            return accounts.FirstOrDefault(a => a.Id == cuentaId);
+        }
     }
 }

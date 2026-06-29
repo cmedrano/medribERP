@@ -6,6 +6,7 @@ using PresupuestoMVC.Models.ViewModels;
 using PresupuestoMVC.Repository.Interfaces;
 using PresupuestoMVC.Services.Interfaces;
 using System.ComponentModel.Design;
+using System.Threading.Tasks;
 
 namespace PresupuestoMVC.Services
 {
@@ -39,6 +40,12 @@ namespace PresupuestoMVC.Services
         {
             var totalCategories = await _categoryRepository.GetCategoriesCountAsync(companyId);
             return totalCategories;
+        }
+
+        public async Task<CategoryResponseDto> GetCategoryByIdAsync(int companyId, int rubroId)
+        {
+            var categories = await _categoryRepository.GetAllCategoriesAsync(companyId);
+            return categories.FirstOrDefault(c => c.Id == rubroId);
         }
     }
 }
