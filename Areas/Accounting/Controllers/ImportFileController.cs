@@ -11,13 +11,13 @@ using System.Security.Claims;
 namespace PresupuestoMVC.Areas.Accounting.Controllers
 {
     [Area("Accounting")]
-    public class ImportFile : Controller
+    public class ImportFileController : Controller
     {
         private readonly IAccountService _accountService;
         private readonly ICategoryService _categoryService;
         private readonly IGastoService _gastoService;
 
-        public ImportFile(IAccountService accountService, ICategoryService categoryService, IGastoService gastoService)
+        public ImportFileController(IAccountService accountService, ICategoryService categoryService, IGastoService gastoService)
         {
             _accountService = accountService;
             _categoryService = categoryService;
@@ -74,17 +74,12 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                 }
 
                 // Si todas las validaciones pasaron, proceder con inserciones
-                var responseList = new List<object>();
-
-                foreach (var item in items)
+                var results = await _gastoService.CreateBatchAsync(items);
+                var responseList = results.Select(result => new
                 {
-                    var result = await _gastoService.CreateAsync(item);
-                    responseList.Add(new
-                    {
-                        success = true,
-                        result = result
-                    });
-                }
+                    success = result.CreateGastoResult?.ConfirmationRequired != true,
+                    result
+                }).ToList();
 
                 return Json(new { success = true, items = responseList });
             }
@@ -100,8 +95,8 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
             if (account == null)
                 return ValidationResult.Failure("Una de las cuentas no existe.");
 
-            if (account.SaldoActual < item.Monto && !item.ForceNegativeBalance)
-                return ValidationResult.Failure("Una de las cuentas no tiene saldo suficiente.");
+            //if (account.SaldoActual < item.Monto && !item.ForceNegativeBalance)
+            //    return ValidationResult.Failure("Una de las cuentas no tiene saldo suficiente.");
 
             var category = await _categoryService.GetCategoryByIdAsync(item.CompanyId, item.RubroTypeId);
             if (category == null)
