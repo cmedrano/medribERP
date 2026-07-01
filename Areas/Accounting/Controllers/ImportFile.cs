@@ -100,8 +100,8 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
             if (account == null)
                 return ValidationResult.Failure("Una de las cuentas no existe.");
 
-            if (account.SaldoActual < item.Monto && !item.ForceNegativeBalance)
-                return ValidationResult.Failure("Una de las cuentas no tiene saldo suficiente.");
+            //if (account.SaldoActual < item.Monto && !item.ForceNegativeBalance)
+            //    return ValidationResult.Failure("Una de las cuentas no tiene saldo suficiente.");
 
             var category = await _categoryService.GetCategoryByIdAsync(item.CompanyId, item.RubroTypeId);
             if (category == null)
