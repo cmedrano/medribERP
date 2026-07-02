@@ -47,6 +47,12 @@ namespace PresupuestoMVC.Data
                 .HasForeignKey(r => r.RubroPadreId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Budget>()
+                .HasOne(b => b.Company)
+                .WithMany()
+                .HasForeignKey(b => b.CompanyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<Income>()
                 .HasOne(t => t.FromAccount)
                 .WithMany()

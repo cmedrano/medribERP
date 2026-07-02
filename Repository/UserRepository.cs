@@ -12,6 +12,7 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text;
 using PresupuestoMVC.Helpers;
+using System.Reflection;
 
 namespace PresupuestoMVC.Repository
 {
@@ -41,23 +42,51 @@ namespace PresupuestoMVC.Repository
 
         public async Task<UserResponseDTO> CreateUserAsync(User userDto)
         {
-            var userExiste = await _context.Users
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                var userExiste = await _context.Users
                 .AnyAsync(u => u.UserName == userDto.UserName || u.UserEmail == userDto.UserEmail);
 
-            if (userExiste)
-                throw new InvalidOperationException("El nombre de usuario o correo electrónico ya está en uso.");
+                if (userExiste)
+                    throw new InvalidOperationException("El nombre de usuario o correo electrónico ya está en uso.");
 
-            _context.Users.Add(userDto);
-            await _context.SaveChangesAsync();
-            var createdUser = await _context.Users
-                .FirstOrDefaultAsync(u => u.UserName == userDto.UserName);
+                _context.Users.Add(userDto);
+                await _context.SaveChangesAsync();
+                var createdUser = await _context.Users
+                    .FirstOrDefaultAsync(u => u.UserName == userDto.UserName);
 
-            return new UserResponseDTO
+                if (userDto.Role == UserRol.Administrador)
+                {
+                    int count = 1;
+                    while (count <= 3)
+                    {
+                        var areaDto = new AreasPerUser()
+                        {
+                            UserId = createdUser.Id,
+                            ModuleId = count
+                        };
+                        _context.AreasPerUser.Add(areaDto);
+                        count++;
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return new UserResponseDTO
+                {
+                    UserName = createdUser.UserName,
+                    UserEmail = createdUser.UserEmail,
+                    Created = createdUser.CreateDate
+                };
+            }
+            catch(Exception ex)
             {
-                UserName = createdUser.UserName,
-                UserEmail = createdUser.UserEmail,
-                Created = createdUser.CreateDate
-            };
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
         public async Task<bool> ResetPassword(string email, int userId, string randomPassword)
         {
