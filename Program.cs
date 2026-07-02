@@ -27,6 +27,9 @@ namespace PresupuestoMVC
             // Razor Runtime Compilation
             builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
+            // Habilitar sesión para que TempData conserve mensajes entre redirecciones
+            builder.Services.AddSession();
+
             // Agregar servicios de localización
             builder.Services.AddLocalization(options =>
             {
@@ -159,6 +162,7 @@ namespace PresupuestoMVC
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
+            app.UseSession();
             app.UseRequestLocalization(localizationOptions);
             app.UseAuthentication();
             app.UseAuthorization();

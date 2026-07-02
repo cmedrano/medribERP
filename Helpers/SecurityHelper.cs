@@ -31,6 +31,35 @@ namespace PresupuestoMVC.Helpers
             // o usar una alternativa más simple
             return Convert.ToBase64String(salt) + ":" + Convert.ToBase64String(hash);
         }
+
+        public static bool VerifyPassword(string password, string storedHash)
+        {
+            try
+            {
+                var parts = storedHash.Split(':');
+                if (parts.Length != 2)
+                    return false;
+
+                byte[] salt = Convert.FromBase64String(parts[0]);
+                byte[] storedHashBytes = Convert.FromBase64String(parts[1]);
+
+                var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password))
+                {
+                    Salt = salt,
+                    DegreeOfParallelism = 2,
+                    MemorySize = 32768,
+                    Iterations = 3
+                };
+
+                byte[] computedHash = argon2.GetBytes(32);
+
+                return CryptographicOperations.FixedTimeEquals(computedHash, storedHashBytes);
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 
 }

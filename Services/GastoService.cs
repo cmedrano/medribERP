@@ -44,6 +44,109 @@ namespace PresupuestoMVC.Services
             return _mapper.Map<IEnumerable<GastoResponseDto>>(gasto);
         }
 
+        public async Task<GastoResponseDto> CreateGastoAsync(CreateGastoViewRequest createDto)
+        {
+            if (createDto == null)
+                throw new Exception($"El gasto no puede ser nulo." + nameof(createDto));
+
+            var existeRubro = await _context.RubroType.AnyAsync(r => r.Id == createDto.RubroTypeId);
+            if (!existeRubro)
+                throw new Exception($"Rubro con ID {createDto.RubroTypeId} no existe.");
+
+            var existeCuenta = await _context.Cuentas.AnyAsync(c => c.Id == createDto.CuentaId);
+            if (!existeCuenta)
+                throw new Exception($"Cuenta con ID {createDto.CuentaId} no existe.");
+
+            createDto.CreateDate = DateTime.UtcNow;
+            var cuenta = await _context.Cuentas
+                .FirstOrDefaultAsync(c => c.Id == createDto.CuentaId);
+
+            if (cuenta == null)
+                throw new Exception("Cuenta no encontrada");
+
+            //if (cuenta.SaldoActual < createDto.Monto && !createDto.ForceNegativeBalance)
+            //{
+            //    return new GastoResponseDto
+            //    {
+            //        CreateGastoResult = new CreateGastoResult
+            //        {
+            //            ConfirmationRequired = true,
+            //            Message = "La cuenta no tiene saldo suficiente. ¿Desea continuar igualmente?"
+            //        }
+            //    };
+            //}
+
+            var gasto = _mapper.Map<Gasto>(createDto);
+
+            _context.Gastos.Add(gasto);
+
+            cuenta.SaldoActual -= createDto.Monto;
+
+            var fecha = createDto.Fecha;
+            int mes = fecha.Month;
+            int anio = fecha.Year;
+
+            var rubro = await _context.Budget.FirstOrDefaultAsync(r =>
+                r.RubroTypeId == createDto.RubroTypeId &&
+                r.Mes == mes &&
+                r.Anio == anio
+            );
+
+            if (rubro == null)
+                throw new Exception("No existe un rubro para el mes/año del gasto");
+
+            rubro.ValorGastado += createDto.Monto;
+
+            await _context.SaveChangesAsync();
+
+            var result = await _context.Gastos
+                .Include(g => g.RubroType)
+                .Include(g => g.Cuenta)
+                .FirstOrDefaultAsync(g => g.Id == gasto.Id);
+
+            var response = _mapper.Map<GastoResponseDto>(result);
+
+            response.CreateGastoResult = new CreateGastoResult
+            {
+                ConfirmationRequired = false
+            };
+
+            return response;
+        }
+
+        public async Task<List<GastoResponseDto>> CreateBatchAsync(List<CreateGastoViewRequest> createDtos)
+        {
+            if (createDtos == null || createDtos.Count == 0)
+                throw new Exception("La lista de gastos no puede ser nula o vacía.");
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                var results = new List<GastoResponseDto>();
+
+                foreach (var item in createDtos)
+                {
+                    var result = await CreateGastoAsync(item);
+                    results.Add(result);
+
+                    if (result.CreateGastoResult?.ConfirmationRequired == true)
+                    {
+                        await transaction.RollbackAsync();
+                        return results;
+                    }
+                }
+
+                await transaction.CommitAsync();
+                return results;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
+
         public async Task<GastoResponseDto> CreateAsync(CreateGastoViewRequest createDto)
         {
             if (createDto == null)
@@ -75,7 +178,7 @@ namespace PresupuestoMVC.Services
                         CreateGastoResult = new CreateGastoResult() { ConfirmationRequired = true, Message = "La cuenta no tiene saldo suficiente. ¿Desea continuar igualmente?" }
                     };
                 }
-                
+
                 var gasto = _mapper.Map<Gasto>(createDto);
 
                 _context.Gastos.Add(gasto);
@@ -120,7 +223,6 @@ namespace PresupuestoMVC.Services
                 throw;
             }
         }
-
         public async Task<GastoResponseDto> UpdateAsync(UpdateGastoViewRequest updateDto)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
