@@ -10,5 +10,6 @@ namespace PresupuestoMVC.Services
         Task RevokeRefreshTokenAsync(string token);
         Task<RefreshTokenResponseDto> RefreshTokenAsync(RefreshViewRequest request);
         Task<RegisterResponseDto> RegisterAsync(RegisterViewRequest registerRequest);
+        Task<User> GetByEmailAsync(RecoverViewModel viewModel);
     }
 }
