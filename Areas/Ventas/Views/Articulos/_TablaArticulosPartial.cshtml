@@ -19,6 +19,9 @@
                         <th class="py-3">CODIGO</th>
                         <th class="py-3">NOMBRE</th>
                         <th class="py-3">UNIDAD DE MEDIDA</th>
+                        <th class="py-3">PRECIO DE VENTA</th>
+                        <th class="py-3">PRECIO DE COMPRA</th>
+                        <th class="py-3">ACTIVO</th>
                         <th class="py-3 text-end">ACCIONES</th>
                     </tr>
                 </thead>
@@ -37,9 +40,25 @@
                                     </div>
                                 </td> *@
                                 <td><span class="badge-soft badge-cuenta">@(item.Codigo ?? "-")</span></td>
-                                <td class="py-4">@(item.Nombre ?? "-")</td>
+                                <td class="py-3">@(item.Nombre ?? "-")</td>
                                 <td><span class="badge-soft badge-rubro">@(item.UnidadMedida ?? "-")</span></td>
-                                <td class="pe-4 py-4 text-end">
+                                <td><span class="py-3">@(item.SalePrice?.ToString() ?? "-")</span> $</td>
+                                <td><span class="py-3">@(item.PurchasePrice?.ToString() ?? "-")</span> $</td>
+                                <td>
+                                    @if (item.Activo)
+                                    {
+                                        <span class="badge-soft badge-success">
+                                            <i class="bi bi-circle-fill text-success"></i>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge-soft badge-danger">
+                                            <i class="bi bi-circle-fill text-secondary"></i>
+                                        </span>
+                                    }
+                                </td>
+                                <td class="pe-3 py-3 text-end">
                                     <button type="button"
                                             class="icon-btn"
                                             title="Ver"

@@ -7,10 +7,16 @@
 <main class="flex-grow-1 container-main">
     <!-- Header -->
     <div class="topbar">
-        <div class="searchbox">
-            <i class="bi bi-search"></i>
-            <input class="form-control" type="text" placeholder="Buscar lista..." />
-        </div>
+        <form method="get" asp-action="Index" class="searchbox">
+            <div>
+                <i class="bi bi-search"></i>
+                <input class="form-control"
+                       type="text"
+                       name="searchNombre"
+                       value="@ViewData["SearchNombre"]"
+                       placeholder="Buscar lista..." />
+            </div>
+        </form>
         <div class="d-flex gap-2 flex-wrap">
             <button class="btn btn-success-soft" onclick="abrirModalLista(true)"><i class=" bi bi-plus-lg me-2" id="btnNuevoGasto"></i>Nueva lista</button>
         </div>
@@ -26,30 +32,23 @@
     <div class="row g-3 mb-4">
         <div class="col-md-6 col-xl-3">
             <div class="erp-card metric-card">
-                <div class="metric-icon"><i class="bi bi-journal-text"></i></div>
-                <div class="metric-label">Listas agregadas este mes</div>
-                <div class="metric-value">3</div>
+                <div class="metric-icon"><i class="bi bi-currency-dollar"></i></div>
+                <div class="metric-label">Cantidad total de lista de precios</div>
+                <div class="metric-value">@Model.Count()</div>
             </div>
         </div>
         <div class="col-md-6 col-xl-3">
             <div class="erp-card metric-card">
-                <div class="metric-icon"><i class="bi bi-cash-stack"></i></div>
-                <div class="metric-label">Total de listas</div>
-                <div class="metric-value">21</div>
+                <div class="metric-icon"><i class="bi bi-toggle-on"></i></div>
+                <div class="metric-label">Lista de precios activos</div>
+                <div class="metric-value">@Model.Count(x => x.Activo)</div>
             </div>
         </div>
         <div class="col-md-6 col-xl-3">
             <div class="erp-card metric-card">
-                <div class="metric-icon"><i class="bi bi-credit-card-2-front"></i></div>
-                <div class="metric-label">Lista principal</div>
-                <div class="metric-value">Minorista</div>
-            </div>
-        </div>
-        <div class="col-md-6 col-xl-3">
-            <div class="erp-card metric-card">
-                <div class="metric-icon"><i class="bi bi-tags"></i></div>
-                <div class="metric-label">Lista menos utilizada</div>
-                <div class="metric-value">Distribuidor</div>
+                <div class="metric-icon"><i class="bi bi-toggle-off"></i></div>
+                <div class="metric-label">Lista de precios no activos</div>
+                <div class="metric-value">@Model.Count(x => !x.Activo)</div>
             </div>
         </div>
     </div>
@@ -71,6 +70,7 @@
                        <th class="form-label small">NOMBRE</th>
                        <th class="form-label small">DESCRIPCIÓN</th>
                         <th class="form-label small" >FECHA CREACIÓN</th>
+                        <th class="form-label small">ACTIVO</th>
                         <th class="form-label small text-end">ACCIONES</th>
                     </tr>
                 </thead>
@@ -83,6 +83,20 @@
                                 <td><span class="badge-soft badge-cuenta">@item.Nombre</span></td>
                                 <td class="fw-semibold">@item.Descripcion</td>
                                 <td><span class="date-pill"><i class="bi bi-calendar3"></i>@item.CreatedAt.ToShortDateString()</span></td>
+                                <td>
+                                    @if (item.Activo)
+                                    {
+                                        <span class="badge-soft badge-success">
+                                            <i class="bi bi-circle-fill text-success"></i>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge-soft badge-danger">
+                                            <i class="bi bi-circle-fill text-secondary"></i>
+                                        </span>
+                                    }
+                                </td>
                                 <td class="text-end">
                                 <button type="button"
                                         class="icon-btn"

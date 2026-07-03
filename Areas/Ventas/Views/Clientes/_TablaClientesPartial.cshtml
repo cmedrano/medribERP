@@ -20,6 +20,7 @@
                         <th class="py-3">TELÉFONO</th>
                         <th class="py-3">EMAIL</th>
                         <th class="py-3">CATEGORÍA</th>
+                        <th class="py-3">ACTIVO</th>
                         <th class="pe-4 py-3 text-end">ACCIONES</th>
                     </tr>
                 </thead>
@@ -51,6 +52,20 @@
                                     else
                                     {
                                         <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.Activo)
+                                    {
+                                        <span class="badge-soft badge-success">
+                                            <i class="bi bi-circle-fill text-success"></i>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge-soft badge-danger">
+                                            <i class="bi bi-circle-fill text-secondary"></i>
+                                        </span>
                                     }
                                 </td>
                                 <td class="pe-4 py-4 text-end">
