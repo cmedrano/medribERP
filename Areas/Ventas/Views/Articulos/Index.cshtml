@@ -18,10 +18,16 @@
 <main class="flex-grow-1 container-main">
     <!-- Header -->
     <div class="topbar">
-        <div class="searchbox">
-            <i class="bi bi-search"></i>
-            <input class="form-control" type="text" placeholder="Buscar codigo ó articulo..." />
-        </div>
+        <form method="get" asp-action="Index" class="searchbox">
+            <div>
+                <i class="bi bi-search"></i>
+                <input class="form-control"
+                       type="text"
+                       name="searchArticulo"
+                       value="@ViewData["SearchArticulo"]"
+                       placeholder="Buscar articulo..." />
+            </div>
+        </form>
         <div class="d-flex gap-2 flex-wrap">
             <button type="button" class="btn btn-success-soft"
                     onclick="abrirModalArticulo(true)">

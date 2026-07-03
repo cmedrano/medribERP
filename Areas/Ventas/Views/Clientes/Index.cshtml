@@ -19,10 +19,16 @@
 <!-- Header -->
 <main class="flex-grow-1 container-main">
     <div class="topbar">
-        <div class="searchbox">
-            <i class="bi bi-search"></i>
-            <input class="form-control" type="text" placeholder="Buscar cleinte ó alias..." />
-        </div>
+        <form method="get" asp-action="Index" class="searchbox">
+            <div>
+                <i class="bi bi-search"></i>
+                <input class="form-control"
+                       type="text"
+                       name="searchCliente"
+                       value="@ViewData["SearchCliente"]"
+                       placeholder="Buscar cleinte..." />
+            </div>
+        </form>
         <div class="d-flex gap-2 flex-wrap">
             <button type="button" class="btn btn-success-soft"
                     onclick="abrirModalCliente(true)">

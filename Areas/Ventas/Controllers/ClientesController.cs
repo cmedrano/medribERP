@@ -29,7 +29,7 @@ namespace PresupuestoMVC.Controllers
             _provinciaService = provinciaService;
         }
 
-        public async Task<IActionResult> Index(int page = 1, string? searchNombre = null, string? searchFantasia = null)
+        public async Task<IActionResult> Index(int page = 1, string? searchNombre = null, string? searchFantasia = null, string? searchCliente = null)
         {
             try
             {
@@ -50,6 +50,17 @@ namespace PresupuestoMVC.Controllers
                 var provincia = await _provinciaService.ObtenerTodasAsync();
                 ViewBag.PriceList = priceList;
                 ViewBag.Provincia = provincia;
+
+                if (!string.IsNullOrWhiteSpace(searchCliente))
+                {
+                    var filtered = resultado.Datos
+                        .Where(x => x.Nombre.Contains(searchCliente, StringComparison.OrdinalIgnoreCase))
+                        .ToList();
+
+                    resultado.Datos = filtered;
+                }
+
+                ViewData["SearchCliente"] = searchCliente ?? "";
                 ViewData["CurrentPage"] = page;
                 ViewData["PageSize"] = PageSize;
                 ViewData["SearchNombre"] = searchNombre ?? "";

@@ -213,7 +213,7 @@
 </div>
 
 <script>
-    function abrirModalLista(
+   function abrirModalLista(
         crear,
         id,
         nombre,
@@ -259,6 +259,7 @@
         const modal = new bootstrap.Modal(document.getElementById('modalLista'));
         modal.show();
     }
+
     function abrirModalEliminar(id, nombre) {
         document.getElementById('listaEliminarNombre').innerText = nombre;
         document.getElementById('btnConfirmarEliminar').onclick = function () {
@@ -276,6 +277,7 @@
             form.submit();
         };
     }
+
 </script>
 
 <style>
