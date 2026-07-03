@@ -21,6 +21,7 @@ namespace PresupuestoMVC.Models.DTOs
         public string? CondicionDeVenta { get; set; }
         public bool OperacionesContado { get; set; }
         public bool InhabilitadoFacturar { get; set; }
+        public bool Activo { get; set; }
         public DateTime FechaRegistro { get; set; }
         public int PriceListId { get; set; }
         public string PriceListNombre { get; set; }

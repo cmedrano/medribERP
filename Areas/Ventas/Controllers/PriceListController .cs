@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Models.ViewModels;
 using PresupuestoMVC.Services;
@@ -16,9 +17,17 @@ namespace PresupuestoMVC.Controllers
             _priceListService = priceListService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? searchNombre)
         {
             var model = await _priceListService.GetAllAsync();
+
+            if (!string.IsNullOrWhiteSpace(searchNombre))
+            {
+                model = model.Where(x => x.Nombre.Contains(searchNombre,StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            ViewData["SearchNombre"] = searchNombre;
+
             return View(model);
         }
 
