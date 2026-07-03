@@ -24,7 +24,7 @@ namespace PresupuestoMVC.Repository
             try
             {     
                 return await _context.Articulos
-                    //.Where(a => a.Activo)
+                    .Where(a => a.Activo)
                     .OrderBy(a => a.Nombre)
                     .ToListAsync();
                 }

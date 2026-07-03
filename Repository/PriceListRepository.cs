@@ -23,7 +23,7 @@ namespace PresupuestoMVC.Repositories
         public async Task<List<PriceList>> GetAllAsync()
         {
             var priceListActivos = await _context.PriceList
-                    //.Where(a => a.Activo)
+                    .Where(a => a.Activo)
                     .OrderBy(a => a.Nombre)
                     .ToListAsync();
 

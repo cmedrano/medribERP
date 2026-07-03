@@ -55,6 +55,13 @@
         </div>
         <div class="col-md-6 col-xl-3">
             <div class="erp-card metric-card">
+                <div class="metric-icon"><i class="bi bi-tag"></i></div>
+                <div class="metric-label">Categoria mas popular</div>
+                <div class="metric-value">@categoriaMasPopular?.Key</div>
+            </div>
+        </div>
+        @* <div class="col-md-6 col-xl-3">
+            <div class="erp-card metric-card">
                 <div class="metric-icon"><i class="bi bi-toggle-on"></i></div>
                 <div class="metric-label">Cliente activos</div>
                 <div class="metric-value">@Model.Datos.Count(x => x.Activo)</div>
@@ -66,15 +73,7 @@
                 <div class="metric-label">Cliente no activos</div>
                 <div class="metric-value">@Model.Datos.Count(x => !x.Activo)</div>
             </div>
-        </div>
-
-        <div class="col-md-6 col-xl-3">
-            <div class="erp-card metric-card">
-                <div class="metric-icon"><i class="bi bi-tag"></i></div>
-                <div class="metric-label">Categoria mas popular</div>
-                <div class="metric-value">@categoriaMasPopular?.Key</div>
-            </div>
-        </div>
+        </div> *@
     </div>
 
     <!-- Filtros -->

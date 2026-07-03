@@ -37,7 +37,7 @@
                 <div class="metric-value">@Model.Count()</div>
             </div>
         </div>
-        <div class="col-md-6 col-xl-3">
+        @* <div class="col-md-6 col-xl-3">
             <div class="erp-card metric-card">
                 <div class="metric-icon"><i class="bi bi-toggle-on"></i></div>
                 <div class="metric-label">Lista de precios activos</div>
@@ -50,7 +50,7 @@
                 <div class="metric-label">Lista de precios no activos</div>
                 <div class="metric-value">@Model.Count(x => !x.Activo)</div>
             </div>
-        </div>
+        </div> *@
     </div>
 
     <!-- Tabla -->
@@ -70,7 +70,7 @@
                        <th class="form-label small">NOMBRE</th>
                        <th class="form-label small">DESCRIPCIÓN</th>
                         <th class="form-label small" >FECHA CREACIÓN</th>
-                        <th class="form-label small">ACTIVO</th>
+                        @* <th class="form-label small">ACTIVO</th> *@
                         <th class="form-label small text-end">ACCIONES</th>
                     </tr>
                 </thead>
@@ -83,7 +83,7 @@
                                 <td><span class="badge-soft badge-cuenta">@item.Nombre</span></td>
                                 <td class="fw-semibold">@item.Descripcion</td>
                                 <td><span class="date-pill"><i class="bi bi-calendar3"></i>@item.CreatedAt.ToShortDateString()</span></td>
-                                <td>
+                                @* <td>
                                     @if (item.Activo)
                                     {
                                         <span class="badge-soft badge-success">
@@ -96,7 +96,7 @@
                                             <i class="bi bi-circle-fill text-secondary"></i>
                                         </span>
                                     }
-                                </td>
+                                </td> *@
                                 <td class="text-end">
                                 <button type="button"
                                         class="icon-btn"
