@@ -264,6 +264,12 @@ namespace PresupuestoMVC.Services
             };
         }
 
+        public async Task<User> GetByEmailAsync(RecoverViewModel viewModel)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.UserEmail == viewModel.Email);
+        }
+
         // Método para hashear contraseñas con Argon2 (formato estándar)
         private string HashPassword(string password)
         {

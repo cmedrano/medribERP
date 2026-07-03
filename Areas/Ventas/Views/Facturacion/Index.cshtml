@@ -1,4 +1,6 @@
-﻿@using PresupuestoMVC.Areas.Ventas.ViewModels
+﻿@using System.Text.RegularExpressions
+@using PresupuestoMVC.Areas.Ventas.ViewModels
+@using PresupuestoMVC.Enums
 
 @{
     @model FacturacionViewModel
@@ -96,6 +98,29 @@
                         <label class="label">DNI / CUIT</label>
                         <input id="dniCliente" class="input" type="text" placeholder="Opcional">
                     </div>
+                    <div class="field">
+                        <label class="label">Medios De Pagos</label>
+                        <select class="select">
+                            <option value="">Selecione un Medios De Pagos</option>
+                            @foreach (var medio in Enum.GetValues(typeof(MedioDePago)))
+                            {
+                                <option value="@((int)medio)">
+                                    @Regex.Replace(medio.ToString(), @"(?<!^)([A-Z])", " $1")
+                                </option>
+                            }
+                        </select>
+                    </div>
+                    <div class="d-flex gap-3">
+                        <div class="field flex-grow-1">
+                            <label class="label">Descuento (%)</label>
+                            <input id="descuento" class="input" type="number" min="0" value="0" />
+                        </div>
+
+                        <div class="field flex-grow-1">
+                            <label class="label">Recargo (%)</label>
+                            <input id="recargo" class="input" type="number" min="0" value="0" />
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -181,7 +206,8 @@
             <div class="summary-line"><span>Lista aplicada</span><strong id="resumenLista">Sin seleccionar</strong></div>
             <div class="summary-line"><span>Artículos</span><strong id="resumenArticulos">0</strong></div>
             <div class="summary-line"><span>Subtotal</span><strong id="resumenSubtotal">$ 0</strong></div>
-            @* <div class="summary-line"><span>Descuento (10%)</span><strong id="resumenDescuento">$ 0</strong></div> *@
+            <div class="summary-line"><span>Descuento (%)</span><strong id="resumenDescuento">0 %</strong></div>
+            <div class="summary-line"><span>Recargo (%)</span><strong id="resumenRecargo">0 %</strong></div>
 
             <div class="summary-total">
                 <span>Total</span>
