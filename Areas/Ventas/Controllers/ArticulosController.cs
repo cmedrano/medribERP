@@ -38,7 +38,7 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
             _articulosPreciosService = articulosPreciosService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? searchArticulo)
         {
             try
             {
@@ -49,12 +49,19 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
                 var productCategories = await _productCategoryService.GetAllProductCategoryAsync();
                 var priceList = await _priceListService.GetAllAsync();
 
+                if (!string.IsNullOrWhiteSpace(searchArticulo))
+                {
+                    articulos = articulos.Where(x => x.Nombre.Contains(searchArticulo, StringComparison.OrdinalIgnoreCase)).ToList();
+                }
+
+                ViewData["SearchArticulo"] = searchArticulo;
                 ViewData["TotalArticulos"] = total;
 
                 ViewBag.ProductCategories = productCategories;
                 ViewBag.Brands = brands;
                 ViewBag.Providers = providers;
                 ViewBag.PriceList = priceList;
+
                 return View(articulos);
             }
             catch (Exception ex)
