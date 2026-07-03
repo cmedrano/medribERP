@@ -1,4 +1,6 @@
-﻿namespace PresupuestoMVC.Models.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace PresupuestoMVC.Models.Entities
 {
     public class Budget
     {
@@ -16,5 +18,8 @@
 
         // Navegación
         public RubroType tipoRubro { get; set; }
+
+        [ForeignKey(nameof(CompanyId))]
+        public Company Company { get; set; }
     }
 }

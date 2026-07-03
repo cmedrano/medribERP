@@ -21,7 +21,8 @@ namespace PresupuestoMVC.Data
             CreateMap<Budget, BudgetResponseDTO>()
                     // Mapear el ID del tipo de rubro
                     .ForMember(dest => dest.RubroTypeId, opt => opt.MapFrom(src => src.RubroTypeId))
-                    .ForMember(dest => dest.tipoRubroNombre, opt => opt.MapFrom(src => src.tipoRubro.nombreRubro));
+                    .ForMember(dest => dest.tipoRubroNombre, opt => opt.MapFrom(src => src.tipoRubro != null ? src.tipoRubro.nombreRubro : string.Empty))
+                    .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company != null ? src.Company.CompanyName : string.Empty));
             CreateMap<CreateBudgetViewRequest, Budget>();
             CreateMap<UpdateBudgetViewRequest, Budget>();
 
