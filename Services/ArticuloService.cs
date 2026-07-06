@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using PresupuestoMVC.Areas.Ventas.ViewModels;
 using PresupuestoMVC.Areas.Ventas.ViewModels.DTOs;
+using PresupuestoMVC.Models;
 using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Repository.Interfaces;
 using PresupuestoMVC.Services.Interfaces;
@@ -142,6 +143,10 @@ namespace PresupuestoMVC.Services
             await _articuloRepository.EliminarAsync(id);
 
             return true;
+        }
+        public async Task<PaginatedResult<Articulo>> GetPagedAsync(int pageNumber, int pageSize)
+        {
+            return await _articuloRepository.GetPagedAsync(pageNumber, pageSize);
         }
     }
 }
