@@ -28,6 +28,7 @@ namespace PresupuestoMVC.Services
         {
             var rubro = await _context.Budget
                 .Include(r => r.tipoRubro)
+                .Include(r => r.Company)
                 .FirstOrDefaultAsync(g => g.Id == id);
 
             if (rubro == null)
@@ -38,7 +39,9 @@ namespace PresupuestoMVC.Services
 
         public async Task<IEnumerable<BudgetResponseDTO>> GetAllBudgetAsync()
         {
-            var rubros = await _context.Budget.ToListAsync();
+            var rubros = await _context.Budget
+                .Include(b => b.Company)
+                .ToListAsync();
             return _mapper.Map<IEnumerable<BudgetResponseDTO>>(rubros);
         }
 
@@ -119,6 +122,7 @@ namespace PresupuestoMVC.Services
 
                 var result = await _context.Budget
                     .Include(r => r.tipoRubro)
+                    .Include(r => r.Company)
                     .FirstOrDefaultAsync(r => r.Id == 4);
 
                 return _mapper.Map<BudgetResponseDTO>(result);
@@ -234,12 +238,14 @@ namespace PresupuestoMVC.Services
                 var query = _context.Budget
                     .Where(r => r.CompanyId == companyId)
                     .Include(r => r.tipoRubro)
+                    .Include(r => r.Company)
                     .AsQueryable();
 
                 var padresQuery = _context.Budget
                     .Where(b => b.CompanyId == companyId &&
                                 b.tipoRubro.RubroPadreId == null)
                     .Include(b => b.tipoRubro)
+                    .Include(b => b.Company)
                     .AsQueryable();
 
                 //var cont = await query.CountAsync();
@@ -300,6 +306,7 @@ namespace PresupuestoMVC.Services
 
                 var subRubros = await subRubrosQuery
                     .Include(b => b.tipoRubro)
+                    .Include(b => b.Company)
                     .ToListAsync();
 
                 var grouped = rubros.Select(p => new BudgetGroupedDto
@@ -351,6 +358,36 @@ namespace PresupuestoMVC.Services
                 .Where(b => b.CompanyId == companyId)
                 .CountAsync();
             return totalBudget;
+        }
+
+        public async Task<IEnumerable<BudgetResponseDTO>> SearchBudgetByYearAndMonth(int anio, int mes)
+        {
+            try
+            {
+                var listBudget = await _context.Budget
+                    .Include(b => b.tipoRubro)
+                    .Include(b => b.Company)
+                    .Where(b => b.Anio == anio && b.Mes == mes)
+                    .Select(b => new BudgetResponseDTO
+                    {
+                        Id = b.tipoRubro.Id,
+                        RubroTypeId = b.tipoRubro.Id,
+                        tipoRubroNombre = b.tipoRubro.nombreRubro,
+                        valorInicial = b.valorInicial,
+                        valorGastado = b.ValorGastado,
+                        Mes = b.Mes,
+                        Anio = b.Anio
+                    })
+                    .ToListAsync();
+
+                return listBudget;
+            }
+
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+
         }
     }
 }

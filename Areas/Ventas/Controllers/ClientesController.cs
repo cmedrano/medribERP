@@ -15,7 +15,6 @@ namespace PresupuestoMVC.Controllers
         private readonly ILocalidadService _localidadService;
         private readonly IPriceListService _priceListService;
         private readonly IProvinciaService _provinciaService;
-        private const int PageSize = 10;
 
         public ClientesController(
             IClienteService clienteService,
@@ -29,7 +28,7 @@ namespace PresupuestoMVC.Controllers
             _provinciaService = provinciaService;
         }
 
-        public async Task<IActionResult> Index(int page = 1, string? searchNombre = null, string? searchFantasia = null)
+        public async Task<IActionResult> Index(string? searchNombre = null, string? searchFantasia = null, string? searchCliente = null, int page = 1, int tamañoPagina = 10)
         {
             try
             {
@@ -41,17 +40,29 @@ namespace PresupuestoMVC.Controllers
                     SearchNombre = searchNombre,
                     SearchFantasia = searchFantasia,
                     Pagina = page,
-                    TamanioPagina = PageSize
+                    TamanioPagina = tamañoPagina
                 };
 
-                var resultado = await _clienteService.ObtenerPaginadosAsync(filtro, page, PageSize);
+                var resultado = await _clienteService.ObtenerPaginadosAsync(filtro, page, tamañoPagina);
 
                 var priceList = await _priceListService.GetAllAsync();
                 var provincia = await _provinciaService.ObtenerTodasAsync();
                 ViewBag.PriceList = priceList;
                 ViewBag.Provincia = provincia;
+
+                if (!string.IsNullOrWhiteSpace(searchCliente))
+                {
+                    var filtered = resultado.Datos
+                        .Where(x => x.Nombre.Contains(searchCliente, StringComparison.OrdinalIgnoreCase))
+                        .ToList();
+
+                    resultado.Datos = filtered;
+                }
+
+                ViewData["SearchCliente"] = searchCliente ?? "";
+                ViewBag.Paginacion = resultado;
                 ViewData["CurrentPage"] = page;
-                ViewData["PageSize"] = PageSize;
+                ViewData["PageSize"] = tamañoPagina;
                 ViewData["SearchNombre"] = searchNombre ?? "";
                 ViewData["SearchFantasia"] = searchFantasia ?? "";
 

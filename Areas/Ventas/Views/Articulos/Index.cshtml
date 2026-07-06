@@ -6,17 +6,28 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Artículos";
     var productCategories = ViewBag.ProductCategories as IEnumerable<ProductCategoryResponseDto>;
-    var brands = ViewBag.Brands;
-    var providers = ViewBag.Providers;
+    var brands = ViewBag.Brands as IEnumerable<BrandResponseDto>;
+    var providers = ViewBag.Providers as IEnumerable<ProviderResponseDto>;
     var priceList = ViewBag.PriceList;
+    var marcaMasPopular = Model.GroupBy(x => x.BrendId)
+        .OrderByDescending(g => g.Count())
+        .FirstOrDefault();
+    var nombreMarca = brands?
+        .FirstOrDefault(x => x.Id == marcaMasPopular?.Key)?.Name ?? "Sin marca";
 }
 <main class="flex-grow-1 container-main">
     <!-- Header -->
     <div class="topbar">
-        <div class="searchbox">
-            <i class="bi bi-search"></i>
-            <input class="form-control" type="text" placeholder="Buscar codigo ó articulo..." />
-        </div>
+        <form method="get" asp-action="Index" class="searchbox">
+            <div>
+                <i class="bi bi-search"></i>
+                <input class="form-control"
+                       type="text"
+                       name="searchArticulo"
+                       value="@ViewData["SearchArticulo"]"
+                       placeholder="Buscar articulo..." />
+            </div>
+        </form>
         <div class="d-flex gap-2 flex-wrap">
             <button type="button" class="btn btn-success-soft"
                     onclick="abrirModalArticulo(true)">
@@ -37,29 +48,29 @@
         <div class="col-md-6 col-xl-3">
             <div class="erp-card metric-card">
                 <div class="metric-icon"><i class="bi bi-journal-text"></i></div>
-                <div class="metric-label">Articulos agregados este mes</div>
-                <div class="metric-value">215</div>
+                <div class="metric-label">Cantidad total de articulos</div>
+                <div class="metric-value">@Model.Count()</div>
             </div>
         </div>
         <div class="col-md-6 col-xl-3">
             <div class="erp-card metric-card">
-                <div class="metric-icon"><i class="bi bi-cash-stack"></i></div>
-                <div class="metric-label">Valor total inventario</div>
-                <div class="metric-value">$ 3.945.700</div>
+                <div class="metric-icon"><i class="bi bi-toggle-on"></i></div>
+                <div class="metric-label">Articulos activos</div>
+                <div class="metric-value">@Model.Count(x => x.Activo)</div>
             </div>
         </div>
         <div class="col-md-6 col-xl-3">
             <div class="erp-card metric-card">
-                <div class="metric-icon"><i class="bi bi-credit-card-2-front"></i></div>
-                <div class="metric-label">medida mas utilizada</div>
-                <div class="metric-value">KG</div>
+                <div class="metric-icon"><i class="bi bi-toggle-off"></i></div>
+                <div class="metric-label">Articulos no activos</div>
+                <div class="metric-value">@Model.Count(x => !x.Activo)</div>
             </div>
         </div>
         <div class="col-md-6 col-xl-3">
             <div class="erp-card metric-card">
-                <div class="metric-icon"><i class="bi bi-tags"></i></div>
-                <div class="metric-label">Rubro principal</div>
-                <div class="metric-value">Almacen</div>
+                <div class="metric-icon"><i class="bi bi-star"></i></div>
+                <div class="metric-label">Marca mas popular</div>
+                <div class="metric-value">@nombreMarca</div>
             </div>
         </div>
     </div>

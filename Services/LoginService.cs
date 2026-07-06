@@ -49,7 +49,7 @@ namespace PresupuestoMVC.Services
                     throw new UnauthorizedAccessException("Contraseña incorrecta");
 
                 // Generar token JWT y RefreshToken para el usuario autenticado
-                var token = GenerateJwtToken(user);
+                var token = await GenerateJwtToken(user);
                 var refreshToken = await GenerateRefreshToken(user.Id);
 
                 // Retornar respuesta con el token JWT y información del usuario
@@ -105,7 +105,7 @@ namespace PresupuestoMVC.Services
         }
 
         // Genera el JwtToken para ese Usuario
-        private string GenerateJwtToken(User user)
+        private async Task<string> GenerateJwtToken(User user)
         {
             // Crear manejador de tokens JWT
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -119,13 +119,19 @@ namespace PresupuestoMVC.Services
             .Select(x => x.Module.Name)
             .ToList();
 
+            var companyName = await _context.Companies
+            .Where(c => c.Id == user.CompanyId)
+            .Select(c => c.CompanyName)
+            .FirstOrDefaultAsync();
+
             // Crear lista de claims
             var claims = new List<Claim>
             {
                new Claim(ClaimTypes.Name, user.UserName), // Claim con el nombre de usuario
                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), // Claim con el ID del usuario
                new Claim(ClaimTypes.Role, user.Role.ToString()),
-               new Claim("CompanyId", user.CompanyId.ToString())
+               new Claim("CompanyId", user.CompanyId.ToString()),
+               new Claim("CompanyName", companyName.ToString() ?? string.Empty)
             };
 
             // Agregar módulos
@@ -197,7 +203,7 @@ namespace PresupuestoMVC.Services
             }
 
             // Generar nuevo access token
-            var newAccessToken = GenerateJwtToken(user);
+            var newAccessToken = await GenerateJwtToken(user);
 
             // Generar NUEVO refresh token (rotación - más seguro)
             var newRefreshToken = await GenerateRefreshToken(user.Id);
@@ -256,6 +262,12 @@ namespace PresupuestoMVC.Services
                 UserName = createdUser.UserName,
                 CreatedAt = createdUser.CreateDate
             };
+        }
+
+        public async Task<User> GetByEmailAsync(RecoverViewModel viewModel)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.UserEmail == viewModel.Email);
         }
 
         // Método para hashear contraseñas con Argon2 (formato estándar)

@@ -1,16 +1,30 @@
 ﻿@model IEnumerable<PresupuestoMVC.Models.Entities.PriceList>
+@using PresupuestoMVC.Models
+@using PresupuestoMVC.Models.Entities
+
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Lista de precios";
+    
+    var paginacion = ViewBag.Paginacion as PaginatedResult<PriceList>;
+    int totalPaginas = paginacion.TotalPages;
+    int inicio = Math.Max(1, paginacion.PageNumber - 2);
+    int fin = Math.Min(totalPaginas, paginacion.PageNumber + 2);
 }
 
 <main class="flex-grow-1 container-main">
     <!-- Header -->
     <div class="topbar">
-        <div class="searchbox">
-            <i class="bi bi-search"></i>
-            <input class="form-control" type="text" placeholder="Buscar lista..." />
-        </div>
+        <form method="get" asp-action="Index" class="searchbox">
+            <div>
+                <i class="bi bi-search"></i>
+                <input class="form-control"
+                       type="text"
+                       name="searchNombre"
+                       value="@ViewData["SearchNombre"]"
+                       placeholder="Buscar lista..." />
+            </div>
+        </form>
         <div class="d-flex gap-2 flex-wrap">
             <button class="btn btn-success-soft" onclick="abrirModalLista(true)"><i class=" bi bi-plus-lg me-2" id="btnNuevoGasto"></i>Nueva lista</button>
         </div>
@@ -18,7 +32,7 @@
     <div class="page-head">
         <div>
             <h1 class="page-title">@ViewData["Title"]</h1>
-            <p class="page-subtitle">Gestión de lista de precios.</p>
+            <p class="page-subtitle">Gestión de lista de precios. Mostrando @paginacion.Items.Count() de @paginacion.TotalCount</p>
         </div>
     </div>
 
@@ -26,16 +40,16 @@
     <div class="row g-3 mb-4">
         <div class="col-md-6 col-xl-3">
             <div class="erp-card metric-card">
-                <div class="metric-icon"><i class="bi bi-journal-text"></i></div>
-                <div class="metric-label">Listas agregadas este mes</div>
-                <div class="metric-value">3</div>
+                <div class="metric-icon"><i class="bi bi-currency-dollar"></i></div>
+                <div class="metric-label">Cantidad total de lista de precios</div>
+                <div class="metric-value">@Model.Count()</div>
             </div>
         </div>
         <div class="col-md-6 col-xl-3">
             <div class="erp-card metric-card">
-                <div class="metric-icon"><i class="bi bi-cash-stack"></i></div>
-                <div class="metric-label">Total de listas</div>
-                <div class="metric-value">21</div>
+                <div class="metric-icon"><i class="bi bi-toggle-on"></i></div>
+                <div class="metric-label">Lista de precios activos</div>
+                <div class="metric-value">@Model.Count(x => x.Activo)</div>
             </div>
         </div>
         <div class="col-md-6 col-xl-3">
@@ -60,7 +74,7 @@
            <div>
                <h2 class="section-title">Listas registradas</h2>
                <p class="section-subtitle">
-                   Mostrando 10 de 21
+                   Mostrando @paginacion.Items.Count() de @paginacion.TotalCount
                </p>
            </div>
        </div>
@@ -71,18 +85,33 @@
                        <th class="form-label small">NOMBRE</th>
                        <th class="form-label small">DESCRIPCIÓN</th>
                         <th class="form-label small" >FECHA CREACIÓN</th>
+                        <th class="form-label small">ACTIVO</th>
                         <th class="form-label small text-end">ACCIONES</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @if (Model != null && Model.Any())
+                    @if (paginacion != null && paginacion.Items.Any())
                     {
-                        foreach (var item in Model)
+                        foreach (var item in paginacion.Items)
                         {
                             <tr>
                                 <td><span class="badge-soft badge-cuenta">@item.Nombre</span></td>
                                 <td class="fw-semibold">@item.Descripcion</td>
                                 <td><span class="date-pill"><i class="bi bi-calendar3"></i>@item.CreatedAt.ToShortDateString()</span></td>
+                                <td>
+                                    @if (item.Activo)
+                                    {
+                                        <span class="badge-soft badge-success">
+                                            <i class="bi bi-circle-fill text-success"></i>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge-soft badge-danger">
+                                            <i class="bi bi-circle-fill text-secondary"></i>
+                                        </span>
+                                    }
+                                </td>
                                 <td class="text-end">
                                 <button type="button"
                                         class="icon-btn"
@@ -125,14 +154,45 @@
             </table>
         </div>
         <div class="table-footer">
-            <small class="text-muted">Página 1 de 19</small>
+            <small class="text-muted">Página @paginacion.PageNumber de @totalPaginas</small>
             <nav>
                 <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item disabled"><a class="page-link" href="#">Anterior</a></li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">Siguiente</a></li>
+                    <!-- Botón Anterior -->
+                    <li class="page-item @(paginacion.PageNumber == 1 ? "disabled" : "")">
+                        @if (paginacion.PageNumber > 1)
+                        {
+                            <a class="page-link" href="@Url.Action("Index", "PriceList", new { Area = "Ventas", pagina = paginacion.PageNumber - 1, tamañoPagina = paginacion.PageSize })">
+                                Anterior
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="page-link">Anterior</span>
+                        }
+                    </li>
+
+                    @for (int i = inicio; i <= fin; i++)
+                    {
+                        <li class="page-item @(i == paginacion.PageNumber ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("Index", "PriceList", new { Area = "Ventas", pagina = i, tamañoPagina = paginacion.PageSize })">
+                                @i
+                            </a>
+                        </li>
+                    }
+
+                    <!-- Botón Siguiente -->
+                    <li class="page-item @(paginacion.PageNumber >= totalPaginas ? "disabled" : "")">
+                        @if (paginacion.PageNumber < totalPaginas)
+                        {
+                            <a class="page-link" href="@Url.Action("Index", "PriceList", new { Area = "Ventas", pagina = paginacion.PageNumber + 1, tamañoPagina = paginacion.PageSize })">
+                                Siguiente
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="page-link">Siguiente</span>
+                        }
+                    </li>
                 </ul>
             </nav>
         </div>
@@ -199,7 +259,7 @@
 </div>
 
 <script>
-    function abrirModalLista(
+   function abrirModalLista(
         crear,
         id,
         nombre,
@@ -245,6 +305,7 @@
         const modal = new bootstrap.Modal(document.getElementById('modalLista'));
         modal.show();
     }
+
     function abrirModalEliminar(id, nombre) {
         document.getElementById('listaEliminarNombre').innerText = nombre;
         document.getElementById('btnConfirmarEliminar').onclick = function () {
@@ -262,6 +323,7 @@
             form.submit();
         };
     }
+
 </script>
 
 <style>

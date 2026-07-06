@@ -9,11 +9,13 @@ namespace PresupuestoMVC.Services
         Task<GastoResponseDto> GetByIdAsync(int id);
         Task<IEnumerable<GastoResponseDto>> GetAllGastosAsync();
         Task<GastoResponseDto> CreateAsync(CreateGastoViewRequest createDto);
+        Task<List<GastoResponseDto>> CreateBatchAsync(List<CreateGastoViewRequest> createDtos);
         Task<GastoResponseDto> UpdateAsync(UpdateGastoViewRequest updateDto);
         Task<bool> DeleteGastoAsync(int gastoId);
         Task<IEnumerable<CuentaResponseDto>> GetAllCuentasAsync();
         Task<PaginacionRespuestaDto<GastoResponseDto>> GetFiltradosAsync(FiltroGastoViewRequest filtro, int pagina, int tamañoPagina, int companyId);
         Task<int> GetGastosCountAsync(int companyId);
-
+        Task<decimal> ObtenerGastoPorFecha(DateTime date);
+        Task<int> GetGastosCountByMonthAsync(int companyId);
     }
 }

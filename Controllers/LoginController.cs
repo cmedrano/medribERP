@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Win32;
 using PresupuestoMVC.Models.ViewModels;
 using PresupuestoMVC.Services;
+using PresupuestoMVC.Services.Interfaces;
 
 namespace PresupuestoMVC.Controllers
 {
@@ -131,6 +132,47 @@ namespace PresupuestoMVC.Controllers
 
             return RedirectToAction("Login", "Login");
         }
+
+        // GET: /Login/Recover - Muestra el formulario de recuperación de contraseña
+        [HttpGet]
+        public IActionResult Recover()
+        {
+            return View("Views/Recover/Recover.cshtml");
+        }
+
+
+        // POST: /Login/Recover - Procesa el formulario de recuperación de contraseña
+        [HttpPost]
+        public async Task<IActionResult> Recover(RecoverViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            try
+            {
+                var user = await _loginService.GetByEmailAsync(model);
+
+                if (user == null)
+                {
+                    ModelState.AddModelError(nameof(model.Email),
+                        "No existe ningún usuario registrado con ese correo.");
+
+                    return View("Views/Recover/Recover.cshtml", model);
+                }
+
+                // Aquí continuará la lógica para enviar el correo.
+
+                return RedirectToAction("Login", "Login");
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View("Views/Recover/Recover.cshtml", model);
+            }
+        }
+
+
+
 
 
     }

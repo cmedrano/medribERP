@@ -4,7 +4,7 @@
     {
         public int rubroTypeId { get; set; }
         public int? SubRubroId { get; set; }
-        public int valorInicial { get; set; }
+        public decimal valorInicial { get; set; }
         public DateTime CreateDate { get; set; }
         public int CreateByUserId { get; set; }
         public int CompanyId { get; set; }

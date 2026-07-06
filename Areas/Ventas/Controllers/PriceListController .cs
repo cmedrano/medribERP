@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Models.ViewModels;
 using PresupuestoMVC.Services;
@@ -16,15 +17,36 @@ namespace PresupuestoMVC.Controllers
             _priceListService = priceListService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? searchNombre, int pagina = 1, int tamañoPagina = 10)
         {
-            var model = await _priceListService.GetAllAsync();
-            return View(model);
-        }
+            try
+            {
+                var resultadoPaginado = await _priceListService.GetPagedAsync(pagina, tamañoPagina);
+                var model = await _priceListService.GetAllAsync();
+                if (!string.IsNullOrWhiteSpace(searchNombre))
+               {
+                    var filteredItems = model
+                        .Where(x => x.Nombre.Contains(searchNombre, StringComparison.OrdinalIgnoreCase))
+                        .ToList(); 
 
-        public IActionResult Create()
-        {
-            return View();
+                    resultadoPaginado.Items = filteredItems;
+                    resultadoPaginado.TotalCount = filteredItems.Count;
+                }
+
+                ViewData["SearchNombre"] = searchNombre;
+                ViewBag.Data = resultadoPaginado.Items;
+                ViewBag.Paginacion = resultadoPaginado;
+                ViewBag.ItemCounter = resultadoPaginado.Items.Count();
+                ViewBag.PaginaActual = pagina;
+                ViewBag.TamañoPagina = tamañoPagina;
+
+                return View(resultadoPaginado.Items);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al cargar los datos: " + ex.Message;
+                return RedirectToAction("Error", "Home");
+            }
         }
 
         [HttpPost]

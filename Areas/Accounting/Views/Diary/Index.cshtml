@@ -10,6 +10,9 @@
     var paginacion = ViewBag.Paginacion as PaginacionRespuestaDto<GastoResponseDto>;
     var items = ViewBag.itemsCount;
     var totalGastos = ViewBag.TotalGastos;
+    decimal gastoTotalMes = ViewBag.GastoTotalMes;
+    decimal gastoTotalSemana = ViewBag.GastoTotalSemana;
+    decimal totalGastosPorMes = ViewBag.TotalGsstosporMes;
 
     int totalPaginas = (int)Math.Ceiling((double)paginacion.TotalRegistros / ViewBag.TamañoPagina);
     int inicio = Math.Max(1, ViewBag.PaginaActual - 2);
@@ -50,22 +53,22 @@
         <div class="col-md-6 col-xl-3">
             <div class="erp-card metric-card">
                 <div class="metric-icon"><i class="bi bi-journal-text"></i></div>
-                <div class="metric-label">Movimientos del mes</div>
-                <div class="metric-value">148</div>
+                <div class="metric-label">Cantidad de gastos</div>
+                <div class="metric-value">@totalGastosPorMes</div>
             </div>
         </div>
         <div class="col-md-6 col-xl-3">
             <div class="erp-card metric-card">
                 <div class="metric-icon"><i class="bi bi-cash-stack"></i></div>
-                <div class="metric-label">Total del período</div>
-                <div class="metric-value">$ 1.245.800</div>
+                <div class="metric-label">Total gastos del mes</div>
+                <div class="metric-value">$ @gastoTotalMes</div>
             </div>
         </div>
         <div class="col-md-6 col-xl-3">
             <div class="erp-card metric-card">
                 <div class="metric-icon"><i class="bi bi-credit-card-2-front"></i></div>
-                <div class="metric-label">Cuenta principal</div>
-                <div class="metric-value">Mercado Pago</div>
+                <div class="metric-label">Gastos de la semana</div>
+                <div class="metric-value">$ @gastoTotalSemana</div>
             </div>
         </div>
         <div class="col-md-6 col-xl-3">
@@ -212,7 +215,7 @@
                                 </span></td>
                                 <td class="note-cell"><div class="truncate">@(gasto.Nota ?? "")</div></td>
                             <td class="text-end">
-                                    <button class="icon-btn"
+                                    <button class="icon-btn-success-custom"
                                             onclick="AbrirModalEditarGasto(
                                             '@gasto.Id',
                                             '@gasto.Fecha.ToString("yyyy-MM-dd")',
@@ -352,9 +355,9 @@
                         </div>
 
                         <!-- Periodo de Imputación -->
-                        <div class="mb-3">
+                        <div class="mb-3 d-none">
                             <label for="crearPeriodoId" class="form-label">Período de Imputación</label>
-                            <select id="crearPeriodoId" name="PeriodoId" class="form-select" required>
+                            <select id="crearPeriodoId" name="PeriodoId" class="form-select">
                                 <option value="">Seleccionar período...</option>
                                 @if (periodos != null)
                                 {
@@ -473,9 +476,9 @@
                         </div>
 
                         <!-- Periodo de Imputación -->
-                        <div class="mb-3">
+                        <div class="mb-3 d-none">
                             <label for="editPeriodoId" class="form-label">Periodo de Imputación</label>
-                            <select id="editPeriodoId" name="PeriodoId" class="form-select" required>
+                            <select id="editPeriodoId" name="PeriodoId" class="form-select">
                                 <option value="">Seleccionar Periodo...</option>
                                 @if (ViewBag.Periodos != null)
                                 {

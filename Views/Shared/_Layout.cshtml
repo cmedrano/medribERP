@@ -1,8 +1,13 @@
 ﻿@using Microsoft.Extensions.Localization
 @using PresupuestoMVC.Resources
+@using System.Security.Claims;
 @inject IStringLocalizer<SharedResource> Localizer
 
 @{
+    var compnayName = User.FindFirst("CompanyName")?.Value;
+    var userName = User.FindFirstValue(ClaimTypes.Name);
+    var rol = User.FindFirstValue(ClaimTypes.Role);
+
     var modules = User.Claims
         .Where(c => c.Type == "Module")
         .Select(c => c.Value)
@@ -28,7 +33,7 @@
     <div class="layout">
         <div class="sidebar">
             <a href="/" class="text-decoration-none text-black brand">
-                Avisur
+                @compnayName
             </a>
 
             <!-- Menú -->
@@ -46,7 +51,8 @@
                 currentController == "Category" ||
                 currentController == "Account" ||
                 currentController == "Statistics" ||
-                currentController == "Period";
+                currentController == "Period" ||
+                currentController == "ImportFile";
                 var isSalesSection =
                 currentController == "Articulos" ||
                 currentController == "Clientes" ||
@@ -95,6 +101,10 @@
                             <!-- Periodos -->
                             <a asp-area="Accounting" asp-controller="Period" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Period" ? "active" : "")">
                                 @Localizer["Periodos"]
+                            </a>
+                            <!-- Importar -->
+                            <a asp-area="Accounting" asp-controller="ImportFile" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ImportFile" ? "active" : "")">
+                                @Localizer["Importar"]
                             </a>
                         </div>
                     </div>
@@ -158,11 +168,11 @@
             <div class="mt-auto pt-3 border-top" style="position:sticky; bottom:0; background:var(--erp-sidebar);">
                 <div class="d-flex align-items-center gap-2 p-2">
                     <div class="text-dark" style="width:40px;height:40px;border-radius:50%;background:#dfe3ff;display:flex;align-items:center;justify-content:center;font-weight:700;">
-                        CM
+                        @userName.ToUpper()[0]@userName.ToUpper()[1]
                     </div>
                     <div class="flex-grow-1">
-                        <div class="text-dark" style="font-weight:700;font-size:.9rem;">Cristian</div>
-                        <div style="font-size:.75rem;color:var(--erp-muted);">Administrador</div>
+                        <div class="text-dark" style="font-weight:700;font-size:.9rem;">@userName</div>
+                        <div style="font-size:.75rem;color:var(--erp-muted);">@rol</div>
                     </div>
                 </div>
                 <form asp-area="" asp-controller="Login" asp-action="Logout" method="post" class="d-inline">

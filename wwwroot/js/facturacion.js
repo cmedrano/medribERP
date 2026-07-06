@@ -140,7 +140,8 @@ $(document).ready(function () {
             priceListId: $('#listaPrecioSelect').val() || 0,
 
             subtotal: parseFloat($('#resumenSubtotal').text().replace('$', '').replace('.', '')),
-            // descuento: parseFloat($('#resumenDescuento').text().replace('$', '').replace('.', '')),
+            descuento: parseFloat($('#resumenDescuento').text().replace('$', '').replace('.', '')),
+            recarga: parseFloat($('#resumenRecargo').text().replace('$', '').replace('.', '')),
             total: parseFloat($('#resumenTotal').text().replace('$', '').replace('.', '')),
 
             detail: saleDetail
@@ -300,20 +301,23 @@ function actualizarPrecio() {
 function actualizarResumen() {
     let cantidadArticulos = 0;
     let subtotal = 0;
+    const descuento = Number(document.getElementById("descuento").value);
+    const recargo = Number(document.getElementById("recargo").value);
 
     $('#detalleFacturaBody tr').each(function () {
         cantidadArticulos += parseInt($(this).data('cantidad'));
         subtotal += parseFloat($(this).data('total'));
     });
 
-    // Descuento 10%
-    // let descuento = subtotal * 0.10;
-    // let total = subtotal - descuento;
-    let total = subtotal
+    // Descuento 10% y Recarga 5%
+    let subtotalConDescuento = subtotal - subtotal * (descuento / 100);
+    let subtotalConRecargo = subtotalConDescuento * (recargo / 100);
+    let total = subtotalConDescuento + subtotalConRecargo;
 
     $('#resumenArticulos').text(cantidadArticulos);
     $('#resumenSubtotal').text(`$ ${subtotal.toLocaleString('es-AR')}`);
-    // $('#resumenDescuento').text(`$ ${descuento.toLocaleString('es-AR')}`);
+    $('#resumenDescuento').text(`$ ${subtotalConDescuento.toLocaleString('es-AR')}`);
+    $('#resumenRecargo').text(`$ ${subtotalConRecargo.toLocaleString('es-AR')}`);
     $('#resumenTotal').text(`$ ${total.toLocaleString('es-AR')}`);
 }
 

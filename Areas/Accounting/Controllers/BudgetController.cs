@@ -50,8 +50,8 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                 // Cargar datos para los dropdowns
                 var rubros = await _categoryService.GetAllCategoriesAsync(companyId);
 
-                // Años: 2025 + 5 años 2025-2030
-                var anios = Enumerable.Range(2025, 6).ToList();
+                // Años: 2025 + 3 años 2025-2027
+                var anios = Enumerable.Range(2025, 3).ToList();
 
                 var culture = new CultureInfo("es-AR");
 
@@ -192,6 +192,61 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
         {
             var categories = await _budgetService.GetCategoriesbyDateAsync(date);
             return Json(categories);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> CreateClone(CreateCloneViewRequest model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    TempData["Error"] = "Datos inválidos";
+                    return RedirectToAction("Index");
+                }
+
+                int userId = int.Parse(
+                    User.FindFirstValue(ClaimTypes.NameIdentifier)
+                )               ;
+    
+                int companyId = int.Parse(User.FindFirst("CompanyId").Value);
+
+                var listbudgetOrigen = await _budgetService.SearchBudgetByYearAndMonth(model.OrigenAnio, model.OrigenMes);
+                var listbudgetDestino = await _budgetService.SearchBudgetByYearAndMonth(model.DestinoAnio, model.DestinoMes);
+
+                if(listbudgetOrigen.Count() > 0)
+                {
+                    bool existeCoincidencia = listbudgetOrigen.Any(origen =>
+                         listbudgetDestino.Any(destino =>
+                         destino.RubroTypeId == origen.RubroTypeId));
+
+                    if (existeCoincidencia)
+                    {
+                        throw new Exception("Ya existen rubros del presupuesto origen en el período destino.");
+                    }
+
+                    foreach (var budgetOrigen in listbudgetOrigen)
+                    {
+                         var createDto = new CreateBudgetViewRequest()
+                         {
+                            rubroTypeId = budgetOrigen.RubroTypeId,
+                            valorInicial = budgetOrigen.valorInicial,
+                            CreateByUserId = userId,
+                            CompanyId = companyId,
+                            Mes = model.DestinoMes,
+                            Anio = model.DestinoAnio
+                         };
+                         await _budgetService.CreateAsync(createDto);
+                    }
+                }
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error: " + ex.Message;
+                return RedirectToAction("Index");
+            }
         }
     }
 }

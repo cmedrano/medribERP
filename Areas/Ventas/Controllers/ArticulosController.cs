@@ -38,7 +38,7 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
             _articulosPreciosService = articulosPreciosService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? searchArticulo, int pagina = 1, int tamañoPagina = 10)
         {
             try
             {
@@ -48,13 +48,31 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
                 var brands = await _brandService.GetAllBrandAsync();
                 var productCategories = await _productCategoryService.GetAllProductCategoryAsync();
                 var priceList = await _priceListService.GetAllAsync();
+                var resultadoPaginado = await _articuloService.GetPagedAsync(pagina, tamañoPagina);
+            
+                if (!string.IsNullOrWhiteSpace(searchArticulo))
+                {
+                    var filtrado = resultadoPaginado.Items.Where(x => x.Nombre.Contains(searchArticulo, StringComparison.OrdinalIgnoreCase)).ToList();
+                    resultadoPaginado.Items = filtrado;
+                }
+
+                ViewData["SearchArticulo"] = searchArticulo;
+
+
+                ViewBag.Data = resultadoPaginado.Items;
+                ViewBag.Paginacion = resultadoPaginado;
+                ViewBag.ItemCounter = resultadoPaginado.Items.Count();
+                ViewBag.PaginaActual = pagina;
+                ViewBag.TamañoPagina = tamañoPagina;
 
                 ViewData["TotalArticulos"] = total;
 
+                ViewBag.Articulos = resultadoPaginado.Items;
                 ViewBag.ProductCategories = productCategories;
                 ViewBag.Brands = brands;
                 ViewBag.Providers = providers;
                 ViewBag.PriceList = priceList;
+
                 return View(articulos);
             }
             catch (Exception ex)

@@ -8,5 +8,6 @@ namespace PresupuestoMVC.Services.Interfaces
         Task<IEnumerable<CategoryResponseDto>> GetAllCategoriesAsync(int companyId);
         Task<CategoryResponseDto> CreateAsync(CreateCategoryViewRequest CreateDto);
         Task<int> GetCategoriesCountAsync(int companyId);
+        Task<CategoryResponseDto> GetCategoryByIdAsync(int companyId, int rubroId);
     }
 }
