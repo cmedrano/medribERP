@@ -17,23 +17,36 @@ namespace PresupuestoMVC.Controllers
             _priceListService = priceListService;
         }
 
-        public async Task<IActionResult> Index(string? searchNombre)
+        public async Task<IActionResult> Index(string? searchNombre, int pagina = 1, int tamañoPagina = 10)
         {
-            var model = await _priceListService.GetAllAsync();
-
-            if (!string.IsNullOrWhiteSpace(searchNombre))
+            try
             {
-                model = model.Where(x => x.Nombre.Contains(searchNombre,StringComparison.OrdinalIgnoreCase)).ToList();
+                var resultadoPaginado = await _priceListService.GetPagedAsync(pagina, tamañoPagina);
+                var model = await _priceListService.GetAllAsync();
+                if (!string.IsNullOrWhiteSpace(searchNombre))
+               {
+                    var filteredItems = model
+                        .Where(x => x.Nombre.Contains(searchNombre, StringComparison.OrdinalIgnoreCase))
+                        .ToList(); 
+
+                    resultadoPaginado.Items = filteredItems;
+                    resultadoPaginado.TotalCount = filteredItems.Count;
+                }
+
+                ViewData["SearchNombre"] = searchNombre;
+                ViewBag.Data = resultadoPaginado.Items;
+                ViewBag.Paginacion = resultadoPaginado;
+                ViewBag.ItemCounter = resultadoPaginado.Items.Count();
+                ViewBag.PaginaActual = pagina;
+                ViewBag.TamañoPagina = tamañoPagina;
+
+                return View(resultadoPaginado.Items);
             }
-
-            ViewData["SearchNombre"] = searchNombre;
-
-            return View(model);
-        }
-
-        public IActionResult Create()
-        {
-            return View();
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al cargar los datos: " + ex.Message;
+                return RedirectToAction("Error", "Home");
+            }
         }
 
         [HttpPost]

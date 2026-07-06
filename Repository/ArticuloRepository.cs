@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PresupuestoMVC.Areas.Ventas.ViewModels;
 using PresupuestoMVC.Areas.Ventas.ViewModels.DTOs;
 using PresupuestoMVC.Data;
+using PresupuestoMVC.Models;
 using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Repository.Interfaces;
 using System;
@@ -141,6 +142,27 @@ namespace PresupuestoMVC.Repository
         public async Task<int> ObtenerTotalAsync()
         {
             return await _context.Articulos.Where(a => a.Activo).CountAsync();
+        }
+
+        public async Task<PaginatedResult<Articulo>> GetPagedAsync(int pageNumber, int pageSize)
+        {
+            var query = _context.Articulos
+                .Where(a => a.Activo)
+                .OrderBy(a => a.Nombre);
+
+            var totalCount = await query.CountAsync();
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PaginatedResult<Articulo>
+            {
+                Items = items,
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
         }
     }
 }

@@ -3,6 +3,7 @@ using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Models.ViewModels;
 using PresupuestoMVC.Repository.Interfaces;
 using PresupuestoMVC.Services.Interfaces;
+using PresupuestoMVC.Models;
 
 namespace PresupuestoMVC.Services
 {
@@ -18,6 +19,11 @@ namespace PresupuestoMVC.Services
         public async Task<List<PriceList>> GetAllAsync()
         {
             return await _priceListRepository.GetAllAsync();
+        }
+
+        public async Task<PaginatedResult<PriceList>> GetPagedAsync(int pageNumber, int pageSize)
+        {
+            return await _priceListRepository.GetPagedAsync(pageNumber, pageSize);
         }
 
         public async Task<PriceList?> GetByIdAsync(int id)
