@@ -171,8 +171,8 @@
                                         <span class="input-group-text bg-light border-0">
                                             <i class="bi bi-currency-dollar"></i>
                                         </span>
-                                        <input type="number"
-                                               name="purchasePrice"
+                                        <input type="decimal"
+                                               name="PurchasePrice"
                                                id="PurchasePrice"
                                                placeholder="0"
                                                class="form-control"
@@ -186,7 +186,7 @@
                                         <span class="input-group-text bg-light border-0">
                                             <i class="bi bi-currency-dollar"></i>
                                         </span>
-                                        <input type="number"
+                                        <input type="decimal"
                                                name="SalePrice"
                                                id="salePrice"
                                                placeholder="0"
@@ -384,7 +384,6 @@
             document.getElementById('providerId').value = providerId || '';
             document.getElementById('PurchasePrice').value = purchasePrice || '';
             document.getElementById('salePrice').value = salePrice || '';
-
             // let url = '@Url.Action("GetPreciosByArticulo", "Articulos", new { area = "Ventas" })';
 
             // let response = await fetch(`${url}?articuloId=${id}`);
