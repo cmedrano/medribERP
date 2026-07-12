@@ -256,8 +256,8 @@ namespace PresupuestoMVC.Services
                 if (cuentaNueva == null)
                     throw new Exception("Cuenta nueva no encontrada");
 
-                if (cuentaNueva.SaldoActual < updateDto.Monto)// no se deja editar el saldo, mas si se deja crear un nuevo gasto?
-                    throw new Exception("Saldo insuficiente");
+                //if (cuentaNueva.SaldoActual < updateDto.Monto)// no se deja editar el saldo, mas si se deja crear un nuevo gasto?
+                //    throw new Exception("Saldo insuficiente");
 
                 var rubroNuevo = await _context.Budget
                     .FirstOrDefaultAsync(r =>
