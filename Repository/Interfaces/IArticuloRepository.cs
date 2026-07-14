@@ -13,6 +13,6 @@ namespace PresupuestoMVC.Repository.Interfaces
         Task ActualizarAsync(Articulo articulo, List<ArticulosPrecios> articulosPrecios);
         Task EliminarAsync(int id);
         Task<int> ObtenerTotalAsync();
-        Task<PaginatedResult<Articulo>> GetPagedAsync(int pageNumber, int pageSize);
+        Task<PaginatedResult<Articulo>> GetPagedAsync(int pageNumber, int pageSize, int companyId);
     }
 }

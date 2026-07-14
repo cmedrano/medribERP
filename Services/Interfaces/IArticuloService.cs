@@ -15,6 +15,6 @@ namespace PresupuestoMVC.Services.Interfaces
         Task<ArticuloResponseDTO> CrearAsync(ArticuloCreateDTO createDto);
         Task<ArticuloResponseDTO> ActualizarAsync(ArticuloUpdateDTO updateDto);
         Task<bool> EliminarAsync(int id);
-        Task<PaginatedResult<Articulo>> GetPagedAsync(int pageNumber, int pageSize);
+        Task<PaginatedResult<Articulo>> GetPagedAsync(int pageNumber, int pageSize, int companyId);
     }
 }

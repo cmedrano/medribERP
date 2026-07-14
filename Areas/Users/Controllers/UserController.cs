@@ -21,8 +21,9 @@ namespace PresupuestoMVC.Controllers
         {
             try
             {
-                var users = await _userService.GetAllUsersAsync();
-                var totalUsers = await _userService.GetUsersCountAsync();
+                int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
+                var users = await _userService.GetAllUsersAsync(companyId);
+                var totalUsers = await _userService.GetUsersCountAsync(companyId);
 
                 ViewBag.Users = users;
                 ViewBag.Roles = Enum.GetValues(typeof(UserRol))
