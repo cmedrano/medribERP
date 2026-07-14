@@ -6,9 +6,9 @@ namespace PresupuestoMVC.Repository.Interfaces
 {
     public interface IUserRepository
     {
-        Task<IEnumerable<UserResponseDTO>> GetAllUsersAsync();
+        Task<IEnumerable<UserResponseDTO>> GetAllUsersAsync(int companyId);
         Task<UserResponseDTO> CreateUserAsync(User user);
         Task<bool> ResetPassword(string email, int userId, string randomPassword);
-        Task<int> GetUsersCountAsync();
+        Task<int> GetUsersCountAsync(int companyId);
     }
 }

@@ -50,5 +50,8 @@ namespace PresupuestoMVC.Models.Entities
 
         [Column("margen")]
         public decimal? Margin { get; set; }
+
+        [Column("company_id")]
+        public int CompanyId { get; set; }
     }
 }

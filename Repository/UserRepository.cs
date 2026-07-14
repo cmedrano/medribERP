@@ -25,9 +25,11 @@ namespace PresupuestoMVC.Repository
             _mapper = mapper;
             _context = context;
         }
-        public async Task<IEnumerable<UserResponseDTO>> GetAllUsersAsync()
+        public async Task<IEnumerable<UserResponseDTO>> GetAllUsersAsync(int companyId)
         {
-            var users = await _context.Users.ToListAsync();
+            var users = await _context.Users
+                .Where(u => u.CompanyId == companyId)
+                .ToListAsync();
 
             var usersDto = users.Select(x => new UserResponseDTO()
             {
@@ -142,9 +144,11 @@ namespace PresupuestoMVC.Repository
             }
         }
 
-        public async Task<int> GetUsersCountAsync()
+        public async Task<int> GetUsersCountAsync(int companyId)
         {
-            var totalUsers = await _context.Users.CountAsync();
+            var totalUsers = await _context.Users
+                .Where(u => u.CompanyId == companyId)
+                .CountAsync();
             return totalUsers;
         }
 

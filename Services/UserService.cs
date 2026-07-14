@@ -17,9 +17,9 @@ namespace PresupuestoMVC.Services
             _userRepository = userRepository;
         }
 
-        public async Task<IEnumerable<UserResponseDTO>> GetAllUsersAsync()
+        public async Task<IEnumerable<UserResponseDTO>> GetAllUsersAsync(int companyId)
         {
-            return await _userRepository.GetAllUsersAsync();
+            return await _userRepository.GetAllUsersAsync(companyId);
         }
 
         public async Task<UserResponseDTO> CreateUserAsync(CreateUserViewRequest userRequest)
@@ -43,9 +43,9 @@ namespace PresupuestoMVC.Services
             return await _userRepository.ResetPassword(email, userId, randomPassword);
         }
 
-        public async Task<int> GetUsersCountAsync()
+        public async Task<int> GetUsersCountAsync(int companyId)
         {
-            var totalUsers = await _userRepository.GetUsersCountAsync();
+            var totalUsers = await _userRepository.GetUsersCountAsync(companyId);
             return totalUsers;
         }
     }

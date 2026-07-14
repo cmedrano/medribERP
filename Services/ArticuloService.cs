@@ -144,9 +144,9 @@ namespace PresupuestoMVC.Services
 
             return true;
         }
-        public async Task<PaginatedResult<Articulo>> GetPagedAsync(int pageNumber, int pageSize)
+        public async Task<PaginatedResult<Articulo>> GetPagedAsync(int pageNumber, int pageSize, int companyId)
         {
-            return await _articuloRepository.GetPagedAsync(pageNumber, pageSize);
+            return await _articuloRepository.GetPagedAsync(pageNumber, pageSize, companyId);
         }
     }
 }

@@ -42,13 +42,14 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
         {
             try
             {
+                int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
                 var articulos = await _articuloService.ObtenerTodosActivosAsync();
                 var total = await _articuloService.ObtenerTotalAsync();
                 var providers = await _providerService.GetAllProviderAsync();
                 var brands = await _brandService.GetAllBrandAsync();
                 var productCategories = await _productCategoryService.GetAllProductCategoryAsync();
                 var priceList = await _priceListService.GetAllAsync();
-                var resultadoPaginado = await _articuloService.GetPagedAsync(pagina, tamañoPagina);
+                var resultadoPaginado = await _articuloService.GetPagedAsync(pagina, tamañoPagina, companyId);
             
                 if (!string.IsNullOrWhiteSpace(searchArticulo))
                 {
