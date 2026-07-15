@@ -3,6 +3,7 @@ using PresupuestoMVC.Models.DTOs;
 using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.Design;
 
 namespace PresupuestoMVC.Repository
 {
@@ -15,11 +16,11 @@ namespace PresupuestoMVC.Repository
             _context = context;
         }
 
-        public async Task<List<Cliente>> ObtenerTodosAsync()
+        public async Task<List<Cliente>> ObtenerTodosAsync(int companyId)
         {
             return await _context.Clientes
                 .Include(c => c.PriceList)
-                .Where(c => c.Activo)
+                .Where(c => c.Activo && c.CompanyId == companyId)
                 .AsNoTracking()
                 .OrderByDescending(c => c.FechaRegistro)
                 .ToListAsync();
@@ -46,10 +47,10 @@ namespace PresupuestoMVC.Repository
                 .FirstOrDefaultAsync(c => c.Activo && c.Email == email);
         }
 
-        public async Task<PaginacionRespuestaDto<Cliente>> ObtenerPaginadosAsync(int pageNumber, int pageSize, string? searchNombre = null, string? searchFantasia = null)
+        public async Task<PaginacionRespuestaDto<Cliente>> ObtenerPaginadosAsync(int pageNumber, int pageSize, int companyId, string? searchNombre = null, string? searchFantasia = null)
         {
             var query = _context.Clientes
-                //.Where(c => c.Activo)
+                .Where(c => c.CompanyId == companyId)
                 .AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(searchNombre))

@@ -24,5 +24,8 @@ namespace PresupuestoMVC.Models.Entities
 
         [Column("descripcion")]
         public string? Descripcion { get; set; }
+
+        [Column("company_id")]
+        public int CompanyId { get; set; }
     }
 }
