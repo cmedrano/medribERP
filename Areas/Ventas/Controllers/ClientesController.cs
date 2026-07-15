@@ -32,6 +32,8 @@ namespace PresupuestoMVC.Controllers
         {
             try
             {
+                int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
+
                 if (page < 1)
                     page = 1;
 
@@ -43,9 +45,9 @@ namespace PresupuestoMVC.Controllers
                     TamanioPagina = tamañoPagina
                 };
 
-                var resultado = await _clienteService.ObtenerPaginadosAsync(filtro, page, tamañoPagina);
+                var resultado = await _clienteService.ObtenerPaginadosAsync(filtro, page, tamañoPagina, companyId);
 
-                var priceList = await _priceListService.GetAllAsync();
+                var priceList = await _priceListService.GetAllAsync(companyId);
                 var provincia = await _provinciaService.ObtenerTodasAsync();
                 ViewBag.PriceList = priceList;
                 ViewBag.Provincia = provincia;
@@ -91,6 +93,8 @@ namespace PresupuestoMVC.Controllers
                     TempData["Error"] = "Datos inválidos";
                     return RedirectToAction("Index");
                 }
+                int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
+                model.CompanyId = companyId;
 
                 await _clienteService.GuardarAsync(model);
                 TempData["Success"] = "Cliente registrado exitosamente";

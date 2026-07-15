@@ -18,9 +18,9 @@ namespace PresupuestoMVC.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ClienteResponseDTO>> ObtenerTodosAsync()
+        public async Task<IEnumerable<ClienteResponseDTO>> ObtenerTodosAsync(int companyId)
         {
-            var clientes = await _clienteRepository.ObtenerTodosAsync();
+            var clientes = await _clienteRepository.ObtenerTodosAsync(companyId);
             return _mapper.Map<IEnumerable<ClienteResponseDTO>>(clientes);
         }
 
@@ -86,7 +86,7 @@ namespace PresupuestoMVC.Services
             return await _clienteRepository.ObtenerTotalAsync();
         }
 
-        public async Task<PaginacionRespuestaDto<ClienteResponseDTO>> ObtenerPaginadosAsync(FiltroClienteViewRequest filtro, int pageNumber, int pageSize)
+        public async Task<PaginacionRespuestaDto<ClienteResponseDTO>> ObtenerPaginadosAsync(FiltroClienteViewRequest filtro, int pageNumber, int pageSize, int companyId)
         {
             if (pageNumber < 1)
                 throw new Exception("La página debe ser mayor a 0.");
@@ -96,7 +96,8 @@ namespace PresupuestoMVC.Services
 
             var resultado = await _clienteRepository.ObtenerPaginadosAsync(
                 pageNumber, 
-                pageSize, 
+                pageSize,
+                companyId,
                 filtro.SearchNombre, 
                 filtro.SearchFantasia
             );

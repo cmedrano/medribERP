@@ -6,7 +6,7 @@ namespace PresupuestoMVC.Repository.Interfaces
 {
     public interface IArticuloRepository
     {
-        Task<IEnumerable<Articulo>> ObtenerTodosActivosAsync();
+        Task<IEnumerable<Articulo>> ObtenerTodosActivosAsync(int companyId);
         Task<Articulo> ObtenerPorIdAsync(int id);
         Task<Articulo> ObtenerPorCodigoAsync(string codigo);
         Task GuardarAsync(Articulo articulo, List<ArticulosPrecios> articulosPrecios);

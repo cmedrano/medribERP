@@ -21,9 +21,9 @@ namespace PresupuestoMVC.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ArticuloResponseDTO>> ObtenerTodosActivosAsync()
+        public async Task<IEnumerable<ArticuloResponseDTO>> ObtenerTodosActivosAsync(int companyId)
         {
-            var articulos = await _articuloRepository.ObtenerTodosActivosAsync();
+            var articulos = await _articuloRepository.ObtenerTodosActivosAsync(companyId);
             return _mapper.Map<IEnumerable<ArticuloResponseDTO>>(articulos);
         }
 
@@ -55,13 +55,9 @@ namespace PresupuestoMVC.Services
                 if (articuloExistente != null && articuloExistente.Activo)
                     throw new Exception("Ya existe un artículo con este código");
 
-                //var articulo = _mapper.Map<Articulo>(createDto);
-                //articulo.Activo = true;
-                //articulo.CreatedAt = DateTime.UtcNow;
-                //articulo.UpdatedAt = DateTime.UtcNow;
-
                 Articulo articulo = new Articulo()
                 {
+                    CompanyId = createDto.CompanyId,
                     Codigo = createDto.Codigo,
                     Nombre = createDto.Nombre,
                     UnidadMedida = createDto.UnidadMedida,

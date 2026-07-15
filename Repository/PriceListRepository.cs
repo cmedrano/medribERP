@@ -21,20 +21,20 @@ namespace PresupuestoMVC.Repositories
             _mapper = mapper;
         }
 
-        public async Task<List<PriceList>> GetAllAsync()
+        public async Task<List<PriceList>> GetAllAsync(int companyId)
         {
             var priceListActivos = await _context.PriceList
-                    //.Where(a => a.Activo)
+                    .Where(a => a.CompanyId == companyId)
                     .OrderBy(a => a.Nombre)
                     .ToListAsync();
 
             return priceListActivos;
         }
 
-        public async Task<PaginatedResult<PriceList>> GetPagedAsync(int pageNumber, int pageSize)
+        public async Task<PaginatedResult<PriceList>> GetPagedAsync(int pageNumber, int pageSize, int companyId)
         {
             var query = _context.PriceList
-                .Where(a => a.Activo)
+                .Where(a => a.Activo && a.CompanyId == companyId)
                 .OrderBy(a => a.Nombre);
 
             var totalCount = await query.CountAsync();

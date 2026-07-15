@@ -9,7 +9,7 @@ namespace PresupuestoMVC.Services.Interfaces
 {
     public interface IArticuloService
     {
-        Task<IEnumerable<ArticuloResponseDTO>> ObtenerTodosActivosAsync();
+        Task<IEnumerable<ArticuloResponseDTO>> ObtenerTodosActivosAsync(int companyId);
         Task<ArticuloResponseDTO> ObtenerPorIdAsync(int id);
         Task<int> ObtenerTotalAsync();
         Task<ArticuloResponseDTO> CrearAsync(ArticuloCreateDTO createDto);
