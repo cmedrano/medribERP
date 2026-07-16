@@ -17,11 +17,11 @@ namespace PresupuestoMVC.Services
                     PrimaryColor = "#1B5E20"
                 },
 
-                ["cliente2"] = new TenantBranding
+                ["erp"] = new TenantBranding
                 {
-                    CompanyName = "Cliente 2",
-                    BackgroundImage = "cliente2.jpg",
-                    Logo = "cliente2-logo.png",
+                    CompanyName = "erp",
+                    BackgroundImage = "erp.jpg",
+                    Logo = "erp-logo.png",
                     PrimaryColor = "#1565C0"
                 }
             };
