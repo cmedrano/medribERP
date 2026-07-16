@@ -12,14 +12,14 @@ namespace PresupuestoMVC.Services
                 ["avisur"] = new TenantBranding
                 {
                     CompanyName = "Avisur",
-                    BackgroundImage = "avisur.jpg",
+                    BackgroundImage = "huevos.jpg",
                     Logo = "avisur-logo.png",
                     PrimaryColor = "#1B5E20"
                 },
 
                 ["erp"] = new TenantBranding
                 {
-                    CompanyName = "erp",
+                    CompanyName = "Erp",
                     BackgroundImage = "erp.jpg",
                     Logo = "erp-logo.png",
                     PrimaryColor = "#1565C0"
