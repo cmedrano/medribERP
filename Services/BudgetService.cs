@@ -360,6 +360,22 @@ namespace PresupuestoMVC.Services
             return totalBudget;
         }
 
+        public async Task<(decimal Used, decimal Available)> GetBudgetSummaryAsync(int companyId)
+        {
+            var totalBudget = await _context.Budget
+                .Where(x => x.CompanyId == companyId)
+                .SumAsync(x => x.valorInicial);
+
+            var usedBudget = await _context.Budget
+                .Where(x => x.CompanyId == companyId)
+                .SumAsync(x => x.ValorGastado);
+
+            var availableBudget = totalBudget - usedBudget;
+
+            return (usedBudget, availableBudget);
+        }
+
+
         public async Task<IEnumerable<BudgetResponseDTO>> SearchBudgetByYearAndMonth(int anio, int mes)
         {
             try

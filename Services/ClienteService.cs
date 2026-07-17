@@ -86,6 +86,11 @@ namespace PresupuestoMVC.Services
             return await _clienteRepository.ObtenerTotalAsync();
         }
 
+        public async Task<int> GetActiveClientsCountAsync(int companyId)
+        {
+            return await _clienteRepository.ObtenerCantidadDeClientesActivos(companyId);
+        }
+
         public async Task<PaginacionRespuestaDto<ClienteResponseDTO>> ObtenerPaginadosAsync(FiltroClienteViewRequest filtro, int pageNumber, int pageSize, int companyId)
         {
             if (pageNumber < 1)

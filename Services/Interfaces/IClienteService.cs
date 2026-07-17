@@ -13,6 +13,7 @@ namespace PresupuestoMVC.Services.Interfaces
         Task<ClienteResponseDTO> ActualizarAsync(UpdateClienteViewRequest updateDto);
         Task<bool> EliminarAsync(int id);
         Task<int> ObtenerTotalAsync();
+        Task<int> GetActiveClientsCountAsync(int companyId);
         Task<PaginacionRespuestaDto<ClienteResponseDTO>> ObtenerPaginadosAsync(FiltroClienteViewRequest filtro, int pageNumber, int pageSize, int companyId);
     }
 }

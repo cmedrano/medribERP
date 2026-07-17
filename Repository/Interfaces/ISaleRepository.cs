@@ -7,6 +7,7 @@ namespace PresupuestoMVC.Repository.Interfaces
         Task<Sale> GetByIdAsync(int id);
         Task<IEnumerable<Sale>> GetAllAsync();
         Task<IEnumerable<Sale>> GetByClientIdAsync(int clientId);
+        Task<decimal> GetSalesMonthAsync(int userId);
         Task<Sale> AddAsync(Sale sale);
         Task UpdateAsync(Sale sale);
         Task DeleteAsync(int id);
