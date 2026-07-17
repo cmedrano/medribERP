@@ -5,9 +5,9 @@ namespace PresupuestoMVC.Services.Interfaces
 {
     public interface IUserService
     {
-        Task<IEnumerable<UserResponseDTO>> GetAllUsersAsync();
+        Task<IEnumerable<UserResponseDTO>> GetAllUsersAsync(int companyId);
         Task<UserResponseDTO> CreateUserAsync(CreateUserViewRequest createDto);
         Task<bool> ResetPassword(string email, int userId);
-        Task<int> GetUsersCountAsync();
+        Task<int> GetUsersCountAsync(int companyId);
     }
 }

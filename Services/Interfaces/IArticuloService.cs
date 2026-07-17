@@ -9,12 +9,12 @@ namespace PresupuestoMVC.Services.Interfaces
 {
     public interface IArticuloService
     {
-        Task<IEnumerable<ArticuloResponseDTO>> ObtenerTodosActivosAsync();
+        Task<IEnumerable<ArticuloResponseDTO>> ObtenerTodosActivosAsync(int companyId);
         Task<ArticuloResponseDTO> ObtenerPorIdAsync(int id);
         Task<int> ObtenerTotalAsync();
         Task<ArticuloResponseDTO> CrearAsync(ArticuloCreateDTO createDto);
         Task<ArticuloResponseDTO> ActualizarAsync(ArticuloUpdateDTO updateDto);
         Task<bool> EliminarAsync(int id);
-        Task<PaginatedResult<Articulo>> GetPagedAsync(int pageNumber, int pageSize);
+        Task<PaginatedResult<Articulo>> GetPagedAsync(int pageNumber, int pageSize, int companyId);
     }
 }

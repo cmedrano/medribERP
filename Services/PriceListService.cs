@@ -16,14 +16,14 @@ namespace PresupuestoMVC.Services
             _priceListRepository = priceListRepository;
         }
 
-        public async Task<List<PriceList>> GetAllAsync()
+        public async Task<List<PriceList>> GetAllAsync(int companyId)
         {
-            return await _priceListRepository.GetAllAsync();
+            return await _priceListRepository.GetAllAsync(companyId);
         }
 
-        public async Task<PaginatedResult<PriceList>> GetPagedAsync(int pageNumber, int pageSize)
+        public async Task<PaginatedResult<PriceList>> GetPagedAsync(int pageNumber, int pageSize, int companyId)
         {
-            return await _priceListRepository.GetPagedAsync(pageNumber, pageSize);
+            return await _priceListRepository.GetPagedAsync(pageNumber, pageSize, companyId);
         }
 
         public async Task<PriceList?> GetByIdAsync(int id)
@@ -35,6 +35,7 @@ namespace PresupuestoMVC.Services
         {
             PriceList priceList = new PriceList()
             {
+                CompanyId = dto.CompanyId,
                 Nombre = dto.Nombre,
                 Descripcion = dto.Descripcion,
                 Activo = true,

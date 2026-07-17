@@ -117,6 +117,23 @@
             return -1;
         }
 
+        function findFechaIndex(headers) {
+            const patterns = [
+                ['fecha', 'aprob'],
+                ['fecha', 'aprobacion'],
+                ['fecha', 'aprobado'],
+                ['fecha', 'liquid'],
+                ['fecha', 'liquidacion']
+            ];
+
+            for (const [a, b] of patterns) {
+                const idx = findIndex(headers, (n) => n.includes(a) && n.includes(b));
+                if (idx !== -1) return idx;
+            }
+
+            return findIndex(headers, (n) => n.includes('fecha'));
+        }
+
         function buildTable(data) {
             previewHead.innerHTML = '';
             previewBody.innerHTML = '';
@@ -125,7 +142,8 @@
             const headers = data[0].map(h => h || '');
 
             // localizar índices de columnas relevantes
-            const idxFecha = findIndex(headers, (n) => n.includes('fecha') && n.includes('liquid'));
+
+            const idxFecha = findFechaIndex(headers);
             const idxTipo = findIndex(headers, (n) => n.includes('tipo') && n.includes('oper'));
             const idxMonto = findIndex(headers, (n) => n.includes('monto') && n.includes('neto'));
 

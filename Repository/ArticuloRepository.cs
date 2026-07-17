@@ -20,12 +20,12 @@ namespace PresupuestoMVC.Repository
             _context = context;
         }
 
-        public async Task<IEnumerable<Articulo>> ObtenerTodosActivosAsync()
+        public async Task<IEnumerable<Articulo>> ObtenerTodosActivosAsync(int companyId)
         {
             try
             {     
                 return await _context.Articulos
-                    //.Where(a => a.Activo)
+                    .Where(a => a.CompanyId == companyId)
                     .OrderBy(a => a.Nombre)
                     .ToListAsync();
                 }
@@ -144,10 +144,10 @@ namespace PresupuestoMVC.Repository
             return await _context.Articulos.Where(a => a.Activo).CountAsync();
         }
 
-        public async Task<PaginatedResult<Articulo>> GetPagedAsync(int pageNumber, int pageSize)
+        public async Task<PaginatedResult<Articulo>> GetPagedAsync(int pageNumber, int pageSize, int companyId)
         {
             var query = _context.Articulos
-                .Where(a => a.Activo)
+                .Where(a => a.Activo && a.CompanyId == companyId)
                 .OrderBy(a => a.Nombre);
 
             var totalCount = await query.CountAsync();

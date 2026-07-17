@@ -21,10 +21,11 @@ namespace PresupuestoMVC.Controllers
         {
             try
             {
-                var resultadoPaginado = await _priceListService.GetPagedAsync(pagina, tamañoPagina);
-                var model = await _priceListService.GetAllAsync();
+                int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
+                var resultadoPaginado = await _priceListService.GetPagedAsync(pagina, tamañoPagina, companyId);
+                var model = await _priceListService.GetAllAsync(companyId);
                 if (!string.IsNullOrWhiteSpace(searchNombre))
-               {
+                {
                     var filteredItems = model
                         .Where(x => x.Nombre.Contains(searchNombre, StringComparison.OrdinalIgnoreCase))
                         .ToList(); 
@@ -54,7 +55,8 @@ namespace PresupuestoMVC.Controllers
         {
             if (!ModelState.IsValid)
                 return View(dto);
-
+            int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
+            dto.CompanyId = companyId;
             await _priceListService.CreateListAsync(dto);
             return RedirectToAction("index");
         }
