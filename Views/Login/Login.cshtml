@@ -34,6 +34,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-direction: column;
         }
 
         .overlay {
@@ -58,31 +59,42 @@
             border: none;
         }
 
-            .btn-primary:hover {
-                background-color: var(--primary-hover);
-            }
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
 
         .link-orange {
             color: var(--primary-color);
             text-decoration: none;
         }
 
-            .link-orange:hover {
-                text-decoration: underline;
-            }
+        .link-orange:hover {
+            text-decoration: underline;
+        }
+
+        .erp-footer-copyright {
+            text-align: center;
+            margin-top: 20px;
+
+        }
+
+        .footer-container {
+            position: relative;
+            width: 100%;
+            top: 15vh;
+            background: white;
+            padding-bottom: 5px;
+        }
+
     </style>
 </head>
 
 <body>
-
     <div class="overlay"></div>
-
     <div class="login-card">
         <h2 class="text-center mb-2">@titulo</h2>
         <p class="text-center text-muted mb-4">@subtitulo</p>
-
         <form asp-action="Login" method="post">
-
             <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
             <div class="mb-3">
@@ -114,6 +126,11 @@
 
         </form>
     </div>
-
+    <footer class="footer-container">
+        <div class="erp-footer-copyright">
+            <p>Copyright © 2026 Medrib Software | Powered by Medrib Software</p>
+        </div>
+    </footer>
 </body>
+
 </html>
