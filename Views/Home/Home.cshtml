@@ -1,4 +1,7 @@
-﻿@{
+﻿@using PresupuestoMVC.Models.ViewModels
+@model DashboardViewModel;
+
+@{
     ViewData["Title"] = "Inicio";
     var modules = User.Claims
         .Where(c => c.Type == "Module")
@@ -31,7 +34,7 @@
                         <span class="kpi-chip chip-success"><i class="bi bi-arrow-up"></i>+12%</span>
                     </div>
                     <div class="kpi-label">Ventas del mes</div>
-                    <div class="kpi-value">$ 8.420.000</div>
+                    <div class="kpi-value">$ @Model.SalesMonth.ToString("N2")</div>
                     <div class="kpi-meta">Comparado con el mes anterior</div>
                 </article>
 
@@ -41,8 +44,8 @@
                         <span class="kpi-chip chip-warning"><i class="bi bi-exclamation-triangle"></i>75%</span>
                     </div>
                     <div class="kpi-label">Presupuesto usado</div>
-                    <div class="kpi-value">$ 1.245.800</div>
-                    <div class="kpi-meta">Quedan $ 412.000 disponibles</div>
+                    <div class="kpi-value">$ @Model.UsedBudget.ToString("N2")</div>
+                    <div class="kpi-meta">Quedan $ @Model.ActiveClients.ToString("N2") disponibles</div>
                 </article>
 
                 <article class="kpi-card">
@@ -51,7 +54,7 @@
                         <span class="kpi-chip chip-success"><i class="bi bi-person-plus"></i>+8</span>
                     </div>
                     <div class="kpi-label">Clientes activos</div>
-                    <div class="kpi-value">248</div>
+                    <div class="kpi-value">@Model.ActiveClients</div>
                     <div class="kpi-meta">8 nuevos en los últimos 30 días</div>
                 </article>
 
