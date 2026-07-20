@@ -15,7 +15,8 @@
     var clients = ViewBag.Clients as IEnumerable<ClienteResponseDTO>;
     var articles = ViewBag.Articles as IEnumerable<ArticuloResponseDTO>;
     var priceList = ViewBag.PriceList as IEnumerable<PriceList>;
-    int companyId = Configuration.GetValue<int>("CompanySetting:companyId");
+    int companyIdConfig = Configuration.GetValue<int>("CompanySetting:companyId");
+    int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
 }
 
 <div class="page">
@@ -213,7 +214,7 @@
             </section>
 
             <!-- Actividad reciente -->
-            @if(companyId != 2)
+            @if(companyId != companyIdConfig)
             {
                 <section class="panel-card">
                     <div class="panel-header">
