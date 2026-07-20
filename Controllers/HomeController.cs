@@ -22,6 +22,8 @@ namespace PresupuestoMVC.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IAccountService _accountService;
         private readonly ISaleRepository _saleRepository;
+        private readonly IArticuloService _articulosService;
+        private readonly IPriceListService _priceListService;
 
         public HomeController(
             ILogger<HomeController> logger,
@@ -31,7 +33,9 @@ namespace PresupuestoMVC.Controllers
             IGastoService gastoService,
             ICategoryService categoryService,
             IAccountService accountService,
-            ISaleRepository saleRepository)
+            ISaleRepository saleRepository,
+            IArticuloService articuloService,
+            IPriceListService priceListService)
         {
             _logger = logger;
             _userService = userService;
@@ -41,6 +45,8 @@ namespace PresupuestoMVC.Controllers
             _categoryService = categoryService;
             _accountService = accountService;
             _saleRepository = saleRepository;
+            _articulosService = articuloService;
+            _priceListService = priceListService;
         }
 
         public async Task<IActionResult> Index()
@@ -49,6 +55,7 @@ namespace PresupuestoMVC.Controllers
             {
                 var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
                 int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
+
                 var salesMonth = await _saleRepository.GetSalesMonthAsync(userId);
                 var activeClients = await _clienteService.GetActiveClientsCountAsync(companyId);
                 var budgetSummary = await _budgetService.GetBudgetSummaryAsync(companyId);
@@ -57,12 +64,19 @@ namespace PresupuestoMVC.Controllers
                 var totalGsstos = await _gastoService.GetGastosCountAsync(companyId);
                 var totalCategories = await _categoryService.GetCategoriesCountAsync(companyId);
                 var totalAccounts = await _accountService.GetAccountsCountAsync(companyId);
+                var clients = await _clienteService.ObtenerTodosAsync(companyId);
+                var articles = await _articulosService.ObtenerTodosActivosAsync(companyId);
+                var priceList = await _priceListService.GetAllAsync(companyId);
+
 
                 ViewBag.TotalUsers = totalUsers;
                 ViewBag.TotalBudgets = totalBudgets;
                 ViewBag.TotalGsstos = totalGsstos;
                 ViewBag.TotalCategories = totalCategories;
                 ViewBag.TotalAccounts = totalAccounts;
+                ViewBag.Clients = clients;
+                ViewBag.Articles = articles;
+                ViewBag.PriceList = priceList;
 
                 var modal = new DashboardViewModel
                 {
@@ -70,7 +84,6 @@ namespace PresupuestoMVC.Controllers
                     ActiveClients = activeClients,
                     UsedBudget = budgetSummary.Used,
                     AvailableBudget = budgetSummary.Available
-
                 };
 
                 return View("Views/Home/Home.cshtml", modal);

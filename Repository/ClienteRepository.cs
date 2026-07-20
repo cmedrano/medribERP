@@ -146,9 +146,9 @@ namespace PresupuestoMVC.Repository
             }
         }
 
-        public async Task<int> ObtenerTotalAsync()
+        public async Task<int> ObtenerTotalAsync(int companyId)
         {
-            return await _context.Clientes.Where(c => c.Activo).CountAsync();
+            return await _context.Clientes.Where(c => c.Activo && c.CompanyId == companyId).CountAsync();
         }
     }
 }
