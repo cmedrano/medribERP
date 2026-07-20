@@ -3,6 +3,8 @@
 @using PresupuestoMVC.Models.DTOs;
 @using PresupuestoMVC.Areas.Ventas.ViewModels.DTOs;
 @using PresupuestoMVC.Models.Entities;
+@inject IConfiguration Configuration
+@using Microsoft.Extensions.Configuration
 @{
     ViewData["Title"] = "Inicio";
     var modules = User.Claims
@@ -13,6 +15,7 @@
     var clients = ViewBag.Clients as IEnumerable<ClienteResponseDTO>;
     var articles = ViewBag.Articles as IEnumerable<ArticuloResponseDTO>;
     var priceList = ViewBag.PriceList as IEnumerable<PriceList>;
+    int companyId = Configuration.GetValue<int>("CompanySetting:companyId");
 }
 
 <div class="page">
@@ -26,8 +29,8 @@
         </div>
 
         <div class="hero-actions">
-            <a href="#" class="btn btn-soft"><i class="bi bi-arrow-repeat"></i>Actualizar</a>
-            <a href="#" class="btn btn-primary"><i class="bi bi-plus-lg"></i>Nueva operación</a>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-soft"><i class="bi bi-arrow-repeat"></i>Actualizar</a>
+            <a asp-area="Ventas" asp-controller="Facturacion" asp-action="Index" class="btn btn-primary"><i class="bi bi-plus-lg"></i>Nueva operación</a>
         </div>
     </section>
 
@@ -101,7 +104,7 @@
                             </div> *@
                             <div class="menu-actions">
                                 <a asp-area="Users" asp-controller="User" asp-action="Index" class="btn btn-primary btn-block"><i class="bi bi-arrow-right-circle"></i>Administrar</a>
-                                <a href="#" class="btn btn-ghost btn-block"><i class="bi bi-plus-lg"></i>Nuevo usuario</a>
+                                @* <a href="#" class="btn btn-ghost btn-block"><i class="bi bi-plus-lg"></i>Nuevo usuario</a> *@
                             </div>
                         </article>
                     }
@@ -122,7 +125,7 @@
                             </div> *@
                             <div class="menu-actions">
                                 <a asp-area="Ventas" asp-controller="Clientes" asp-action="Index" class="btn btn-primary btn-block"><i class="bi bi-people"></i>Ver clientes</a>
-                                <a href="#" class="btn btn-ghost btn-block"><i class="bi bi-person-plus"></i>Nuevo cliente</a>
+                                @* <a href="#" class="btn btn-ghost btn-block"><i class="bi bi-person-plus"></i>Nuevo cliente</a> *@
                             </div>
                         </article>
 
@@ -139,8 +142,8 @@
                                 <div class="menu-stat"><span>Nuevos esta semana</span><strong>5</strong></div>
                             </div> *@
                             <div class="menu-actions">
-                                <a hasp-area="Ventas" asp-controller="Articulos" asp-action="Index" class="btn btn-primary btn-block"><i class="bi bi-box"></i>Ver artículos</a>
-                                <a href="#" class="btn btn-ghost btn-block"><i class="bi bi-plus-lg"></i>Nuevo artículo</a>
+                                <a asp-area="Ventas" asp-controller="Articulos" asp-action="Index" class="btn btn-primary btn-block"><i class="bi bi-box"></i>Ver artículos</a>
+                                @* <a href="#" class="btn btn-ghost btn-block"><i class="bi bi-plus-lg"></i>Nuevo artículo</a> *@
                             </div>
                         </article>
 
@@ -158,7 +161,7 @@
                             </div> *@
                             <div class="menu-actions">
                                 <a asp-area="Ventas" asp-controller="PriceList" asp-action="Index" class="btn btn-primary btn-block"><i class="bi bi-tag"></i>Ver listas</a>
-                                <a href="#" class="btn btn-ghost btn-block"><i class="bi bi-plus-lg"></i>Nueva lista</a>
+                                @* <a href="#" class="btn btn-ghost btn-block"><i class="bi bi-plus-lg"></i>Nueva lista</a> *@
                             </div>
                         </article>
                     }
@@ -200,70 +203,74 @@
                         <div class="status-left">
                             <span class="status-dot dot-success"><i class="bi bi-check2-circle"></i></span>
                             <div>
-                                <p class="status-name">Cantidad de ventas</p>
-                                <p class="status-meta">las ventas que se realizo</p>
+                                <p class="status-name">Cantidad lista de precios</p>
+                                <p class="status-meta">lista de precio disponible</p>
                             </div>
                         </div>
-                        <div class="status-value">OK</div>
+                        <div class="status-value">@priceList.Count()</div>
                     </div>
                 </div>
             </section>
 
-            <section class="panel-card">
-                <div class="panel-header">
-                    <div>
-                        <h2 class="panel-title">Actividad reciente</h2>
-                        <p class="panel-subtitle">Últimos movimientos importantes del sistema.</p>
+            <!-- Actividad reciente -->
+            @if(companyId != 2)
+            {
+                <section class="panel-card">
+                    <div class="panel-header">
+                        <div>
+                            <h2 class="panel-title">Actividad reciente</h2>
+                            <p class="panel-subtitle">Últimos movimientos importantes del sistema.</p>
+                        </div>
                     </div>
-                </div>
-                <div class="activity-list">
-                    <div class="activity-item">
-                        <div class="activity-left">
-                            <span class="activity-icon"><i class="bi bi-person-plus"></i></span>
-                            <div>
-                                <p class="activity-title">Se creó un nuevo cliente</p>
-                                <p class="activity-meta">Distribuidora Centro · hace 12 min</p>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-left">
+                                <span class="activity-icon"><i class="bi bi-person-plus"></i></span>
+                                <div>
+                                    <p class="activity-title">Se creó un nuevo cliente</p>
+                                    <p class="activity-meta">Distribuidora Centro · hace 12 min</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-left">
+                                <span class="activity-icon"><i class="bi bi-pencil-square"></i></span>
+                                <div>
+                                    <p class="activity-title">Se actualizó una lista de precios</p>
+                                    <p class="activity-meta">Lista mayorista · hace 38 min</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-left">
+                                <span class="activity-icon"><i class="bi bi-box-seam"></i></span>
+                                <div>
+                                    <p class="activity-title">Se registró un nuevo artículo</p>
+                                    <p class="activity-meta">Yerba mate 1kg · hace 1 h</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-left">
+                                <span class="activity-icon"><i class="bi bi-person-workspace"></i></span>
+                                <div>
+                                    <p class="activity-title">Se modificaron permisos</p>
+                                    <p class="activity-meta">Usuario BraianD · hace 2 h</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-left">
+                                <span class="activity-icon"><i class="bi bi-person-workspace"></i></span>
+                                <div>
+                                    <p class="activity-title">Se modificaron permisos</p>
+                                    <p class="activity-meta">Usuario BraianD · hace 2 h</p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="activity-item">
-                        <div class="activity-left">
-                            <span class="activity-icon"><i class="bi bi-pencil-square"></i></span>
-                            <div>
-                                <p class="activity-title">Se actualizó una lista de precios</p>
-                                <p class="activity-meta">Lista mayorista · hace 38 min</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-left">
-                            <span class="activity-icon"><i class="bi bi-box-seam"></i></span>
-                            <div>
-                                <p class="activity-title">Se registró un nuevo artículo</p>
-                                <p class="activity-meta">Yerba mate 1kg · hace 1 h</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-left">
-                            <span class="activity-icon"><i class="bi bi-person-workspace"></i></span>
-                            <div>
-                                <p class="activity-title">Se modificaron permisos</p>
-                                <p class="activity-meta">Usuario BraianD · hace 2 h</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-left">
-                            <span class="activity-icon"><i class="bi bi-person-workspace"></i></span>
-                            <div>
-                                <p class="activity-title">Se modificaron permisos</p>
-                                <p class="activity-meta">Usuario BraianD · hace 2 h</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                </section>
+            }
         </div>
     </section>
 
