@@ -12,7 +12,7 @@ namespace PresupuestoMVC.Repository.Interfaces
         Task GuardarAsync(Cliente cliente);
         Task ActualizarAsync(Cliente cliente);
         Task EliminarAsync(int id);
-        Task<int> ObtenerTotalAsync();
+        Task<int> ObtenerTotalAsync(int companyId);
         Task<int> ObtenerCantidadDeClientesActivos(int companyId);
         Task<PaginacionRespuestaDto<Cliente>> ObtenerPaginadosAsync(int pageNumber, int pageSize, int companyId, string? searchNombre = null, string? searchFantasia = null);
     }

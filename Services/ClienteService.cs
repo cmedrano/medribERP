@@ -81,9 +81,9 @@ namespace PresupuestoMVC.Services
             return true;
         }
 
-        public async Task<int> ObtenerTotalAsync()
+        public async Task<int> ObtenerTotalAsync(int companyId)
         {
-            return await _clienteRepository.ObtenerTotalAsync();
+            return await _clienteRepository.ObtenerTotalAsync(companyId);
         }
 
         public async Task<int> GetActiveClientsCountAsync(int companyId)
