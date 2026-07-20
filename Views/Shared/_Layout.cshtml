@@ -9,7 +9,8 @@
     var compnayName = User.FindFirst("CompanyName")?.Value;
     var userName = User.FindFirstValue(ClaimTypes.Name);
     var rol = User.FindFirstValue(ClaimTypes.Role);
-    int companyId = Configuration.GetValue<int>("CompanySetting:companyId");
+    int companyIdConfig = Configuration.GetValue<int>("CompanySetting:companyId");
+    int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
     var modules = User.Claims
         .Where(c => c.Type == "Module")
         .Select(c => c.Value)
@@ -183,7 +184,7 @@
                             <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
                         </button>
                         <br/>
-                        @if (companyId != 2)
+                        @if (companyId != companyIdConfig)
                         {
                             <a asp-area="Users" asp-controller="UserConfig" asp-action="Index" class="btn btn-soft w-100">
                                 <i class="bi bi-gear-fill me-2"></i>
