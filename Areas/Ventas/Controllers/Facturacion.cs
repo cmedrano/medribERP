@@ -98,7 +98,7 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
             {
                 var sale = await _facturacionService.GetSaleByIdAsync(id);
                 var client = await _clienteService.ObtenerPorIdAsync((int)sale.ClientId);
-                var company = await _facturacionService.GetCompanyInfoAsync(2);
+                var company = await _facturacionService.GetCompanyInfoAsync(client.CompanyId);
 
                 var ViewModel = new PreviewPdfViewModel
                 {
