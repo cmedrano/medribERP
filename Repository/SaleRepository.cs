@@ -59,6 +59,21 @@ namespace PresupuestoMVC.Repository
             }
         }
 
+        public async Task<decimal> GetSalesMonthAsync(int userId)
+        {
+            var inicioMes = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1, 0, 0, 0, DateTimeKind.Utc);
+            var finMes = inicioMes.AddMonths(1);
+
+            var totalMes = await _context.Sales
+                .Where(x =>
+                    x.ClientId == userId &&
+                    x.DateInserted >= inicioMes &&
+                    x.DateInserted < finMes)
+                .SumAsync(x => x.Total);
+
+            return totalMes;
+        }
+
         public async Task<bool> ExistsAsync(int id)
         {
             return await _context.Sales.AnyAsync(s => s.Id == id);

@@ -20,7 +20,7 @@ namespace PresupuestoMVC.Services
                 ["erp"] = new TenantBranding
                 {
                     CompanyName = "Erp",
-                    BackgroundImage = "erp.jpg",
+                    BackgroundImage = "erp.png",
                     Logo = "erp-logo.png",
                     PrimaryColor = "#1565C0"
                 }
