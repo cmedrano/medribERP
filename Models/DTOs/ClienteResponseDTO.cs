@@ -25,5 +25,6 @@ namespace PresupuestoMVC.Models.DTOs
         public DateTime FechaRegistro { get; set; }
         public int PriceListId { get; set; }
         public string PriceListNombre { get; set; }
+        public int CompanyId { get; set; }
     }
 }
