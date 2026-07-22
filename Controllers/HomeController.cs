@@ -24,6 +24,7 @@ namespace PresupuestoMVC.Controllers
         private readonly ISaleRepository _saleRepository;
         private readonly IArticuloService _articulosService;
         private readonly IPriceListService _priceListService;
+        private readonly IActivityLogService _activityLogService;
 
         public HomeController(
             ILogger<HomeController> logger,
@@ -35,7 +36,8 @@ namespace PresupuestoMVC.Controllers
             IAccountService accountService,
             ISaleRepository saleRepository,
             IArticuloService articuloService,
-            IPriceListService priceListService)
+            IPriceListService priceListService,
+            IActivityLogService activityLogService)
         {
             _logger = logger;
             _userService = userService;
@@ -47,6 +49,7 @@ namespace PresupuestoMVC.Controllers
             _saleRepository = saleRepository;
             _articulosService = articuloService;
             _priceListService = priceListService;
+            _activityLogService = activityLogService;
         }
 
         public async Task<IActionResult> Index()
@@ -67,7 +70,7 @@ namespace PresupuestoMVC.Controllers
                 var clients = await _clienteService.ObtenerTodosAsync(companyId);
                 var articles = await _articulosService.ObtenerTodosActivosAsync(companyId);
                 var priceList = await _priceListService.GetAllAsync(companyId);
-
+                var activityLog = await _activityLogService.GetRecentActivitiesAsync(companyId);
 
                 ViewBag.TotalUsers = totalUsers;
                 ViewBag.TotalBudgets = totalBudgets;
@@ -77,6 +80,7 @@ namespace PresupuestoMVC.Controllers
                 ViewBag.Clients = clients;
                 ViewBag.Articles = articles;
                 ViewBag.PriceList = priceList;
+                ViewBag.ActivityLog = activityLog;
 
                 var modal = new DashboardViewModel
                 {

@@ -89,11 +89,19 @@ namespace PresupuestoMVC.Repository
 
         public async Task GuardarAsync(Cliente cliente)
         {
-            cliente.FechaRegistro = DateTime.UtcNow;
-            cliente.Activo = true;
+            try
+            {
+                cliente.FechaRegistro = DateTime.UtcNow;
+                cliente.Activo = true;
 
-            _context.Clientes.Add(cliente);
-            await _context.SaveChangesAsync();
+                _context.Clientes.Add(cliente);
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                throw;
+            }
+
         }
 
         public async Task ActualizarAsync(Cliente cliente)

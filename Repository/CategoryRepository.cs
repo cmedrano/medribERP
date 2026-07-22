@@ -42,7 +42,7 @@ namespace PresupuestoMVC.Repository
         public async Task<CategoryResponseDto> CreateAsync(RubroType rubroTypeDto)
         {
             var userExiste = await _context.RubroType
-                .AnyAsync(r => r.nombreRubro == rubroTypeDto.nombreRubro);
+                .AnyAsync(r => r.nombreRubro == rubroTypeDto.nombreRubro && r.CompanyId == rubroTypeDto.CompanyId);
 
             if (userExiste)
                 throw new InvalidOperationException("El nombre del rubro ya existe.");
