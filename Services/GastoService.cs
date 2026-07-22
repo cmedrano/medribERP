@@ -200,6 +200,17 @@ namespace PresupuestoMVC.Services
 
                 rubro.ValorGastado += createDto.Monto;
 
+                var activityDto = new ActivityLog
+                {
+                    CompanyId = createDto.CompanyId,
+                    EntityType = "Diary",
+                    Action = "CREATE",
+                    Description = $"Se creo un nuevo gasto de ${createDto.Monto}"
+                    //OldValues = JsonSerializer.Serialize(cliente)
+                };
+
+                _context.ActivityLog.Add(activityDto);
+
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 

@@ -5,6 +5,8 @@
 @using PresupuestoMVC.Models.Entities;
 @inject IConfiguration Configuration
 @using Microsoft.Extensions.Configuration
+@using PresupuestoMVC.Areas.Accounting.Data.DTOs;
+
 @{
     ViewData["Title"] = "Inicio";
     var modules = User.Claims
@@ -17,6 +19,7 @@
     var priceList = ViewBag.PriceList as IEnumerable<PriceList>;
     int companyIdConfig = Configuration.GetValue<int>("CompanySetting:companyId");
     int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
+    var activityLog = ViewBag.ActivityLog as IEnumerable<ActivityLogResponse>;
 }
 
 <div class="page">
@@ -223,52 +226,40 @@
                             <p class="panel-subtitle">Últimos movimientos importantes del sistema.</p>
                         </div>
                     </div>
+
                     <div class="activity-list">
-                        <div class="activity-item">
-                            <div class="activity-left">
-                                <span class="activity-icon"><i class="bi bi-person-plus"></i></span>
-                                <div>
-                                    <p class="activity-title">Se creó un nuevo cliente</p>
-                                    <p class="activity-meta">Distribuidora Centro · hace 12 min</p>
+
+                        @if (ViewBag.ActivityLog != null && activityLog.Any())
+                        {
+                            foreach (var activity in activityLog)
+                            {
+                                <div class="activity-item">
+                                    <div class="activity-left">
+                                        <span class="activity-icon">
+                                            <i class="bi bi-clock-history"></i>
+                                        </span>
+                                        <div>
+                                            <p class="activity-title">@activity.Description</p>
+                                            <p class="activity-meta">@activity.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="activity-item">
+                                <div class="activity-left">
+                                    <span class="activity-icon">
+                                        <i class="bi bi-info-circle"></i>
+                                    </span>
+                                    <div>
+                                        <p class="activity-title">No hay actividad reciente.</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-left">
-                                <span class="activity-icon"><i class="bi bi-pencil-square"></i></span>
-                                <div>
-                                    <p class="activity-title">Se actualizó una lista de precios</p>
-                                    <p class="activity-meta">Lista mayorista · hace 38 min</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-left">
-                                <span class="activity-icon"><i class="bi bi-box-seam"></i></span>
-                                <div>
-                                    <p class="activity-title">Se registró un nuevo artículo</p>
-                                    <p class="activity-meta">Yerba mate 1kg · hace 1 h</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-left">
-                                <span class="activity-icon"><i class="bi bi-person-workspace"></i></span>
-                                <div>
-                                    <p class="activity-title">Se modificaron permisos</p>
-                                    <p class="activity-meta">Usuario BraianD · hace 2 h</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-left">
-                                <span class="activity-icon"><i class="bi bi-person-workspace"></i></span>
-                                <div>
-                                    <p class="activity-title">Se modificaron permisos</p>
-                                    <p class="activity-meta">Usuario BraianD · hace 2 h</p>
-                                </div>
-                            </div>
-                        </div>
+                        }
+
                     </div>
                 </section>
             }
