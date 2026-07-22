@@ -1,5 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using PresupuestoMVC.Areas.Accounting.Data.DTOs;
 using PresupuestoMVC.Areas.Ventas.ViewModels;
 using PresupuestoMVC.Areas.Ventas.ViewModels.DTOs;
 using PresupuestoMVC.Models;
@@ -13,12 +15,14 @@ namespace PresupuestoMVC.Services
     public class ArticuloService : IArticuloService
     {
         private readonly IArticuloRepository _articuloRepository;
+        private readonly IActivityLogRepository _activityLogRepository;
         private readonly IMapper _mapper;
 
-        public ArticuloService(IArticuloRepository articuloRepository, IMapper mapper)
+        public ArticuloService(IArticuloRepository articuloRepository, IMapper mapper, IActivityLogRepository activityLogRepository)
         {
             _articuloRepository = articuloRepository;
             _mapper = mapper;
+            _activityLogRepository = activityLogRepository;
         }
 
         public async Task<IEnumerable<ArticuloResponseDTO>> ObtenerTodosActivosAsync(int companyId)
@@ -80,6 +84,14 @@ namespace PresupuestoMVC.Services
                     }).ToList() ?? new List<ArticulosPrecios>();
 
                 await _articuloRepository.GuardarAsync(articulo, articulosPrecios);
+
+                var ActivityDto = new ActivityLogRequestDto() {
+                    CompanyId = createDto.CompanyId,
+                    EntityType = "Articulo",
+                    Action = "CREATE",
+                    Description = $"Se creó un nuevo articulo {articulo.Nombre}"
+                };
+                await _activityLogRepository.LogAsync(ActivityDto);
 
                 return _mapper.Map<ArticuloResponseDTO>(articulo);
             }

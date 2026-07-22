@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
+using PresupuestoMVC.Areas.Accounting.Data.DTOs;
 using PresupuestoMVC.Data;
 using PresupuestoMVC.Migrations;
 using PresupuestoMVC.Models.DTOs;
 using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Models.ViewModels;
+using PresupuestoMVC.Repository.Interfaces;
 using PresupuestoMVC.Services.Interfaces;
 using System.ComponentModel.Design;
 
@@ -17,11 +19,13 @@ namespace PresupuestoMVC.Services
     {
         private readonly IMapper _mapper;
         private readonly AppDbContext _context;
+        private readonly IActivityLogRepository _activityLogRepository;
 
-        public BudgetService(AppDbContext context, IMapper mapper)
+        public BudgetService(AppDbContext context, IMapper mapper, IActivityLogRepository activityLogRepository)
         {
             _context = context;
             _mapper = mapper;
+            _activityLogRepository = activityLogRepository;
         }
 
         public async Task<BudgetResponseDTO> GetByIdAsync(int id)
@@ -118,13 +122,22 @@ namespace PresupuestoMVC.Services
                         budgetExiste.valorInicial += budgetWithSubCategory.valorInicial;   
                 }
 
-                await _context.SaveChangesAsync();
-
                 var result = await _context.Budget
                     .Include(r => r.tipoRubro)
                     .Include(r => r.Company)
-                    .FirstOrDefaultAsync(r => r.Id == 4);
+                    .OrderByDescending(r => r.Id)
+                    .FirstOrDefaultAsync();
 
+                var ActivityDto = new ActivityLogRequestDto()
+                {
+                    CompanyId = createDto.CompanyId,
+                    EntityType = "Budget",
+                    Action = "CREATE",
+                    Description = $"Se creó un nuevo presupuesto {result.tipoRubro.nombreRubro} - mes: {result.Mes} - año: {result.Anio}"
+                };
+                await _activityLogRepository.LogAsync(ActivityDto);
+
+                await _context.SaveChangesAsync();
                 return _mapper.Map<BudgetResponseDTO>(result);
             }
             catch (Exception ex)

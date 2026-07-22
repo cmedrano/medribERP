@@ -35,6 +35,7 @@ namespace PresupuestoMVC.Data
         public DbSet<Sale> Sales { get; set; }
         public DbSet<SaleDetail> SaleDetails { get; set; }
         public DbSet<Company> Companies { get; set; }
+        public DbSet<ActivityLog> ActivityLog { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

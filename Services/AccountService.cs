@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using PresupuestoMVC.Areas.Accounting.Data.DTOs;
 using PresupuestoMVC.Models.DTOs;
 using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Models.ViewModels;
@@ -12,9 +13,11 @@ namespace PresupuestoMVC.Services
     public class AccountService : IAccountService
     {
         private readonly IAccountRepository _accountRepository;
-        public AccountService(IAccountRepository accountRepository)
+        private readonly IActivityLogRepository _activityLogRepository;
+        public AccountService(IAccountRepository accountRepository, IActivityLogRepository activityLogRepository)
         {
             _accountRepository = accountRepository;
+            _activityLogRepository = activityLogRepository;
         }
 
         public async Task<IEnumerable<CuentaResponseDto>> GetAllAccountAsync(int companyId)
@@ -30,7 +33,20 @@ namespace PresupuestoMVC.Services
                 SaldoActual = accountRequest.InitialBalance,
                 CompanyId = accountRequest.CompanyId
             };
-            return await _accountRepository.CreateAccountAsync(account);
+
+            var result = await _accountRepository.CreateAccountAsync(account);
+
+            var resultActivity =  new ActivityLogRequestDto()
+            {
+                CompanyId = accountRequest.CompanyId,
+                EntityType = "Account",
+                EntityId = result.Id,
+                Action = "CREATE",
+                Description = $"Se creó una nueva cuenta {result.nombreCuenta}"
+            };
+
+            await _activityLogRepository.LogAsync(resultActivity);
+            return result;
         }
         public async Task<CuentaResponseDto> CreateIncomeAsync(CreateIncomeViewRequest income)
         {
