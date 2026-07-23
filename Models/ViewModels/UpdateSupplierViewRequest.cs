@@ -1,7 +1,7 @@
-﻿namespace PresupuestoMVC.Models.DTOs
+﻿namespace PresupuestoMVC.Models.ViewModels
 {
-    public class ProviderResponseDto
-    {
+    public class UpdateSupplierViewRequest
+    { 
         public int Id { get; set; }
         public string Name { get; set; }
         public string Code { get; set; }

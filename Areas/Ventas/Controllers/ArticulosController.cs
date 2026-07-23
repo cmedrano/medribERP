@@ -45,7 +45,7 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
                 int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
                 var articulos = await _articuloService.ObtenerTodosActivosAsync(companyId);
                 var total = await _articuloService.ObtenerTotalAsync();
-                var providers = await _providerService.GetAllProviderAsync();
+                var providers = await _providerService.GetAllProviderAsync(companyId);
                 var brands = await _brandService.GetAllBrandAsync();
                 var productCategories = await _productCategoryService.GetAllProductCategoryAsync();
                 var priceList = await _priceListService.GetAllAsync(companyId);
