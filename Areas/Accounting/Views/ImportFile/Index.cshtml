@@ -47,6 +47,12 @@
                         <input class="form-control" type="file" id="fileInput" accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
                     </div>
 
+                    <div class="d-flex justify-content-end mb-2">
+                        <button type="button" class="btn btn-success-soft d-none" id="btnAgregarFila">
+                            <i class="bi bi-plus-lg me-2"></i> Agregar fila
+                        </button>
+                    </div>
+
                     <div class="table-responsive">
                         <table class="table table-sm table-striped" id="previewTable">
                             <thead id="previewHead"></thead>
@@ -74,6 +80,7 @@
 <script>
     function abrirModalCrearImportar() {
         // limpiar vista previa y estado
+        document.getElementById('btnAgregarFila').classList.add('d-none');
         const fileInput = document.getElementById('fileInput');
         const previewHead = document.getElementById('previewHead');
         const previewBody = document.getElementById('previewBody');
@@ -102,6 +109,130 @@
         const rubrosList = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(categories ?? Enumerable.Empty<CategoryResponseDto>()));
         const cuentasList = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(accounts ?? Enumerable.Empty<CuentaResponseDto>()));
 
+        function agregarFilaVacia() {
+
+            const tr = document.createElement('tr');
+
+            // =========================
+            // Checkbox
+            // =========================
+            const tdCheck = document.createElement('td');
+
+            const chk = document.createElement('input');
+            chk.type = 'checkbox';
+            chk.className = 'form-check-input';
+            chk.checked = true;
+            chk.style.position = 'relative';
+            chk.style.left = '23px';
+            chk.style.top = '12px';
+            chk.addEventListener('change', validateRows);
+
+            tdCheck.appendChild(chk);
+            tr.appendChild(tdCheck);
+
+            // =========================
+            // Fecha
+            // =========================
+            const tdFecha = document.createElement('td');
+
+            const inputFecha = document.createElement('input');
+            inputFecha.type = 'date';
+            inputFecha.className = 'form-control form-control-sm';
+
+            // Fecha actual
+            const hoy = new Date();
+            const yyyy = hoy.getFullYear();
+            const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+            const dd = String(hoy.getDate()).padStart(2, '0');
+
+            inputFecha.value = `${yyyy}-${mm}-${dd}`;
+
+            tdFecha.appendChild(inputFecha);
+            tr.appendChild(tdFecha);
+
+            // =========================
+            // Rubro
+            // =========================
+            const tdRubro = document.createElement('td');
+            tdRubro.style.minWidth = '200px';
+
+            const selectRubro = document.createElement('select');
+            selectRubro.className = 'form-select form-select-sm';
+
+            const optRubro = document.createElement('option');
+            optRubro.value = '';
+            optRubro.textContent = '-- seleccionar --';
+            selectRubro.appendChild(optRubro);
+
+            rubrosList.forEach(r => {
+                const opt = document.createElement('option');
+                opt.value = r.id ?? r.Id ?? r.RubroTypeId ?? r.rubroTypeId ?? '';
+                opt.textContent = r.nombreRubro || r.nombre || r.name || r.Nombre || '';
+                selectRubro.appendChild(opt);
+            });
+
+            selectRubro.addEventListener('change', validateRows);
+
+            tdRubro.appendChild(selectRubro);
+            tr.appendChild(tdRubro);
+
+            // =========================
+            // Cuenta
+            // =========================
+            const tdCuenta = document.createElement('td');
+            tdCuenta.style.minWidth = '200px';
+
+            const selectCuenta = document.createElement('select');
+            selectCuenta.className = 'form-select form-select-sm';
+
+            const optCuenta = document.createElement('option');
+            optCuenta.value = '';
+            optCuenta.textContent = '-- seleccionar --';
+            selectCuenta.appendChild(optCuenta);
+
+            cuentasList.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.id ?? c.Id ?? c.cuentaId ?? c.IdCuenta ?? '';
+                opt.textContent = c.nombreCuenta || c.nombre || c.name || c.Nombre || '';
+                selectCuenta.appendChild(opt);
+            });
+
+            selectCuenta.addEventListener('change', validateRows);
+
+            tdCuenta.appendChild(selectCuenta);
+            tr.appendChild(tdCuenta);
+
+            // =========================
+            // Nota
+            // =========================
+            const tdNota = document.createElement('td');
+
+            const inputNota = document.createElement('input');
+            inputNota.type = 'text';
+            inputNota.className = 'form-control form-control-sm';
+
+            tdNota.appendChild(inputNota);
+            tr.appendChild(tdNota);
+
+            // =========================
+            // Monto
+            // =========================
+            const tdMonto = document.createElement('td');
+
+            const inputMonto = document.createElement('input');
+            inputMonto.type = 'number';
+            inputMonto.step = '0.01';
+            inputMonto.className = 'form-control form-control-sm';
+            inputMonto.value = '0.00';
+
+            tdMonto.appendChild(inputMonto);
+            tr.appendChild(tdMonto);
+
+            previewBody.appendChild(tr);
+
+            validateRows();
+        }
+
         function stripDiacritics(s) {
             return s ? s.normalize('NFD').replace(/\p{Diacritic}/gu, '') : s;
         }
@@ -117,6 +248,23 @@
             return -1;
         }
 
+        function findFechaIndex(headers) {
+            const patterns = [
+                ['fecha', 'aprob'],
+                ['fecha', 'aprobacion'],
+                ['fecha', 'aprobado'],
+                ['fecha', 'liquid'],
+                ['fecha', 'liquidacion']
+            ];
+
+            for (const [a, b] of patterns) {
+                const idx = findIndex(headers, (n) => n.includes(a) && n.includes(b));
+                if (idx !== -1) return idx;
+            }
+
+            return findIndex(headers, (n) => n.includes('fecha'));
+        }
+
         function buildTable(data) {
             previewHead.innerHTML = '';
             previewBody.innerHTML = '';
@@ -125,13 +273,14 @@
             const headers = data[0].map(h => h || '');
 
             // localizar índices de columnas relevantes
-            const idxFecha = findIndex(headers, (n) => n.includes('fecha') && n.includes('liquid'));
+
+            const idxFecha = findFechaIndex(headers);
             const idxTipo = findIndex(headers, (n) => n.includes('tipo') && n.includes('oper'));
             const idxMonto = findIndex(headers, (n) => n.includes('monto') && n.includes('neto'));
 
             // crear cabecera
             const theadRow = document.createElement('tr');
-            ['Fecha', 'Rubro', 'Cuenta', 'Note', 'Monto'].forEach(h => {
+            ['Importar', 'Fecha', 'Rubro', 'Cuenta', 'Nota', 'Monto'].forEach(h => {
                 const th = document.createElement('th');
                 th.textContent = h;
                 theadRow.appendChild(th);
@@ -179,6 +328,21 @@
 
                 const tr = document.createElement('tr');
 
+                const tdCheck = document.createElement('td');
+
+                const chk = document.createElement('input');
+                chk.type = 'checkbox';
+                chk.className = 'form-check-input';
+                chk.checked = true;
+                chk.style.position = 'relative';
+                chk.style.left = '23px';
+                chk.style.top = '12px';
+
+                tdCheck.appendChild(chk);
+                tr.appendChild(tdCheck);
+
+                chk.addEventListener('change', validateRows);
+
                 // Fecha -> input date (editable)
                 const tdFecha = document.createElement('td');
                 const inputFecha = document.createElement('input');
@@ -202,7 +366,6 @@
                 const selectRubro = document.createElement('select');
                 selectRubro.className = 'form-select form-select-sm';
                 selectRubro.style.minWidth = '100%';
-                selectRubro.required = true;
                 const optEmpty = document.createElement('option');
                 optEmpty.value = '';
                 optEmpty.textContent = '-- seleccionar --';
@@ -222,7 +385,6 @@
                 const selectCuenta = document.createElement('select');
                 selectCuenta.className = 'form-select form-select-sm';
                 selectCuenta.style.minWidth = '100%';
-                selectCuenta.required = true;
                 const optEmptyC = document.createElement('option');
                 optEmptyC.value = '';
                 optEmptyC.textContent = '-- seleccionar --';
@@ -267,6 +429,7 @@
 
             // validar filas para habilitar botón solo si todas tienen rubro y cuenta
             validateRows();
+            document.getElementById('btnAgregarFila').classList.remove('d-none');
         }
 
         function handleCSV(file) {
@@ -299,37 +462,63 @@
 
         function validateRows() {
             const rows = previewBody.querySelectorAll('tr');
+
             if (!rows || rows.length === 0) {
                 submitBtn.disabled = true;
                 return false;
             }
+
+            let hayFilasSeleccionadas = false;
+
             for (let i = 0; i < rows.length; i++) {
-                const selR = rows[i].querySelector('select');
+
+                const chk = rows[i].querySelector('input[type="checkbox"]');
+
+                // Si la fila no está seleccionada, no la validamos
+                if (!chk || !chk.checked)
+                    continue;
+
+                hayFilasSeleccionadas = true;
+
+                const selR = rows[i].querySelectorAll('select')[0];
                 const selC = rows[i].querySelectorAll('select')[1];
+
                 if (!selR || !selC) {
                     submitBtn.disabled = true;
                     return false;
                 }
+
                 if (!selR.value || !selC.value) {
                     submitBtn.disabled = true;
                     return false;
                 }
             }
-            submitBtn.disabled = false;
-            return true;
+
+            // Debe haber al menos una fila seleccionada
+            submitBtn.disabled = !hayFilasSeleccionadas;
+            return hayFilasSeleccionadas;
         }
 
         function buildPayload() {
             const rows = previewBody.querySelectorAll('tr');
             const items = [];
+
             rows.forEach(row => {
+
+                const chk = row.querySelector('input[type="checkbox"]');
+
+                // Si no está marcada, no se importa
+                if (!chk || !chk.checked)
+                    return;
+
                 const fechaInput = row.querySelector('input[type="date"]');
                 const selectRubro = row.querySelectorAll('select')[0];
                 const selectCuenta = row.querySelectorAll('select')[1];
                 const noteInput = row.querySelector('input[type="text"]');
                 const montoInput = row.querySelector('input[type="number"]');
 
-                if (!selectRubro || !selectCuenta) return;
+                if (!selectRubro || !selectCuenta)
+                    return;
 
                 items.push({
                     RubroTypeId: parseInt(selectRubro.value, 10) || 0,
@@ -340,6 +529,7 @@
                     ForceNegativeBalance: false
                 });
             });
+
             return items;
         }
 
@@ -412,5 +602,7 @@
                 }
             });
         }
+    document.getElementById('btnAgregarFila')
+     .addEventListener('click', agregarFilaVacia);
     })();
 </script>

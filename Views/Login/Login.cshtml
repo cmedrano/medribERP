@@ -7,7 +7,9 @@
     var backgroundImage = "/images/huevos.jpg"; // cambiar imagen acá
     var titulo = "Iniciar Sesión";
     var subtitulo = "Accede a tu cuenta";
+    var branding = (TenantBranding)ViewBag.Branding;
 }
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,11 +28,14 @@
         body {
             margin: 0;
             min-height: 100vh;
-            background: url('@backgroundImage') no-repeat center center fixed;
+            background-image: url('/images/branding/@branding.BackgroundImage');
             background-size: cover;
+            background-position: center;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-direction: column;
+            margin-bottom: -117px;
         }
 
         .overlay {
@@ -55,31 +60,41 @@
             border: none;
         }
 
-            .btn-primary:hover {
-                background-color: var(--primary-hover);
-            }
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
 
         .link-orange {
             color: var(--primary-color);
             text-decoration: none;
         }
 
-            .link-orange:hover {
-                text-decoration: underline;
-            }
+        .link-orange:hover {
+            text-decoration: underline;
+        }
+
+/*         .erp-footer-copyright {
+            text-align: center;
+            margin-top: 20px;
+        } */
+
+/*         .footer-container {
+            position: relative;
+            width: 100%;
+            top: 15vh;
+            background: white;
+            padding-bottom: 5px;
+        } */
+
     </style>
 </head>
 
 <body>
-
     <div class="overlay"></div>
-
     <div class="login-card">
         <h2 class="text-center mb-2">@titulo</h2>
         <p class="text-center text-muted mb-4">@subtitulo</p>
-
         <form asp-action="Login" method="post">
-
             <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
             <div class="mb-3">
@@ -94,23 +109,28 @@
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
-            <div class="text-end mb-3">
+@*             <div class="text-end mb-3">
                 <a asp-action="Recover" class="link-orange">¿Olvidaste tu contraseña?</a>
-            </div>
+            </div> *@
 
             <button type="submit" class="btn btn-primary w-100 py-2">
                 Ingresar
             </button>
 
-            <div class="text-center mt-4">
+@*             <div class="text-center mt-4">
                 ¿No tienes cuenta?
                 <a asp-controller="Login" asp-action="Register" class="link-orange">
                     Regístrate
                 </a>
-            </div>
+            </div> *@
 
         </form>
     </div>
-
+    <footer class="footer-container">
+        <div class="erp-footer-copyright">
+            @* <p>Copyright © 2026 Medrib Software | Powered by Medrib Software</p> *@
+        </div>
+    </footer>
 </body>
+
 </html>

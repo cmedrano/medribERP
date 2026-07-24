@@ -3,6 +3,7 @@ using PresupuestoMVC.Models.DTOs;
 using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.Design;
 
 namespace PresupuestoMVC.Repository
 {
@@ -15,11 +16,16 @@ namespace PresupuestoMVC.Repository
             _context = context;
         }
 
-        public async Task<List<Cliente>> ObtenerTodosAsync()
+        public async Task<int> ObtenerCantidadDeClientesActivos(int companyId)
+        {
+            return await _context.Clientes.CountAsync(c => c.Activo && c.CompanyId == companyId);
+        }
+
+        public async Task<List<Cliente>> ObtenerTodosAsync(int companyId)
         {
             return await _context.Clientes
                 .Include(c => c.PriceList)
-                .Where(c => c.Activo)
+                .Where(c => c.Activo && c.CompanyId == companyId)
                 .AsNoTracking()
                 .OrderByDescending(c => c.FechaRegistro)
                 .ToListAsync();
@@ -46,10 +52,10 @@ namespace PresupuestoMVC.Repository
                 .FirstOrDefaultAsync(c => c.Activo && c.Email == email);
         }
 
-        public async Task<PaginacionRespuestaDto<Cliente>> ObtenerPaginadosAsync(int pageNumber, int pageSize, string? searchNombre = null, string? searchFantasia = null)
+        public async Task<PaginacionRespuestaDto<Cliente>> ObtenerPaginadosAsync(int pageNumber, int pageSize, int companyId, string? searchNombre = null, string? searchFantasia = null)
         {
             var query = _context.Clientes
-                .Where(c => c.Activo)
+                .Where(c => c.CompanyId == companyId)
                 .AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(searchNombre))
@@ -83,11 +89,19 @@ namespace PresupuestoMVC.Repository
 
         public async Task GuardarAsync(Cliente cliente)
         {
-            cliente.FechaRegistro = DateTime.UtcNow;
-            cliente.Activo = true;
+            try
+            {
+                cliente.FechaRegistro = DateTime.UtcNow;
+                cliente.Activo = true;
 
-            _context.Clientes.Add(cliente);
-            await _context.SaveChangesAsync();
+                _context.Clientes.Add(cliente);
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                throw;
+            }
+
         }
 
         public async Task ActualizarAsync(Cliente cliente)
@@ -140,9 +154,9 @@ namespace PresupuestoMVC.Repository
             }
         }
 
-        public async Task<int> ObtenerTotalAsync()
+        public async Task<int> ObtenerTotalAsync(int companyId)
         {
-            return await _context.Clientes.Where(c => c.Activo).CountAsync();
+            return await _context.Clientes.Where(c => c.Activo && c.CompanyId == companyId).CountAsync();
         }
     }
 }

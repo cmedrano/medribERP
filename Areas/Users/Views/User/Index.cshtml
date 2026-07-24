@@ -1,9 +1,6 @@
 ﻿@using PresupuestoMVC.Models.Entities
 @using PresupuestoMVC.Models.DTOs
 @using PresupuestoMVC.Enums;
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Usuarios";
@@ -41,6 +38,22 @@
     </div>
 
     <!-- informacion util rapida -->
+    @{
+        int administradores = 0;
+        int operadores = 0;
+
+        foreach(var user in users)
+        {
+            if (user.Rol == UserRol.Administrador)
+            {
+                administradores += 1;
+            }
+            else if (user.Rol == UserRol.Operador)
+            {
+                operadores += 1;
+            }
+        }
+    }
     <div class="row g-3 mb-4">
         <div class="col-md-6 col-xl-4">
             <div class="erp-card metric-card">
@@ -53,26 +66,26 @@
             <div class="erp-card metric-card">
                 @* <div class="metric-icon"><i class="bi bi-cash-stack"></i></div> *@
                 <div class="metric-label">Administradores</div>
-                <div class="metric-value">4</div>
+                <div class="metric-value">@administradores</div>
             </div>
         </div>
         <div class="col-md-6 col-xl-4">
             <div class="erp-card metric-card">
                 @* <div class="metric-icon"><i class="bi bi-credit-card-2-front"></i></div> *@
                 <div class="metric-label">Operadores</div>
-                <div class="metric-value">5</div>
+                <div class="metric-value">@operadores</div>
             </div>
         </div>
     </div>
         
-        <!-- Grilla de Usuarios -->
+    <!-- Grilla de Usuarios -->
     <div class="card border-0 shadow-sm rounded-4">
         <div class="card-body p-0">
             <div class="table-tools">
                 <div>
                     <h2 class="section-title">Usuarios registrados</h2>
                     <p class="section-subtitle">
-                        Mostrando 9 de @totalUsers
+                        Mostrando @users.Count() de @totalUsers;
                     </p>
                 </div>
             </div>
@@ -118,7 +131,7 @@
                                        </span>
                                     </td>
                                     <td class="pe-4 py-4 text-end">
-                                        <button class="icon-btn"
+                                        <button class="icon-btn d-none"
                                                 onclick="abrirModalEditar(
                                                 '@user.Id',
                                                 '@user.UserName',
@@ -136,7 +149,7 @@
                                                 <i class="bi bi-key"></i>
                                             </button>
                                         }
-                                        <button class="icon-btn icon-btn-danger"
+                                        <button class="icon-btn icon-btn-danger d-none"
                                                 onclick="abrirModalEliminar(
                                                 '@user.Id',
                                                 '@user.UserName',
@@ -159,7 +172,9 @@
                     </tbody>
                 </table>
             </div>
-            <div class="table-footer">
+
+            <!-- Paginacion -->
+@*             <div class="table-footer">
                 <small class="text-muted">Página 1 de 19</small>
                 <nav>
                     <ul class="pagination pagination-sm mb-0">
@@ -170,7 +185,7 @@
                         <li class="page-item"><a class="page-link" href="#">Siguiente</a></li>
                     </ul>
                 </nav>
-            </div>
+            </div> *@
          </div>
      </div>
     

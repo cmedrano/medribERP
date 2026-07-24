@@ -103,6 +103,9 @@ namespace PresupuestoMVC
             builder.Services.AddScoped<IFacturacionService, FacturacionService>();
             builder.Services.AddScoped<ISaleRepository, SaleRepository>();
             builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+            builder.Services.AddScoped<ITenantBrandingService, TenantBrandingService>();
+            builder.Services.AddScoped<IActivityLogRepository, ActivityLogRespository>();
+            builder.Services.AddScoped<IActivityLogService, ActivityLogService>();
 
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));

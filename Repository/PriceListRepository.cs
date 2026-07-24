@@ -6,6 +6,7 @@ using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Models.ViewModels;
 using PresupuestoMVC.Repository.Interfaces;
 using System;
+using PresupuestoMVC.Models;
 
 namespace PresupuestoMVC.Repositories
 {
@@ -20,15 +21,37 @@ namespace PresupuestoMVC.Repositories
             _mapper = mapper;
         }
 
-        public async Task<List<PriceList>> GetAllAsync()
+        public async Task<List<PriceList>> GetAllAsync(int companyId)
         {
             var priceListActivos = await _context.PriceList
-                    .Where(a => a.Activo)
+                    .Where(a => a.CompanyId == companyId)
                     .OrderBy(a => a.Nombre)
                     .ToListAsync();
 
             return priceListActivos;
         }
+
+        public async Task<PaginatedResult<PriceList>> GetPagedAsync(int pageNumber, int pageSize, int companyId)
+        {
+            var query = _context.PriceList
+                .Where(a => a.Activo && a.CompanyId == companyId)
+                .OrderBy(a => a.Nombre);
+
+            var totalCount = await query.CountAsync();
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PaginatedResult<PriceList>
+            {
+                Items = items,
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+        }
+
         public async Task<PriceList?> GetByIdAsync(int id)
         {
             return await _context.PriceList.FindAsync(id);

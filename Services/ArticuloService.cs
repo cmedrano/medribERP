@@ -1,7 +1,10 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using PresupuestoMVC.Areas.Accounting.Data.DTOs;
 using PresupuestoMVC.Areas.Ventas.ViewModels;
 using PresupuestoMVC.Areas.Ventas.ViewModels.DTOs;
+using PresupuestoMVC.Models;
 using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Repository.Interfaces;
 using PresupuestoMVC.Services.Interfaces;
@@ -12,17 +15,19 @@ namespace PresupuestoMVC.Services
     public class ArticuloService : IArticuloService
     {
         private readonly IArticuloRepository _articuloRepository;
+        private readonly IActivityLogRepository _activityLogRepository;
         private readonly IMapper _mapper;
 
-        public ArticuloService(IArticuloRepository articuloRepository, IMapper mapper)
+        public ArticuloService(IArticuloRepository articuloRepository, IMapper mapper, IActivityLogRepository activityLogRepository)
         {
             _articuloRepository = articuloRepository;
             _mapper = mapper;
+            _activityLogRepository = activityLogRepository;
         }
 
-        public async Task<IEnumerable<ArticuloResponseDTO>> ObtenerTodosActivosAsync()
+        public async Task<IEnumerable<ArticuloResponseDTO>> ObtenerTodosActivosAsync(int companyId)
         {
-            var articulos = await _articuloRepository.ObtenerTodosActivosAsync();
+            var articulos = await _articuloRepository.ObtenerTodosActivosAsync(companyId);
             return _mapper.Map<IEnumerable<ArticuloResponseDTO>>(articulos);
         }
 
@@ -54,13 +59,9 @@ namespace PresupuestoMVC.Services
                 if (articuloExistente != null && articuloExistente.Activo)
                     throw new Exception("Ya existe un artículo con este código");
 
-                //var articulo = _mapper.Map<Articulo>(createDto);
-                //articulo.Activo = true;
-                //articulo.CreatedAt = DateTime.UtcNow;
-                //articulo.UpdatedAt = DateTime.UtcNow;
-
                 Articulo articulo = new Articulo()
                 {
+                    CompanyId = createDto.CompanyId,
                     Codigo = createDto.Codigo,
                     Nombre = createDto.Nombre,
                     UnidadMedida = createDto.UnidadMedida,
@@ -83,6 +84,14 @@ namespace PresupuestoMVC.Services
                     }).ToList() ?? new List<ArticulosPrecios>();
 
                 await _articuloRepository.GuardarAsync(articulo, articulosPrecios);
+
+                var ActivityDto = new ActivityLogRequestDto() {
+                    CompanyId = createDto.CompanyId,
+                    EntityType = "Articulo",
+                    Action = "CREATE",
+                    Description = $"Se creó un nuevo articulo {articulo.Nombre}"
+                };
+                await _activityLogRepository.LogAsync(ActivityDto);
 
                 return _mapper.Map<ArticuloResponseDTO>(articulo);
             }
@@ -142,6 +151,10 @@ namespace PresupuestoMVC.Services
             await _articuloRepository.EliminarAsync(id);
 
             return true;
+        }
+        public async Task<PaginatedResult<Articulo>> GetPagedAsync(int pageNumber, int pageSize, int companyId)
+        {
+            return await _articuloRepository.GetPagedAsync(pageNumber, pageSize, companyId);
         }
     }
 }

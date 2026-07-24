@@ -15,7 +15,6 @@ namespace PresupuestoMVC.Controllers
         private readonly ILocalidadService _localidadService;
         private readonly IPriceListService _priceListService;
         private readonly IProvinciaService _provinciaService;
-        private const int PageSize = 10;
 
         public ClientesController(
             IClienteService clienteService,
@@ -29,10 +28,12 @@ namespace PresupuestoMVC.Controllers
             _provinciaService = provinciaService;
         }
 
-        public async Task<IActionResult> Index(int page = 1, string? searchNombre = null, string? searchFantasia = null, string? searchCliente = null)
+        public async Task<IActionResult> Index(string? searchNombre = null, string? searchFantasia = null, string? searchCliente = null, int page = 1, int tamañoPagina = 10)
         {
             try
             {
+                int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
+
                 if (page < 1)
                     page = 1;
 
@@ -41,12 +42,12 @@ namespace PresupuestoMVC.Controllers
                     SearchNombre = searchNombre,
                     SearchFantasia = searchFantasia,
                     Pagina = page,
-                    TamanioPagina = PageSize
+                    TamanioPagina = tamañoPagina
                 };
 
-                var resultado = await _clienteService.ObtenerPaginadosAsync(filtro, page, PageSize);
+                var resultado = await _clienteService.ObtenerPaginadosAsync(filtro, page, tamañoPagina, companyId);
 
-                var priceList = await _priceListService.GetAllAsync();
+                var priceList = await _priceListService.GetAllAsync(companyId);
                 var provincia = await _provinciaService.ObtenerTodasAsync();
                 ViewBag.PriceList = priceList;
                 ViewBag.Provincia = provincia;
@@ -61,8 +62,9 @@ namespace PresupuestoMVC.Controllers
                 }
 
                 ViewData["SearchCliente"] = searchCliente ?? "";
+                ViewBag.Paginacion = resultado;
                 ViewData["CurrentPage"] = page;
-                ViewData["PageSize"] = PageSize;
+                ViewData["PageSize"] = tamañoPagina;
                 ViewData["SearchNombre"] = searchNombre ?? "";
                 ViewData["SearchFantasia"] = searchFantasia ?? "";
 
@@ -91,6 +93,8 @@ namespace PresupuestoMVC.Controllers
                     TempData["Error"] = "Datos inválidos";
                     return RedirectToAction("Index");
                 }
+                int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
+                model.CompanyId = companyId;
 
                 await _clienteService.GuardarAsync(model);
                 TempData["Success"] = "Cliente registrado exitosamente";

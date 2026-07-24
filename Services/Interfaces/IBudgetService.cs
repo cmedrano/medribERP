@@ -16,5 +16,6 @@ namespace PresupuestoMVC.Services.Interfaces
         Task<IEnumerable<CategoryResponseDto>> GetCategoriesbyDateAsync(DateTime date);
         Task<int> GetBudgetCountAsync(int companyId);
         Task<IEnumerable<BudgetResponseDTO>> SearchBudgetByYearAndMonth(int anio, int mes);
+        Task<(decimal Used, decimal Available)> GetBudgetSummaryAsync(int companyId);
     }
 }

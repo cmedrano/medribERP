@@ -1,7 +1,15 @@
 ﻿@model IEnumerable<PresupuestoMVC.Models.Entities.PriceList>
+@using PresupuestoMVC.Models
+@using PresupuestoMVC.Models.Entities
+
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Lista de precios";
+    
+    var paginacion = ViewBag.Paginacion as PaginatedResult<PriceList>;
+    int totalPaginas = paginacion.TotalPages;
+    int inicio = Math.Max(1, paginacion.PageNumber - 2);
+    int fin = Math.Min(totalPaginas, paginacion.PageNumber + 2);
 }
 
 <main class="flex-grow-1 container-main">
@@ -46,9 +54,16 @@
         </div>
         <div class="col-md-6 col-xl-3">
             <div class="erp-card metric-card">
-                <div class="metric-icon"><i class="bi bi-toggle-off"></i></div>
-                <div class="metric-label">Lista de precios no activos</div>
-                <div class="metric-value">@Model.Count(x => !x.Activo)</div>
+                <div class="metric-icon"><i class="bi bi-credit-card-2-front"></i></div>
+                <div class="metric-label">Lista principal</div>
+                <div class="metric-value">Minorista</div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="erp-card metric-card">
+                <div class="metric-icon"><i class="bi bi-tags"></i></div>
+                <div class="metric-label">Lista menos utilizada</div>
+                <div class="metric-value">Distribuidor</div>
             </div>
         </div> *@
     </div>
@@ -59,7 +74,7 @@
            <div>
                <h2 class="section-title">Listas registradas</h2>
                <p class="section-subtitle">
-                   Mostrando 10 de 21
+                   Mostrando @paginacion.Items.Count() de @paginacion.TotalCount
                </p>
            </div>
        </div>
@@ -75,9 +90,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (Model != null && Model.Any())
+                    @if (paginacion != null && paginacion.Items.Any())
                     {
-                        foreach (var item in Model)
+                        foreach (var item in paginacion.Items)
                         {
                             <tr>
                                 <td><span class="badge-soft badge-cuenta">@item.Nombre</span></td>
@@ -139,14 +154,45 @@
             </table>
         </div>
         <div class="table-footer">
-            <small class="text-muted">Página 1 de 19</small>
+            <small class="text-muted">Página @paginacion.PageNumber de @totalPaginas</small>
             <nav>
                 <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item disabled"><a class="page-link" href="#">Anterior</a></li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">Siguiente</a></li>
+                    <!-- Botón Anterior -->
+                    <li class="page-item @(paginacion.PageNumber == 1 ? "disabled" : "")">
+                        @if (paginacion.PageNumber > 1)
+                        {
+                            <a class="page-link" href="@Url.Action("Index", "PriceList", new { Area = "Ventas", pagina = paginacion.PageNumber - 1, tamañoPagina = paginacion.PageSize })">
+                                Anterior
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="page-link">Anterior</span>
+                        }
+                    </li>
+
+                    @for (int i = inicio; i <= fin; i++)
+                    {
+                        <li class="page-item @(i == paginacion.PageNumber ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("Index", "PriceList", new { Area = "Ventas", pagina = i, tamañoPagina = paginacion.PageSize })">
+                                @i
+                            </a>
+                        </li>
+                    }
+
+                    <!-- Botón Siguiente -->
+                    <li class="page-item @(paginacion.PageNumber >= totalPaginas ? "disabled" : "")">
+                        @if (paginacion.PageNumber < totalPaginas)
+                        {
+                            <a class="page-link" href="@Url.Action("Index", "PriceList", new { Area = "Ventas", pagina = paginacion.PageNumber + 1, tamañoPagina = paginacion.PageSize })">
+                                Siguiente
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="page-link">Siguiente</span>
+                        }
+                    </li>
                 </ul>
             </nav>
         </div>

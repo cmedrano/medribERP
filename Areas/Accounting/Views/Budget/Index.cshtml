@@ -32,7 +32,7 @@
         <div class="d-flex gap-2 flex-wrap">
             <button class="btn btn-success-soft" id="btnNuevoPresupuesto"
                     onclick="abrirModalCrear()">
-                <i class="bi bi-plus-lg me-2"></i>Presupuesto
+                <i class="bi bi-plus-lg me-2"></i>Nuevo
             </button> 
             <button class="btn btn-success-soft" id="btnClonarPresupuesto"
                     onclick="abrirModalCLonar()">
@@ -200,14 +200,14 @@
                                     <div class="progress border border-secondary mb-1" style="height: 16px;">
                                         <div class="progress-bar @barraColor"
                                              role="progressbar"
-                                             style="width:@porcentajeGastado.ToString("0.##")%">
+                                             style="width:@porcentajeGastado.ToString("0.##", CultureInfo.InvariantCulture)%">
                                         </div>
 
                                         @if (disponible >= 0)
                                         {
                                             <div class="progress-bar bg-light"
                                                  role="progressbar"
-                                                 style="width:@porcentajeDisponible.ToString("0.##")%">
+                                                 style="width:@porcentajeDisponible.ToString("0.##", CultureInfo.InvariantCulture)%">
                                             </div>
                                         }
                                     </div>

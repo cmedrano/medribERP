@@ -200,6 +200,17 @@ namespace PresupuestoMVC.Services
 
                 rubro.ValorGastado += createDto.Monto;
 
+                var activityDto = new ActivityLog
+                {
+                    CompanyId = createDto.CompanyId,
+                    EntityType = "Diary",
+                    Action = "CREATE",
+                    Description = $"Se creo un nuevo gasto de ${createDto.Monto}"
+                    //OldValues = JsonSerializer.Serialize(cliente)
+                };
+
+                _context.ActivityLog.Add(activityDto);
+
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
@@ -256,8 +267,8 @@ namespace PresupuestoMVC.Services
                 if (cuentaNueva == null)
                     throw new Exception("Cuenta nueva no encontrada");
 
-                if (cuentaNueva.SaldoActual < updateDto.Monto)// no se deja editar el saldo, mas si se deja crear un nuevo gasto?
-                    throw new Exception("Saldo insuficiente");
+                //if (cuentaNueva.SaldoActual < updateDto.Monto)// no se deja editar el saldo, mas si se deja crear un nuevo gasto?
+                //    throw new Exception("Saldo insuficiente");
 
                 var rubroNuevo = await _context.Budget
                     .FirstOrDefaultAsync(r =>

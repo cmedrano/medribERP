@@ -25,9 +25,10 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var clientes = await _clienteService.ObtenerTodosAsync();
-            var articulos = await _articuloService.ObtenerTodosActivosAsync();
-            var listPrice = await _priceListService.GetAllAsync();
+            int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
+            var clientes = await _clienteService.ObtenerTodosAsync(companyId);
+            var articulos = await _articuloService.ObtenerTodosActivosAsync(companyId);
+            var listPrice = await _priceListService.GetAllAsync(companyId);
 
             var viewModel = new FacturacionViewModel
             {
@@ -97,7 +98,7 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
             {
                 var sale = await _facturacionService.GetSaleByIdAsync(id);
                 var client = await _clienteService.ObtenerPorIdAsync((int)sale.ClientId);
-                var company = await _facturacionService.GetCompanyInfoAsync(2);
+                var company = await _facturacionService.GetCompanyInfoAsync(client.CompanyId);
 
                 var ViewModel = new PreviewPdfViewModel
                 {

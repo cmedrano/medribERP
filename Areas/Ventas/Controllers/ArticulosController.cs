@@ -38,25 +38,37 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
             _articulosPreciosService = articulosPreciosService;
         }
 
-        public async Task<IActionResult> Index(string? searchArticulo)
+        public async Task<IActionResult> Index(string? searchArticulo, int pagina = 1, int tamañoPagina = 10)
         {
             try
             {
-                var articulos = await _articuloService.ObtenerTodosActivosAsync();
+                int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
+                var articulos = await _articuloService.ObtenerTodosActivosAsync(companyId);
                 var total = await _articuloService.ObtenerTotalAsync();
-                var providers = await _providerService.GetAllProviderAsync();
+                var providers = await _providerService.GetAllProviderAsync(companyId);
                 var brands = await _brandService.GetAllBrandAsync();
                 var productCategories = await _productCategoryService.GetAllProductCategoryAsync();
-                var priceList = await _priceListService.GetAllAsync();
-
+                var priceList = await _priceListService.GetAllAsync(companyId);
+                var resultadoPaginado = await _articuloService.GetPagedAsync(pagina, tamañoPagina, companyId);
+            
                 if (!string.IsNullOrWhiteSpace(searchArticulo))
                 {
-                    articulos = articulos.Where(x => x.Nombre.Contains(searchArticulo, StringComparison.OrdinalIgnoreCase)).ToList();
+                    var filtrado = resultadoPaginado.Items.Where(x => x.Nombre.Contains(searchArticulo, StringComparison.OrdinalIgnoreCase)).ToList();
+                    resultadoPaginado.Items = filtrado;
                 }
 
                 ViewData["SearchArticulo"] = searchArticulo;
+
+
+                ViewBag.Data = resultadoPaginado.Items;
+                ViewBag.Paginacion = resultadoPaginado;
+                ViewBag.ItemCounter = resultadoPaginado.Items.Count();
+                ViewBag.PaginaActual = pagina;
+                ViewBag.TamañoPagina = tamañoPagina;
+
                 ViewData["TotalArticulos"] = total;
 
+                ViewBag.Articulos = resultadoPaginado.Items;
                 ViewBag.ProductCategories = productCategories;
                 ViewBag.Brands = brands;
                 ViewBag.Providers = providers;
@@ -81,6 +93,9 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
 
             try
             {
+                int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
+                model.CompanyId = companyId;
+
                 await _articuloService.CrearAsync(model);
                 TempData["Success"] = "Artículo creado exitosamente";
                 return RedirectToAction("Index");

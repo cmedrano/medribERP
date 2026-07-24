@@ -3,21 +3,32 @@ using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Models.ViewModels;
 using PresupuestoMVC.Repository.Interfaces;
 using PresupuestoMVC.Services.Interfaces;
+using PresupuestoMVC.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
+using PresupuestoMVC.Areas.Accounting.Data.DTOs;
+using PresupuestoMVC.Repository;
 
 namespace PresupuestoMVC.Services
 {
     public class PriceListService : IPriceListService
     {
         private readonly IPriceListRepository _priceListRepository;
+        private readonly IActivityLogRepository _activityLogRepository;
 
-        public PriceListService(IPriceListRepository priceListRepository)
+        public PriceListService(IPriceListRepository priceListRepository, IActivityLogRepository activityLogRepository)
         {
             _priceListRepository = priceListRepository;
+            _activityLogRepository = activityLogRepository;
         }
 
-        public async Task<List<PriceList>> GetAllAsync()
+        public async Task<List<PriceList>> GetAllAsync(int companyId)
         {
-            return await _priceListRepository.GetAllAsync();
+            return await _priceListRepository.GetAllAsync(companyId);
+        }
+
+        public async Task<PaginatedResult<PriceList>> GetPagedAsync(int pageNumber, int pageSize, int companyId)
+        {
+            return await _priceListRepository.GetPagedAsync(pageNumber, pageSize, companyId);
         }
 
         public async Task<PriceList?> GetByIdAsync(int id)
@@ -29,6 +40,7 @@ namespace PresupuestoMVC.Services
         {
             PriceList priceList = new PriceList()
             {
+                CompanyId = dto.CompanyId,
                 Nombre = dto.Nombre,
                 Descripcion = dto.Descripcion,
                 Activo = true,
@@ -36,6 +48,15 @@ namespace PresupuestoMVC.Services
                 UpdatedAt = DateTime.UtcNow
             };
             await _priceListRepository.AddListAsync(priceList);
+
+            var ActivityDto = new ActivityLogRequestDto()
+            {
+                CompanyId = dto.CompanyId,
+                EntityType = "PriceList",
+                Action = "CREATE",
+                Description = $"Se creó una nueva lista de precio {priceList.Nombre}"
+            };
+            await _activityLogRepository.LogAsync(ActivityDto);
         }
 
         public async Task UpdateAsync(UpdatePriceListViewRequest dto)

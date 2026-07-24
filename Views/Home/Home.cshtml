@@ -1,9 +1,25 @@
-﻿@{
+﻿@using PresupuestoMVC.Models.ViewModels
+@model DashboardViewModel;
+@using PresupuestoMVC.Models.DTOs;
+@using PresupuestoMVC.Areas.Ventas.ViewModels.DTOs;
+@using PresupuestoMVC.Models.Entities;
+@inject IConfiguration Configuration
+@using Microsoft.Extensions.Configuration
+@using PresupuestoMVC.Areas.Accounting.Data.DTOs;
+
+@{
     ViewData["Title"] = "Inicio";
     var modules = User.Claims
         .Where(c => c.Type == "Module")
         .Select(c => c.Value)
         .ToList();
+
+    var clients = ViewBag.Clients as IEnumerable<ClienteResponseDTO>;
+    var articles = ViewBag.Articles as IEnumerable<ArticuloResponseDTO>;
+    var priceList = ViewBag.PriceList as IEnumerable<PriceList>;
+    int companyIdConfig = Configuration.GetValue<int>("CompanySetting:companyId");
+    int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
+    var activityLog = ViewBag.ActivityLog as IEnumerable<ActivityLogResponse>;
 }
 
 <div class="page">
@@ -17,8 +33,8 @@
         </div>
 
         <div class="hero-actions">
-            <a href="#" class="btn btn-soft"><i class="bi bi-arrow-repeat"></i>Actualizar</a>
-            <a href="#" class="btn btn-primary"><i class="bi bi-plus-lg"></i>Nueva operación</a>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-soft"><i class="bi bi-arrow-repeat"></i>Actualizar</a>
+            <a asp-area="Ventas" asp-controller="Facturacion" asp-action="Index" class="btn btn-primary"><i class="bi bi-plus-lg"></i>Nueva operación</a>
         </div>
     </section>
 
@@ -28,30 +44,30 @@
                 <article class="kpi-card">
                     <div class="kpi-top">
                         <span class="kpi-icon"><i class="bi bi-cash-stack"></i></span>
-                        <span class="kpi-chip chip-success"><i class="bi bi-arrow-up"></i>+12%</span>
+                        <span class="kpi-chip chip-success"><i class="bi bi-arrow-up"></i>0%</span>
                     </div>
                     <div class="kpi-label">Ventas del mes</div>
-                    <div class="kpi-value">$ 8.420.000</div>
+                    <div class="kpi-value">$ @Model.SalesMonth.ToString("N2")</div>
                     <div class="kpi-meta">Comparado con el mes anterior</div>
                 </article>
 
                 <article class="kpi-card">
                     <div class="kpi-top">
                         <span class="kpi-icon"><i class="bi bi-wallet2"></i></span>
-                        <span class="kpi-chip chip-warning"><i class="bi bi-exclamation-triangle"></i>75%</span>
+                        <span class="kpi-chip chip-warning"><i class="bi bi-exclamation-triangle"></i>0%</span>
                     </div>
                     <div class="kpi-label">Presupuesto usado</div>
-                    <div class="kpi-value">$ 1.245.800</div>
-                    <div class="kpi-meta">Quedan $ 412.000 disponibles</div>
+                    <div class="kpi-value">$ @Model.UsedBudget.ToString("N2")</div>
+                    <div class="kpi-meta">Quedan $ @Model.ActiveClients.ToString("N2") disponibles</div>
                 </article>
 
                 <article class="kpi-card">
                     <div class="kpi-top">
                         <span class="kpi-icon"><i class="bi bi-people"></i></span>
-                        <span class="kpi-chip chip-success"><i class="bi bi-person-plus"></i>+8</span>
+                        <span class="kpi-chip chip-success"><i class="bi bi-person-plus"></i>0</span>
                     </div>
                     <div class="kpi-label">Clientes activos</div>
-                    <div class="kpi-value">248</div>
+                    <div class="kpi-value">@Model.ActiveClients</div>
                     <div class="kpi-meta">8 nuevos en los últimos 30 días</div>
                 </article>
 
@@ -82,78 +98,82 @@
                         <article class="menu-card">
                             <div class="menu-card-header">
                                 <span class="menu-icon"><i class="bi bi-person"></i></span>
-                                <span class="menu-mini-chip">9 usuarios</span>
+                                <span class="menu-mini-chip">@ViewBag.TotalUsers usuarios</span>
                             </div>
                             <h3 class="menu-title">Usuarios</h3>
                             <p class="menu-description">Administración de usuarios, perfiles, permisos y acceso al sistema.</p>
-                            <div class="menu-stats">
-                                <div class="menu-stat"><span>Activos</span><strong>9</strong></div>
+@*                             <div class="menu-stats">
+                                <div class="menu-stat"><span>Activos</span><strong>@Model.ActiveClients</strong></div>
                                 <div class="menu-stat"><span>Administradores</span><strong>4</strong></div>
-                            </div>
+                            </div> *@
                             <div class="menu-actions">
                                 <a asp-area="Users" asp-controller="User" asp-action="Index" class="btn btn-primary btn-block"><i class="bi bi-arrow-right-circle"></i>Administrar</a>
-                                <a href="#" class="btn btn-ghost btn-block"><i class="bi bi-plus-lg"></i>Nuevo usuario</a>
+                                @* <a href="#" class="btn btn-ghost btn-block"><i class="bi bi-plus-lg"></i>Nuevo usuario</a> *@
                             </div>
                         </article>
                     }
                     @* ventas *@
                     @if (modules.Contains("sales"))
                     {
+                        @* clientes *@
                         <article class="menu-card">
                             <div class="menu-card-header">
                                 <span class="menu-icon"><i class="bi bi-shop"></i></span>
-                                <span class="menu-mini-chip">248 clientes</span>
+                                <span class="menu-mini-chip">@clients.Count() clientes</span>
                             </div>
                             <h3 class="menu-title">Clientes</h3>
                             <p class="menu-description">Gestión comercial de clientes, contactos, datos fiscales y condiciones de venta.</p>
-                            <div class="menu-stats">
+@*                             <div class="menu-stats">
                                 <div class="menu-stat"><span>Nuevos este mes</span><strong>12</strong></div>
                                 <div class="menu-stat"><span>Con cuenta corriente</span><strong>68</strong></div>
-                            </div>
+                            </div> *@
                             <div class="menu-actions">
                                 <a asp-area="Ventas" asp-controller="Clientes" asp-action="Index" class="btn btn-primary btn-block"><i class="bi bi-people"></i>Ver clientes</a>
-                                <a href="#" class="btn btn-ghost btn-block"><i class="bi bi-person-plus"></i>Nuevo cliente</a>
+                                @* <a href="#" class="btn btn-ghost btn-block"><i class="bi bi-person-plus"></i>Nuevo cliente</a> *@
                             </div>
                         </article>
 
+                        @* articulos *@
                         <article class="menu-card">
                             <div class="menu-card-header">
                                 <span class="menu-icon"><i class="bi bi-box-seam"></i></span>
-                                <span class="menu-mini-chip">1.284 artículos</span>
+                                <span class="menu-mini-chip">@articles.Count() artículos</span>
                             </div>
                             <h3 class="menu-title">Artículos</h3>
                             <p class="menu-description">Catálogo de productos, rubros, marcas, proveedores y control de precios.</p>
-                            <div class="menu-stats">
+@*                             <div class="menu-stats">
                                 <div class="menu-stat"><span>Stock bajo</span><strong>17</strong></div>
                                 <div class="menu-stat"><span>Nuevos esta semana</span><strong>5</strong></div>
-                            </div>
+                            </div> *@
                             <div class="menu-actions">
-                                <a hasp-area="Ventas" asp-controller="Articulos" asp-action="Index" class="btn btn-primary btn-block"><i class="bi bi-box"></i>Ver artículos</a>
-                                <a href="#" class="btn btn-ghost btn-block"><i class="bi bi-plus-lg"></i>Nuevo artículo</a>
+                                <a asp-area="Ventas" asp-controller="Articulos" asp-action="Index" class="btn btn-primary btn-block"><i class="bi bi-box"></i>Ver artículos</a>
+                                @* <a href="#" class="btn btn-ghost btn-block"><i class="bi bi-plus-lg"></i>Nuevo artículo</a> *@
                             </div>
                         </article>
 
+                        @* lista de precios *@
                         <article class="menu-card">
                             <div class="menu-card-header">
                                 <span class="menu-icon"><i class="bi bi-tags"></i></span>
-                                <span class="menu-mini-chip">3 listas</span>
+                                <span class="menu-mini-chip">@priceList.Count() listas</span>
                             </div>
                             <h3 class="menu-title">Lista de precios</h3>
                             <p class="menu-description">Definición de listas minorista, mayorista y distribuidor con precios actualizados.</p>
-                            <div class="menu-stats">
+@*                             <div class="menu-stats">
                                 <div class="menu-stat"><span>Listas activas</span><strong>3</strong></div>
                                 <div class="menu-stat"><span>Actualizadas hoy</span><strong>1</strong></div>
-                            </div>
+                            </div> *@
                             <div class="menu-actions">
                                 <a asp-area="Ventas" asp-controller="PriceList" asp-action="Index" class="btn btn-primary btn-block"><i class="bi bi-tag"></i>Ver listas</a>
-                                <a href="#" class="btn btn-ghost btn-block"><i class="bi bi-plus-lg"></i>Nueva lista</a>
+                                @* <a href="#" class="btn btn-ghost btn-block"><i class="bi bi-plus-lg"></i>Nueva lista</a> *@
                             </div>
                         </article>
                     }
                 </div>
             </section>
         </div>
-
+           
+        <!-- Estado de sistema -->
         <div class="right-stack">
             <section class="panel-card">
                 <div class="panel-header">
@@ -167,90 +187,82 @@
                         <div class="status-left">
                             <span class="status-dot dot-danger"><i class="bi bi-exclamation-lg"></i></span>
                             <div>
-                                <p class="status-name">Artículos con stock crítico</p>
-                                <p class="status-meta">Revisar reposición urgente</p>
+                                <p class="status-name">Cantidad de articulos</p>
+                                <p class="status-meta">articulos que hay en el sistema</p>
                             </div>
                         </div>
-                        <div class="status-value">5</div>
+                        <div class="status-value">@articles.Count()</div>
                     </div>
                     <div class="status-item">
                         <div class="status-left">
                             <span class="status-dot dot-primary"><i class="bi bi-receipt"></i></span>
                             <div>
-                                <p class="status-name">Ventas pendientes de facturar</p>
-                                <p class="status-meta">Operaciones del día sin cierre</p>
+                                <p class="status-name">Cantidad de clientes</p>
+                                <p class="status-meta">los clientes en el sistema</p>
                             </div>
                         </div>
-                        <div class="status-value">12</div>
+                        <div class="status-value">@clients.Count()</div>
                     </div>
                     <div class="status-item">
                         <div class="status-left">
                             <span class="status-dot dot-success"><i class="bi bi-check2-circle"></i></span>
                             <div>
-                                <p class="status-name">Cierres correctos</p>
-                                <p class="status-meta">Sin inconsistencias detectadas</p>
+                                <p class="status-name">Cantidad lista de precios</p>
+                                <p class="status-meta">lista de precio disponible</p>
                             </div>
                         </div>
-                        <div class="status-value">OK</div>
+                        <div class="status-value">@priceList.Count()</div>
                     </div>
                 </div>
             </section>
 
-            <section class="panel-card">
-                <div class="panel-header">
-                    <div>
-                        <h2 class="panel-title">Actividad reciente</h2>
-                        <p class="panel-subtitle">Últimos movimientos importantes del sistema.</p>
-                    </div>
-                </div>
-                <div class="activity-list">
-                    <div class="activity-item">
-                        <div class="activity-left">
-                            <span class="activity-icon"><i class="bi bi-person-plus"></i></span>
-                            <div>
-                                <p class="activity-title">Se creó un nuevo cliente</p>
-                                <p class="activity-meta">Distribuidora Centro · hace 12 min</p>
-                            </div>
+            <!-- Actividad reciente -->
+            @if(companyId != companyIdConfig)
+            {
+                <section class="panel-card">
+                    <div class="panel-header">
+                        <div>
+                            <h2 class="panel-title">Actividad reciente</h2>
+                            <p class="panel-subtitle">Últimos movimientos importantes del sistema.</p>
                         </div>
                     </div>
-                    <div class="activity-item">
-                        <div class="activity-left">
-                            <span class="activity-icon"><i class="bi bi-pencil-square"></i></span>
-                            <div>
-                                <p class="activity-title">Se actualizó una lista de precios</p>
-                                <p class="activity-meta">Lista mayorista · hace 38 min</p>
+
+                    <div class="activity-list">
+
+                        @if (ViewBag.ActivityLog != null && activityLog.Any())
+                        {
+                            foreach (var activity in activityLog)
+                            {
+                                <div class="activity-item">
+                                    <div class="activity-left">
+                                        <span class="activity-icon">
+                                            <i class="bi bi-clock-history"></i>
+                                        </span>
+                                        <div>
+                                            <p class="activity-title">@activity.Description</p>
+                                            <p class="activity-meta">@activity.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="activity-item">
+                                <div class="activity-left">
+                                    <span class="activity-icon">
+                                        <i class="bi bi-info-circle"></i>
+                                    </span>
+                                    <div>
+                                        <p class="activity-title">No hay actividad reciente.</p>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        }
+
                     </div>
-                    <div class="activity-item">
-                        <div class="activity-left">
-                            <span class="activity-icon"><i class="bi bi-box-seam"></i></span>
-                            <div>
-                                <p class="activity-title">Se registró un nuevo artículo</p>
-                                <p class="activity-meta">Yerba mate 1kg · hace 1 h</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-left">
-                            <span class="activity-icon"><i class="bi bi-person-workspace"></i></span>
-                            <div>
-                                <p class="activity-title">Se modificaron permisos</p>
-                                <p class="activity-meta">Usuario BraianD · hace 2 h</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-left">
-                            <span class="activity-icon"><i class="bi bi-person-workspace"></i></span>
-                            <div>
-                                <p class="activity-title">Se modificaron permisos</p>
-                                <p class="activity-meta">Usuario BraianD · hace 2 h</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                </section>
+            }
         </div>
     </section>
 
