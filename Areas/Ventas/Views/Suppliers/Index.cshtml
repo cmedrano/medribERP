@@ -1,0 +1,544 @@
+﻿@using PresupuestoMVC.Models.DTOs;
+@using PresupuestoMVC.Models
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Proveedores";
+
+    var paginacion = ViewBag.Paginacion as PaginatedResult<ProviderResponseDto>;
+    int inicio = Math.Max(1, paginacion.PageNumber - 2);
+    int fin = Math.Min(paginacion.TotalPages, paginacion.PageNumber + 2);
+}
+<main class="flex-grow-1 container-main">
+    <!-- Header -->
+    <div class="topbar">
+        <form method="get" asp-action="Index" class="searchbox">
+            <div>
+                <i class="bi bi-search"></i>
+                <input class="form-control"
+                       type="text"
+                       name="searchNombre"
+                       value="@ViewData["SearchNombre"]"
+                       placeholder="Buscar proveedor" />
+            </div>
+        </form>
+        <div class="d-flex gap-2 flex-wrap">
+            <button class="btn btn-success-soft" onclick="AbrirModalCrearProveedor()"><i class=" bi bi-plus-lg me-2" id="btnNuevoGasto"></i>Nuevo</button>
+        </div>
+    </div>
+    <div class="page-head">
+        <div>
+            <h1 class="page-title">@ViewData["Title"]</h1>
+            <p class="page-subtitle">Gestión de proveedores.</p>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <section class="erp-card table-card">
+        <div class="table-tools">
+            <div>
+                <h2 class="section-title">Listas registradas</h2>
+                <p class="section-subtitle">
+                    Mostrando @paginacion.Items.Count() de @paginacion.TotalCount
+                </p>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-modern table-hover align-middle">
+                <thead class="custom-header text-white">
+                    <tr>
+                        <th class="form-label small">CODIGO</th>
+                        <th class="form-label small">EMPRESA</th>
+                        <th class="form-label small">TELEFONO</th>
+                        <th class="form-label small">DIRECCION</th>
+                        <th class="form-label small">MAIL</th>
+                        <th class="form-label small">RESPONSABLE</th>
+                        <th class="form-label small text-end">ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (paginacion != null && paginacion.Items.Any())
+                    {
+                        foreach (var item in paginacion.Items)
+                        {
+                            <tr>
+                                <td><span class="badge-soft badge-cuenta">@item.Code</span></td>
+                                <td class="fw-semibold">@item.Company</td>
+                                <td class="fw-semibold">@item.Phone</td>
+                                <td class="fw-semibold">@item.Address</td>
+                                <td class="fw-semibold">@item.Email</td>
+                                <td class="fw-semibold">@item.Responsible</td>
+                                <td class="text-end">
+                                    <button type="button"
+                                            class="icon-btn"
+                                            title="Ver"
+                                            onclick="AbrirModalVerProveedor(
+                                            '@item.Code',
+                                            '@item.Company',
+                                            '@item.Phone',
+                                            '@item.Address',
+                                            '@item.Email',
+                                            '@item.Responsible')">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    <button type="button"
+                                            class="icon-btn"
+                                            title="Editar"
+                                            onclick="AbrirModalEditarProveedor(
+                                            '@item.Id',
+                                            '@item.Code',
+                                            '@item.Company',
+                                            '@item.Phone',
+                                            '@item.Address',
+                                            '@item.Email',
+                                            '@item.Responsible')">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button type="button"
+                                            class="icon-btn icon-btn-danger"
+                                            title="Eliminar"
+                                            onclick="AbrirModalEliminarProveedor('@item.Id','@item.Company')"
+                                            data-bs-target="#modalEliminarProveedor">
+                                        <i class="bi bi-trash text-danger"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-4">
+                                No hay listas cargadas.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="table-footer">
+            <small class="text-muted">Página @paginacion.PageNumber de @paginacion.TotalPages</small>
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    <!-- Botón Anterior -->
+                    <li class="page-item @(paginacion.PageNumber == 1 ? "disabled" : "")">
+                        @if (paginacion.PageNumber > 1)
+                        {
+                            <a class="page-link" href="@Url.Action("Index", "Suppliers", new { Area = "Ventas", pagina = paginacion.PageNumber - 1, tamañoPagina = paginacion.PageSize })">
+                                Anterior
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="page-link">Anterior</span>
+                        }
+                    </li>
+
+                    @for (int i = inicio; i <= fin; i++)
+                    {
+                        <li class="page-item @(i == paginacion.PageNumber ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("Index", "Suppliers", new { Area = "Ventas", pagina = i, tamañoPagina = paginacion.PageSize })">
+                                @i
+                            </a>
+                        </li>
+                    }
+
+                    <!-- Botón Siguiente -->
+                    <li class="page-item @(paginacion.PageNumber >= paginacion.TotalPages ? "disabled" : "")">
+                        @if (paginacion.PageNumber < paginacion.TotalPages)
+                        {
+                            <a class="page-link" href="@Url.Action("Index", "Suppliers", new { Area = "Ventas", pagina = paginacion.PageNumber + 1, tamañoPagina = paginacion.PageSize })">
+                                Siguiente
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="page-link">Siguiente</span>
+                        }
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </section>
+</main>
+
+<!-- Modal de Creación -->
+<div class="modal fade" id="modalCrearProveedor" tabindex="-1">
+    <div class="modal-dialog erp-modal">
+        <div class="modal-content border-0 shadow-lg">
+
+            <!-- Header -->
+            <div class="erp-modal-header">
+                <h5 class="erp-modal-title" id="modalProveedorTitle">
+                    <i class="bi bi-box"></i> Nuevo Proveedor
+                </h5>
+                <button class="erp-modal-close"
+                        type="button"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <form action="@Url.Action("CreateSupplier")" method="post">
+
+                <div class="modal-body d-flex gap-2 p-4">
+                    <div class="w-100 d-flex"> 
+                        <div>
+                            <!-- Codigo -->
+                            <div class="mb-3">
+                                <label for="crearProveedor" class="form-label">CODIGO</label>
+                                <input type="text"
+                                    name="Codigo"
+                                    id="crearCode"
+                                    class="form-control"
+                                    placeholder="ABC123" />
+                            </div>
+                            <!-- Empresa -->
+                            <div class="mb-3">
+                                <label class="form-label">EMPRESA</label>
+                                <input type="text"
+                                    name="Empresa"
+                                    id="crearEmpresa" 
+                                    class="form-control"
+                                    placeholder="Microsoft"
+                                    required />
+                            </div>
+                            <!-- Telefono -->
+                            <div class="mb-3">
+                                <label class="form-label">TELEFONO</label>
+                                <input type="number"
+                                    name="Telefono"
+                                    id="crearTelefono"
+                                    class="form-control"
+                                    placeholder="1122334455" />
+                            </div>
+                        </div>
+                        <div>
+                            <!-- DIreccion -->
+                            <div class="mb-3">
+                                <label class="form-label">DIRECCION</label>
+                                <input type="text"
+                                       name="Direccion"
+                                       id="crearDireccion"
+                                       class="form-control"
+                                       placeholder="Rivadavia 123" />
+                            </div>
+                            <!-- Mail -->
+                            <div class="mb-3">
+                                <label class="form-label">MAIL</label>
+                                <input type="text"
+                                       name="Mail"
+                                       id="crearMail"
+                                       class="form-control"
+                                       placeholder="email@gmail.com" />
+                            </div>
+                            <!-- Resppnsable -->
+                            <div class="mb-3">
+                                <label class="form-label">RESPONSABLE</label>
+                                <input type="text"
+                                       name="Responsable"
+                                       id="crearResponsable"
+                                       class="form-control"
+                                       placeholder="Luis" />
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-soft btn-pill"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                            class="btn btn-primary btn-pill">
+                        <i class="bi bi-check-circle me-1"></i>
+                        Crear proveedor
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Editar -->
+<div class="modal fade" id="modalEditarProveedor" tabindex="-1">
+    <div class="modal-dialog erp-modal">
+        <div class="modal-content border-0 shadow-lg">
+
+            <!-- Header -->
+            <div class="erp-modal-header">
+                <h5 class="erp-modal-title" id="modalProveedorTitle">
+                    <i class="bi bi-box"></i> Editar Proveedor
+                </h5>
+                <button class="erp-modal-close"
+                        type="button"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <form action="@Url.Action("UpdateSupplier")" method="post">
+
+                <div class="modal-body d-flex gap-2 p-4">
+                    <div class="w-100 d-flex">
+                        <!-- Campo oculto para el ID -->
+                        <input type="hidden" id="editProviderId" name="Id" />
+                        <div>
+                            <!-- Codigo -->
+                            <div class="mb-3">
+                                <label for="crearProveedor" class="form-label">CODIGO</label>
+                                <input type="text"
+                                       name="Codigo"
+                                       id="editCode"
+                                       class="form-control"
+                                       placeholder="ABC123" />
+                            </div>
+                            <!-- Empresa -->
+                            <div class="mb-3">
+                                <label class="form-label">EMPRESA</label>
+                                <input type="text"
+                                       name="Empresa"
+                                       id="editEmpresa"
+                                       class="form-control"
+                                       placeholder="Microsoft"
+                                       required />
+                            </div>
+                            <!-- Telefono -->
+                            <div class="mb-3">
+                                <label class="form-label">TELEFONO</label>
+                                <input type="number"
+                                       name="Telefono"
+                                       id="editTelefono"
+                                       class="form-control"
+                                       placeholder="1122334455" />
+                            </div>
+                        </div>
+                        <div>
+                            <!-- DIreccion -->
+                            <div class="mb-3">
+                                <label class="form-label">DIRECCION</label>
+                                <input type="text"
+                                       name="Direccion"
+                                       id="editDireccion"
+                                       class="form-control"
+                                       placeholder="Rivadavia 123" />
+                            </div>
+                            <!-- Mail -->
+                            <div class="mb-3">
+                                <label class="form-label">MAIL</label>
+                                <input type="text"
+                                       name="Mail"
+                                       id="editMail"
+                                       class="form-control"
+                                       placeholder="email@gmail.com" />
+                            </div>
+                            <!-- Resppnsable -->
+                            <div class="mb-3">
+                                <label class="form-label">RESPONSABLE</label>
+                                <input type="text"
+                                       name="Responsable"
+                                       id="editResponsable"
+                                       class="form-control"
+                                       placeholder="Luis" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-soft btn-pill"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                            class="btn btn-primary btn-pill">
+                        <i class="bi bi-check-circle me-1"></i>
+                         Aceptar
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Ver -->
+<div class="modal fade" id="modalVerProveedor" tabindex="-1">
+    <div class="modal-dialog erp-modal">
+        <div class="modal-content border-0 shadow-lg">
+
+            <!-- Header -->
+            <div class="erp-modal-header">
+                <h5 class="erp-modal-title" id="modalProveedorTitle">
+                    <i class="bi bi-box"></i> Detalle Proveedor
+                </h5>
+                <button class="erp-modal-close"
+                        type="button"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+                <div class="modal-body gap-2 p-4">
+                    <div class="w-100 d-flex">
+                        <!-- Campo oculto para el ID -->
+                        <input type="hidden" id="editProviderId" name="Id" />
+                        <div>
+                            <!-- codigo -->
+                            <div class="mb-3">
+                                <label for="crearProveedor" class="form-label">CODIGO</label>
+                                <input type="text"
+                                       name="Code"
+                                       id="verCode"
+                                       class="form-control"
+                                       disabled />
+                            </div>
+                            <!-- Empresa -->
+                            <div class="mb-3">
+                                <label class="form-label">EMPRESA</label>
+                                <input type="text"
+                                       name="Empresa"
+                                       id="verEmpresa"
+                                       class="form-control"
+                                       disabled />
+                            </div>
+                            <!-- Telefono -->
+                            <div class="mb-3">
+                                <label class="form-label">TELEFONO</label>
+                                <input type="number"
+                                       name="Telefono"
+                                       id="verTelefono"
+                                       class="form-control"
+                                       placeholder="1122334455"
+                                       disabled />
+                            </div>
+                        </div>
+                        <div>
+                            <!-- DIreccion -->
+                            <div class="mb-3">
+                                <label class="form-label">DIRECCION</label>
+                                <input type="text"
+                                       name="Direccion"
+                                       id="verDireccion"
+                                       class="form-control"
+                                       placeholder="Rivadavia 123"
+                                       disabled />
+                            </div>
+                            <!-- Mail -->
+                            <div class="mb-3">
+                                <label class="form-label">MAIL</label>
+                                <input type="text"
+                                       name="Mail"
+                                       id="verMail"
+                                       class="form-control"
+                                       placeholder="email@gmail.com"
+                                       disabled />
+                            </div>
+                            <!-- Resppnsable -->
+                            <div class="mb-3">
+                                <label class="form-label">RESPONSABLE</label>
+                                <input type="text"
+                                       name="Responsable"
+                                       id="verResponsable"
+                                       class="form-control"
+                                       placeholder="Luis"
+                                       disabled />
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                        class="btn btn-primary btn-pill"
+                        data-bs-dismiss="modal">
+                      <i class="bi bi-check-circle me-1"></i>
+                        Aceptar
+                    </button>
+                </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal de Eliminación -->
+<div class="modal fade" id="modalEliminarProveedor" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <form action="@Url.Action("DeleteSupplier")" method="post">
+                <div class="modal-body p-5 text-center">
+                    <input type="hidden" id="deleteProviderId" name="id" />
+                    <div class="mb-4">
+                        <i class="bi bi-exclamation-circle-fill text-danger" style="font-size: 3rem;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">¿Estás seguro?</h5>
+                    <p class="text-muted">Se eliminará a <strong id="deleteProviderName"></strong></p>
+                </div>
+                <div class="modal-footer border-0 bg-light d-flex justify-content-center gap-2">
+                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger rounded-pill px-4" id="btnEliminarMarca">Sí, Eliminar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    // --- MODAL CREACIÓN --- //
+    function AbrirModalCrearProveedor() {
+        document.getElementById('crearCode').value = "";
+        document.getElementById('crearEmpresa').value = "";
+        document.getElementById('crearTelefono').value = "";
+        document.getElementById('crearDireccion').value = "";
+        document.getElementById('crearMail').value = "";
+        document.getElementById('crearResponsable').value = "";
+
+        const modal = new bootstrap.Modal(document.getElementById('modalCrearProveedor'));
+        modal.show();
+    }
+
+    // --- MODAL EDICION --- //
+    function AbrirModalEditarProveedor(id, code, empresa, telefono, direccion, mail, responsable) {
+        document.getElementById('editProviderId').value = id;
+        document.getElementById('editCode').value = code;
+        document.getElementById('editEmpresa').value = empresa;
+        document.getElementById('editTelefono').value = telefono;
+        document.getElementById('editDireccion').value = direccion;
+        document.getElementById('editMail').value = mail;
+        document.getElementById('editResponsable').value = responsable;
+
+        const modal = new bootstrap.Modal(document.getElementById('modalEditarProveedor'));
+        modal.show();
+    }
+
+    // --- MODAL ELIMINAR --- //
+    function AbrirModalEliminarProveedor(id, nombre) {
+        document.getElementById('deleteProviderId').value = id;
+        document.getElementById('deleteProviderName').innerText = nombre;
+
+        const modal = new bootstrap.Modal(document.getElementById('modalEliminarProveedor'));
+        modal.show();
+    }
+
+    // --- MODAL VER --- //
+    function AbrirModalVerProveedor(code, empresa, telefono, direccion, mail, responsable){
+        var txtCodigo = document.getElementById("verCode").value = code;
+        var txtNombre = document.getElementById("verEmpresa").value = empresa;
+        var txtNombre = document.getElementById("verTelefono").value = telefono;
+        var txtNombre = document.getElementById("verDireccion").value = direccion;
+        var txtNombre = document.getElementById("verMail").value = mail;
+        var txtNombre = document.getElementById("verResponsable").value = responsable;
+
+        const modal = new bootstrap.Modal(document.getElementById('modalVerProveedor'));
+        modal.show();
+    }
+</script>

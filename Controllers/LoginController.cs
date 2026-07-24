@@ -37,6 +37,9 @@ namespace PresupuestoMVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewRequest loginRequest)
         {
+
+            var branding = _brandingService.GetBranding(HttpContext);
+            ViewBag.Branding = branding;
             if (!ModelState.IsValid)
             {
                 return View(loginRequest);
@@ -89,6 +92,8 @@ namespace PresupuestoMVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewRequest registerRequest)
         {
+            var branding = _brandingService.GetBranding(HttpContext);
+            ViewBag.Branding = branding;
             if (!ModelState.IsValid)
             {
                 return View(registerRequest);
