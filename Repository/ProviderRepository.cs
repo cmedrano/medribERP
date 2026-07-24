@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using PresupuestoMVC.Data;
 using PresupuestoMVC.Models;
 using PresupuestoMVC.Models.DTOs;
 using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Models.ViewModels;
 using PresupuestoMVC.Repository.Interfaces;
+using System.Net;
 
 namespace PresupuestoMVC.Repository
 {
@@ -29,7 +31,7 @@ namespace PresupuestoMVC.Repository
                 var providerDto = providers.Select(x => new ProviderResponseDto()
                 {
                     Id = x.Id,
-                    Name = x.Name,
+                    Company = x.Company,
                     Code = x.Code
                 }).ToList();
                 return providerDto;
@@ -44,13 +46,17 @@ namespace PresupuestoMVC.Repository
         {
             var query = _context.Provider
                 .Where(a => a.CompanyId == companyId)
-                .OrderBy(a => a.Name);
+                .OrderBy(a => a.Company);
 
             var queryProvider = query.Select(p => new ProviderResponseDto
             {
                 Id = p.Id,
                 Code = p.Code,
-                Name = p.Name
+                Company = p.Company,
+                Phone = p.Phone,
+                Address = p.Address,
+                Email = p.Email,
+                Responsible = p.Responsible
             });
 
             var totalCount = await queryProvider.CountAsync();
@@ -73,7 +79,7 @@ namespace PresupuestoMVC.Repository
             try
             {
                 var providerExiste = await _context.Provider
-                .AnyAsync(r => r.Name == supplierDto.Nombre && r.CompanyId == supplierDto.CompanyId);
+                .AnyAsync(r => r.Company == supplierDto.Empresa && r.CompanyId == supplierDto.CompanyId);
 
                 if (providerExiste)
                     throw new InvalidOperationException("El nombre del proveedor ya existe.");
@@ -81,19 +87,23 @@ namespace PresupuestoMVC.Repository
                 var proveedor = new Provider()
                 {
                     Code = supplierDto.Codigo,
-                    Name = supplierDto.Nombre,
-                    CompanyId = supplierDto.CompanyId
+                    Company = supplierDto.Empresa,
+                    CompanyId = supplierDto.CompanyId,
+                    Phone = supplierDto.Telefono,
+                    Address = supplierDto.Direccion,
+                    Email = supplierDto.Mail,
+                    Responsible = supplierDto.Responsable
                 };
 
                 _context.Provider.Add(proveedor);
                 await _context.SaveChangesAsync();
                 var createdSupplier = await _context.Provider
-                    .FirstOrDefaultAsync(r => r.Name == supplierDto.Nombre);
+                    .FirstOrDefaultAsync(r => r.Company == supplierDto.Empresa);
 
                 return new ProviderResponseDto
                 {
                     Id = createdSupplier.Id,
-                    Name = createdSupplier.Name,
+                    Company = createdSupplier.Company,
                     Code = createdSupplier.Code
                 };
             }
@@ -112,15 +122,19 @@ namespace PresupuestoMVC.Repository
                 if (providerExiste == null)
                     throw new InvalidOperationException("El proveedor no existe.");
 
-                providerExiste.Name = supplierDto.Name;
-                providerExiste.Code = supplierDto.Code;
+                providerExiste.Company = supplierDto.Empresa;
+                providerExiste.Code = supplierDto.Codigo;
+                providerExiste.Phone = supplierDto.Telefono;
+                providerExiste.Address = supplierDto.Direccion;
+                providerExiste.Email = supplierDto.Mail;
+                providerExiste.Responsible = supplierDto.Responsable;
 
                 await _context.SaveChangesAsync();
 
                 var responseDto = new ProviderResponseDto()
                 {
                     Id = providerExiste.Id,
-                    Name = providerExiste.Name,
+                    Company = providerExiste.Company,
                     Code = providerExiste.Code,
                 };
                 return responseDto;

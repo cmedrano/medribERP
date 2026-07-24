@@ -13,10 +13,22 @@ namespace PresupuestoMVC.Models.Entities
         [Column("company_id")]
         public int CompanyId { get; set; }
 
-        [Column("name")]
-        public string Name { get; set; }
+        [Column("company")]
+        public string Company { get; set; }
 
         [Column("code")]
         public string? Code { get; set; }
+        
+        [Column("phone")]
+        public int? Phone { get; set; }
+        
+        [Column("address")]
+        public string? Address { get; set; }
+
+        [Column("email")]
+        public string? Email { get; set; }
+        
+        [Column("responsible")]
+        public string? Responsible { get; set; }
     }
 }
