@@ -55,7 +55,7 @@ namespace PresupuestoMVC.Repository
         public async Task<PaginacionRespuestaDto<Cliente>> ObtenerPaginadosAsync(int pageNumber, int pageSize, int companyId, string? searchNombre = null, string? searchFantasia = null)
         {
             var query = _context.Clientes
-                .Where(c => c.CompanyId == companyId)
+                .Where(c => c.CompanyId == companyId && c.Activo == true)
                 .AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(searchNombre))

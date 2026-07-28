@@ -78,13 +78,13 @@
                                     <button type="button"
                                             class="icon-btn"
                                             title="Ver"
-                                            onclick="abrirModalCliente(false, '@item.Id', '@item.Nombre', '@(item.Telefono ?? "")', '@(item.Domicilio ?? "")', '@(item.Localidad ?? "")', '@(item.Provincia ?? "")', '@(item.CodigoPostal ?? "")', '@(item.Email ?? "")', '@(item.Celular ?? "")', '@(item.DNI ?? "")', '@(item.CUIT ?? "")', '@(item.Fantasia ?? "")', '@(item.CondicionDeVenta ?? "")', '@(item.Categoria ?? "")', '@item.OperacionesContado.ToString().ToLower()', '@item.InhabilitadoFacturar.ToString().ToLower()', true)">
+                                            onclick="abrirModalCliente(false, '@item.Id', '@item.Nombre', '@(item.Telefono ?? "")', '@(item.Domicilio ?? "")', '@(item.Localidad ?? "")', '@(item.Provincia ?? "")', '@(item.CodigoPostal ?? "")', '@(item.Email ?? "")', '@(item.Celular ?? "")', '@(item.DNI ?? "")', '@(item.CUIT ?? "")', '@(item.Fantasia ?? "")', '@(item.CondicionDeVenta ?? "")', '@(item.Categoria ?? "")', '@item.OperacionesContado.ToString().ToLower()', '@item.InhabilitadoFacturar.ToString().ToLower()', '@item.PriceListId', true)">
                                         <i class="bi bi-eye"></i>
                                     </button>
                                     <button type="button"
                                             class="icon-btn"
                                             title="Editar"
-                                            onclick="abrirModalCliente(false, '@item.Id', '@item.Nombre', '@(item.Telefono ?? "")', '@(item.Domicilio ?? "")', '@(item.Localidad ?? "")', '@(item.Provincia ?? "")', '@(item.CodigoPostal ?? "")', '@(item.Email ?? "")', '@(item.Celular ?? "")', '@(item.DNI ?? "")', '@(item.CUIT ?? "")', '@(item.Fantasia ?? "")', '@(item.CondicionDeVenta ?? "")', '@(item.Categoria ?? "")', '@item.OperacionesContado.ToString().ToLower()', '@item.InhabilitadoFacturar.ToString().ToLower()', false)">
+                                            onclick="abrirModalCliente(false, '@item.Id', '@item.Nombre', '@(item.Telefono ?? "")', '@(item.Domicilio ?? "")', '@(item.Localidad ?? "")', '@(item.Provincia ?? "")', '@(item.CodigoPostal ?? "")', '@(item.Email ?? "")', '@(item.Celular ?? "")', '@(item.DNI ?? "")', '@(item.CUIT ?? "")', '@(item.Fantasia ?? "")', '@(item.CondicionDeVenta ?? "")', '@(item.Categoria ?? "")', '@item.OperacionesContado.ToString().ToLower()', '@item.InhabilitadoFacturar.ToString().ToLower()', '@item.PriceListId', false)">
                                         <i class="bi bi-pencil"></i>
                                     </button>
                                     <button type="button"
