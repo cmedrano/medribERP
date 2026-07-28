@@ -12,5 +12,8 @@ namespace PresupuestoMVC.Models.Entities
 
         [Column("name")]
         public string Name { get; set; }
+
+        [Column("company_id")]
+        public int CompanyId { get; set; }
     }
 }

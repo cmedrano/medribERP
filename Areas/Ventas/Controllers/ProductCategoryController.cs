@@ -1,0 +1,46 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using PresupuestoMVC.Models.ViewModels;
+using PresupuestoMVC.Services;
+using PresupuestoMVC.Services.Interfaces;
+
+namespace PresupuestoMVC.Areas.Ventas.Controllers
+{
+    [Area("Ventas")]
+    public class ProductCategoryController : Controller
+    {
+        private readonly IProductCategoryService _productCategoryService;
+        public ProductCategoryController(IProductCategoryService productCategoryService)
+        {
+            _productCategoryService = productCategoryService;
+        }
+
+        public async Task<IActionResult> Index(string? searchNombre, int pagina = 1, int tamañoPagina = 10)
+        {
+            int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
+            var paginacion = await _productCategoryService.GetPagedAsync(pagina, tamañoPagina, companyId);
+
+            ViewBag.Paginacion = paginacion;
+            return View();
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> CreateProductCategory(CreateProductCategoryViewRequest ProductCategoryDto)
+        {
+            try
+            {
+                int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
+                ProductCategoryDto.CompanyId = companyId;
+                var res = await _productCategoryService.CreateProductCategoryAsync(ProductCategoryDto);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error: " + ex.Message;
+                return RedirectToAction("Index");
+
+            }
+        }
+    }
+}

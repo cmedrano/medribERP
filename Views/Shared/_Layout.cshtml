@@ -62,7 +62,8 @@
                 currentController == "PriceList" ||
                 currentController == "Facturacion" ||
                 currentController == "Marca" ||
-                currentController == "Suppliers";
+                currentController == "Suppliers" ||
+                currentController == "ProductCategory";
             }
             <!-- Areas Accounting-->
             @if (modules.Contains("accounting"))
@@ -155,9 +156,13 @@
                             <a asp-area="Ventas" asp-controller="Marca" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Marca" ? "active" : "")">
                                 Marcas
                             </a>
-                            <!-- proveedores -->
+                            <!-- Proveedores -->
                             <a asp-area="Ventas" asp-controller="Suppliers" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Suppliers" ? "active" : "")">
                                 Proveedores
+                            </a>
+                            <!-- Rubros -->
+                            <a asp-area="Ventas" asp-controller="ProductCategory" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ProductCategory" ? "active" : "")">
+                                Rubros
                             </a>
                         </nav>
                     </div>
