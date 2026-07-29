@@ -29,5 +29,10 @@ namespace PresupuestoMVC.Services
         {
             return await _productCategoryRepository.CreateProductCategoryAsync(productCategoryDto);
         }
+
+        public async Task UpdateProductCategoryAsync(UpdateProductCategoryViewRequest productCategoryDto)
+        {
+            await _productCategoryRepository.Update(productCategoryDto);
+        }
     }
 }

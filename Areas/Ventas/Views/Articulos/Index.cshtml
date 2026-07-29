@@ -106,17 +106,17 @@
                             <h3 class="erp-form-section-title">Datos del artículo</h3>
                             <div class="row g-3 mb-3">
                                 <!-- Codigo -->
-                                <div class="col-md-4">
+                                <div class="col-md-4" id="divCodigo">
                                     <label class="form-label">Codigo</label>
                                     <input type="text" name="Codigo" id="articuloCodigo" class="form-control" placeholder="Ej. fda-123" required>
                                 </div>
                                 <!-- Nombre -->
-                                <div class="col-md-4">
+                                <div class="col-md-4" id="divNombre">
                                     <label class="form-label">Nombre</label>
                                     <input type="text" name="Nombre" id="articuloNombre" class="form-control" placeholder="Ej. Richard" required>
                                 </div>
                                 <!-- Unidad de medida -->
-                                <div class="col-md-4">
+                                <div class="col-md-4" id="divUnidadDeMedida">
                                     <label class="form-label">Unidad de medida</label>
                                     <input type="text" name="UnidadMedida" id="articuloUnidadMedida" class="form-control" placeholder="Ej. Kg" required>
                                 </div>
@@ -172,7 +172,7 @@
                                         <span class="input-group-text bg-light border-0">
                                             <i class="bi bi-currency-dollar"></i>
                                         </span>
-                                        <input type="decimal"
+                                        <input type="number"
                                                name="PurchasePrice"
                                                id="PurchasePrice"
                                                placeholder="0"
@@ -187,7 +187,7 @@
                                         <span class="input-group-text bg-light border-0">
                                             <i class="bi bi-currency-dollar"></i>
                                         </span>
-                                        <input type="decimal"
+                                        <input type="number"
                                                name="SalePrice"
                                                id="salePrice"
                                                placeholder="0"
@@ -296,8 +296,9 @@
                                                             <i class="bi bi-currency-dollar"></i>
                                                         </span>
                                                         <input type="number"
+                                                               min="0"
                                                                name="Items[@i].Price"
-                                                               class="form-control"
+                                                               class="form-control price-input"
                                                                placeholder="0"
                                                                required>
                                                     </div>
@@ -364,6 +365,9 @@
             document.getElementById('formArticulo').action = '@Url.Action("GuardarArticulo", "Articulos")';
             document.getElementById('btnSubmitForm').innerHTML = '<i class="bi bi-check2-circle me-2"></i>Registrar articulo';
             document.getElementById('formArticulo').reset();
+            document.getElementById("divCodigo").style.display = "";
+            document.getElementById("divNombre").style.display = "";
+            document.getElementById("divUnidadDeMedida").style.display = "";
             btnSubmit.style.display = 'block';
             btnLista.style.display = 'block';
             document.querySelectorAll("#subModal .price-input").forEach(input => {
@@ -375,6 +379,9 @@
                 el.disabled = false;
             });
         } else {
+            console.log("Purchase:", purchasePrice);
+            console.log("Sale:", salePrice);
+
             // Modo ver/editar
             document.getElementById('articuloId').value = id;
             document.getElementById('articuloNombre').value = nombre;
@@ -383,24 +390,32 @@
             document.getElementById('SelectRubroId').value = productCategoryId || '';
             document.getElementById('BrendId').value = brendId || '';
             document.getElementById('providerId').value = providerId || '';
-            document.getElementById('PurchasePrice').value = purchasePrice || '';
-            document.getElementById('salePrice').value = salePrice || '';
-            // let url = '@Url.Action("GetPreciosByArticulo", "Articulos", new { area = "Ventas" })';
+            document.getElementById('PurchasePrice').value = purchasePrice.toString().replace(",", ".");
+            document.getElementById('salePrice').value = salePrice.toString().replace(",", ".");
+            // document.getElementById('PurchasePrice').value = purchasePrice || '';
+            // document.getElementById('salePrice').value = salePrice || '';
+            let url = '@Url.Action("GetPreciosByArticulo", "Articulos", new { area = "Ventas" })';
 
-            // let response = await fetch(`${url}?articuloId=${id}`);
+            let response = await fetch(`${url}?articuloId=${id}`);
 
-            // let precios = await response.json();
+            let precios = await response.json();
 
-            // cargarPreciosEnSubModal(precios);
+            cargarPreciosEnSubModal(precios);
 
             if (soloVer) {
                 document.getElementById('modalArticuloTitle').innerHTML = '<i class="bi bi-eye me-2"></i>Detalles del Articulo';
+                document.getElementById("divCodigo").style.display = "none";
+                document.getElementById("divNombre").style.display = "none";
+                document.getElementById("divUnidadDeMedida").style.display = "none";
                 btnSubmit.style.display = 'none';
                 btnLista.style.display = 'none';
             } else {
                 document.getElementById('modalArticuloTitle').innerHTML = '<i class="bi bi-pencil-square me-2 erp-modal-title-icon"></i>Editar Articulo';
                 document.getElementById('formArticulo').action = '@Url.Action("EditarArticulo", "Articulos")';
                 document.getElementById('btnSubmitForm').innerHTML = '<i class="bi bi-check2-circle me-2"></i>Actualizar articulo';
+                document.getElementById("divCodigo").style.display = "";
+                document.getElementById("divNombre").style.display = "";
+                document.getElementById("divUnidadDeMedida").style.display = "";
                 btnSubmit.style.display = 'block';
                 btnLista.style.display = 'block';
             }

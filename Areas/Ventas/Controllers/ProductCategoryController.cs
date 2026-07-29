@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PresupuestoMVC.Areas.Ventas.ViewModels.DTOs;
 using PresupuestoMVC.Models.ViewModels;
 using PresupuestoMVC.Services;
 using PresupuestoMVC.Services.Interfaces;
@@ -42,5 +43,25 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
 
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> EditarProductCategory(UpdateProductCategoryViewRequest request)
+        {
+
+            try
+            {
+                await _productCategoryService.UpdateProductCategoryAsync(request);
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error: " + ex.Message;
+                return RedirectToAction("Index");
+            }
+        }
+
+
+
     }
 }

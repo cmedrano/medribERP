@@ -9,5 +9,6 @@ namespace PresupuestoMVC.Services.Interfaces
         Task<IEnumerable<ProductCategoryResponseDto>> GetAllProductCategoryAsync(int companyId);
         Task<PaginatedResult<ProductCategoryResponseDto>> GetPagedAsync(int pageNumber, int pageSize, int companyId);
         Task<ProductCategoryResponseDto> CreateProductCategoryAsync(CreateProductCategoryViewRequest productCategoryDto);
+        Task UpdateProductCategoryAsync(UpdateProductCategoryViewRequest productCategoryDto);
     }
 }

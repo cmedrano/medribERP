@@ -97,5 +97,18 @@ namespace PresupuestoMVC.Repository
                 throw new InvalidOperationException("error al crear el Rubro");
             }
         }
+
+        public async Task Update(UpdateProductCategoryViewRequest model)
+        {
+            var rubroExiste = await _context.Product_Category
+                .FirstOrDefaultAsync(r => r.Id == model.Id);
+
+            if (rubroExiste == null)
+                throw new Exception("No se encontró el rubro.");
+
+            rubroExiste.Name = model.Nombre;
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

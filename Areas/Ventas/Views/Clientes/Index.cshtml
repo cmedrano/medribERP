@@ -575,7 +575,7 @@
         buscarClientes(1, '', '');
     }
 
-    function abrirModalCliente(crear, id, nombre, telefono, domicilio, localidad, provincia, codigoPostal, email, celular, dni, cuit, fantasia, condicionDeVenta, categoria, operacionesContado, inhabitadoFacturar, soloVer = false) {
+    function abrirModalCliente(crear, id, nombre, telefono, domicilio, localidad, provincia, codigoPostal, email, celular, dni, cuit, fantasia, condicionDeVenta, categoria, operacionesContado, inhabitadoFacturar, priceListId, soloVer = false) {
         isCreating = crear;
         const btnSubmit = document.getElementById('btnSubmitForm');
 
@@ -613,6 +613,7 @@
             document.getElementById('clienteCondicionDeVenta').value = condicionDeVenta || '';
             document.getElementById('clienteOperacionesContado').checked = String(operacionesContado) === 'true';
             document.getElementById('clienteInhabilitadoFacturar').checked = String(inhabitadoFacturar) === 'true';
+            document.getElementById("SelectListaId").value = priceListId || "";
 
             // Cargar localidades si hay código postal
             if (codigoPostal) {
