@@ -4,6 +4,8 @@
     @model PreviewPdfViewModel
 
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var descuento = (Model.Sale.Descuento / Model.Sale.Subtotal) * 100;
 }
 
 <div class="invoice">
@@ -29,7 +31,7 @@
         <div class="invoice-info">
 
             <div class="invoice-letter">
-                A
+                B
             </div>
 
             <div class="invoice-body">
@@ -148,15 +150,18 @@
                 <td class="right">$ @Model.Sale.Subtotal</td>
             </tr>
 
-            <tr>
+            @* <tr>
                 <td>IVA 21%</td>
                 <td class="right">$ 585.963</td>
-            </tr>
+            </tr> *@
 
-            <tr>
-                <td>Descuentos 10%</td>
-                <td class="right">$ @Model.Sale.Descuento</td>
-            </tr>
+            @if (descuento != 100)
+            {
+                <tr>
+                    <td>Descuento (%)</td>
+                    <td class="right">$ @Model.Sale.Descuento</td>
+                </tr>
+            }
 
             <tr class="grand-total">
                 <td>TOTAL</td>
