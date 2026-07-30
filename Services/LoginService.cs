@@ -247,6 +247,8 @@ namespace PresupuestoMVC.Services
                 UserName = registerRequest.UserName,
                 UserEmail = registerRequest.Email,
                 UserPasswordHash = passwordHash,
+                CompanyId = registerRequest.CompanyId,
+                Role = registerRequest.Role,
                 CreateDate = DateTime.UtcNow
             };
 
@@ -255,6 +257,14 @@ namespace PresupuestoMVC.Services
             await _context.SaveChangesAsync();
             var createdUser = await _context.Users
                 .FirstOrDefaultAsync(u => u.UserName == registerRequest.UserName);
+
+            var area = new AreasPerUser
+            {
+                UserId = createdUser!.Id,
+                ModuleId = (int)registerRequest.Role
+            };
+            _context.AreasPerUser.Add(area);
+            await _context.SaveChangesAsync();
 
             return new RegisterResponseDto
             {

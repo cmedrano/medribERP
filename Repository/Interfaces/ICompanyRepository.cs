@@ -5,5 +5,6 @@ namespace PresupuestoMVC.Repository.Interfaces
     public interface ICompanyRepository
     {
         Task<Company> GetCompanyByIdAsync(int id);
+        Task<List<Company>> GetAllCompanyAsync();
     }
 }
