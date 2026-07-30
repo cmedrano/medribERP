@@ -1,4 +1,5 @@
-﻿using PresupuestoMVC.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using PresupuestoMVC.Data;
 using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Repository.Interfaces;
 
@@ -16,6 +17,11 @@ namespace PresupuestoMVC.Repository
         public async Task<Company> GetCompanyByIdAsync(int id)
         {
             return await _context.Companies.FindAsync(id);
+        }
+
+        public async Task<List<Company>> GetAllCompanyAsync()
+        {
+            return await _context.Companies.ToListAsync();
         }
     }
 }
