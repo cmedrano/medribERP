@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Win32;
 using PresupuestoMVC.Models;
 using PresupuestoMVC.Models.ViewModels;
+using PresupuestoMVC.Repository.Interfaces;
 using PresupuestoMVC.Services;
 using PresupuestoMVC.Services.Interfaces;
 
@@ -13,11 +14,13 @@ namespace PresupuestoMVC.Controllers
     {
         private readonly ILoginService _loginService;
         private readonly ITenantBrandingService _brandingService;
+        private readonly ICompanyRepository _companyRepository;
 
-        public LoginController(ILoginService loginService, ITenantBrandingService tenantBrandingService)
+        public LoginController(ILoginService loginService, ITenantBrandingService brandingService, ICompanyRepository companyRepository)
         {
             _loginService = loginService;
-            _brandingService = tenantBrandingService;
+            _brandingService = brandingService;
+            _companyRepository = companyRepository;
         }
 
         [HttpGet]
@@ -37,6 +40,9 @@ namespace PresupuestoMVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewRequest loginRequest)
         {
+
+            var branding = _brandingService.GetBranding(HttpContext);
+            ViewBag.Branding = branding;
             if (!ModelState.IsValid)
             {
                 return View(loginRequest);
@@ -80,15 +86,22 @@ namespace PresupuestoMVC.Controllers
 
         // GET: /Login/Register - Muestra el formulario de registro
         [HttpGet]
-        public IActionResult Register()
+        public async Task<IActionResult> Register()
         {
-            return View("Views/Register/Register.cshtml");
+            var model = new RegisterViewRequest
+            {
+                Companies = await _companyRepository.GetAllCompanyAsync()
+            };
+
+            return View("Views/Register/Register.cshtml", model);
         }
 
         // POST: /Login/Register - Procesa el formulario de registro
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewRequest registerRequest)
         {
+            var branding = _brandingService.GetBranding(HttpContext);
+            ViewBag.Branding = branding;
             if (!ModelState.IsValid)
             {
                 return View(registerRequest);

@@ -125,7 +125,7 @@ $(document).ready(function () {
 
             saleDetail.push({
                 itemId: itemId,
-                codeItem: codeItem,
+                codeItem: codeItem.toString(),
                 nameItem: nameItem,
                 quantity: quantity,
                 precioUnitario: precioUnitario,
@@ -311,13 +311,22 @@ function actualizarResumen() {
 
     // Descuento 10% y Recarga 5%
     let subtotalConDescuento = subtotal - subtotal * (descuento / 100);
-    let subtotalConRecargo = subtotalConDescuento * (recargo / 100);
-    let total = subtotalConDescuento + subtotalConRecargo;
+    let importeDescuento = subtotal - subtotalConDescuento;
+    let importeRecargo = subtotalConDescuento * (recargo / 100);
+    let total = subtotalConDescuento + importeRecargo;
 
     $('#resumenArticulos').text(cantidadArticulos);
     $('#resumenSubtotal').text(`$ ${subtotal.toLocaleString('es-AR')}`);
-    $('#resumenDescuento').text(`$ ${subtotalConDescuento.toLocaleString('es-AR')}`);
-    $('#resumenRecargo').text(`$ ${subtotalConRecargo.toLocaleString('es-AR')}`);
+    $('#resumenDescuento').text(
+        descuento > 0
+            ? `$ ${importeDescuento.toLocaleString('es-AR')}`
+            : '$ 0'
+    );
+    $('#resumenRecargo').text(
+        recargo > 0
+            ? `$ ${importeRecargo.toLocaleString('es-AR')}`
+            : '$ 0'
+    );
     $('#resumenTotal').text(`$ ${total.toLocaleString('es-AR')}`);
 }
 
@@ -357,25 +366,23 @@ $('#clientSelect').on('change', function () {
     const clientes = window.clientes;
     const cliente = clientes.find(c => c.Id == clienteId);
 
-    console.log(cliente)
-
     if (!cliente) {
         $('#nombreCliente').val('');
         $('#dniCliente').val('');
         $('#listaPrecioCliente').val('');
+        $('#listaPrecioSelect').val('').trigger('change');
         return;
     }
 
     $('#nombreCliente').val(cliente.Nombre);
     $('#dniCliente').val(cliente.DNI);
-    $('#listaPrecioSelect').val(cliente.PriceListId);
-
-    console.log(cliente.PriceListId)
+    $('#listaPrecioSelect').val(cliente.PriceListId).trigger('change');
 });
 
 $('#listaPrecioSelect').on('change', function () {
 
     const texto = $(this).find(':selected').text();
+    const option = this.options[this.selectedIndex];
 
-    $('#resumenLista').text(texto || 'Sin seleccionar');
+    $('#resumenLista').text(option.text || 'Sin seleccionar');
 });

@@ -95,7 +95,6 @@ namespace PresupuestoMVC.Areas.Ventas.Views.Facturacion.PDF
                                 columns.RelativeColumn(2); // Código
                                 columns.RelativeColumn(3); // Descripción
                                 columns.RelativeColumn(1); // Cant.
-                                columns.RelativeColumn(1); // U.Med
                                 columns.RelativeColumn(2); // Precio
                                 columns.RelativeColumn(1); // Desc.
                                 columns.RelativeColumn(2); // Total
@@ -107,7 +106,6 @@ namespace PresupuestoMVC.Areas.Ventas.Views.Facturacion.PDF
                                 header.Cell().Background(Colors.Grey.Lighten3).Padding(5).Text("Código").Bold();
                                 header.Cell().Background(Colors.Grey.Lighten3).Padding(5).Text("Descripción").Bold();
                                 header.Cell().Background(Colors.Grey.Lighten3).Padding(5).AlignRight().Text("Cant.").Bold();
-                                header.Cell().Background(Colors.Grey.Lighten3).Padding(5).Text("U.Med").Bold();
                                 header.Cell().Background(Colors.Grey.Lighten3).Padding(5).AlignRight().Text("Precio").Bold();
                                 header.Cell().Background(Colors.Grey.Lighten3).Padding(5).AlignRight().Text("Desc.").Bold();
                                 header.Cell().Background(Colors.Grey.Lighten3).Padding(5).AlignRight().Text("Total").Bold();
@@ -119,7 +117,6 @@ namespace PresupuestoMVC.Areas.Ventas.Views.Facturacion.PDF
                                 table.Cell().Padding(5).Text(item.CodeItem ?? "-");
                                 table.Cell().Padding(5).Text(item.NameItem);
                                 table.Cell().Padding(5).AlignRight().Text(item.Quantity.ToString());
-                                table.Cell().Padding(5).Text("UN");
                                 table.Cell().Padding(5).AlignRight().Text($"${item.PrecioUnitario:N0}");
                                 table.Cell().Padding(5).AlignRight().Text($"10%");
                                 table.Cell().Padding(5).AlignRight().Text($"${item.Total:N0}");

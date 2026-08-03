@@ -55,6 +55,13 @@
         </div>
         <div class="col-md-6 col-xl-3">
             <div class="erp-card metric-card">
+                <div class="metric-icon"><i class="bi bi-tag"></i></div>
+                <div class="metric-label">Categoria mas popular</div>
+                <div class="metric-value">@categoriaMasPopular?.Key</div>
+            </div>
+        </div>
+        @* <div class="col-md-6 col-xl-3">
+            <div class="erp-card metric-card">
                 <div class="metric-icon"><i class="bi bi-toggle-on"></i></div>
                 <div class="metric-label">Cliente activos</div>
                 <div class="metric-value">@Model.Datos.Count(x => x.Activo)</div>
@@ -66,15 +73,7 @@
                 <div class="metric-label">Cliente no activos</div>
                 <div class="metric-value">@Model.Datos.Count(x => !x.Activo)</div>
             </div>
-        </div>
-
-        <div class="col-md-6 col-xl-3">
-            <div class="erp-card metric-card">
-                <div class="metric-icon"><i class="bi bi-tag"></i></div>
-                <div class="metric-label">Categoria mas popular</div>
-                <div class="metric-value">@categoriaMasPopular?.Key</div>
-            </div>
-        </div>
+        </div> *@
     </div>
 
     <!-- Filtros -->
@@ -576,7 +575,7 @@
         buscarClientes(1, '', '');
     }
 
-    function abrirModalCliente(crear, id, nombre, telefono, domicilio, localidad, provincia, codigoPostal, email, celular, dni, cuit, fantasia, condicionDeVenta, categoria, operacionesContado, inhabitadoFacturar, soloVer = false) {
+    function abrirModalCliente(crear, id, nombre, telefono, domicilio, localidad, provincia, codigoPostal, email, celular, dni, cuit, fantasia, condicionDeVenta, categoria, operacionesContado, inhabitadoFacturar, priceListId, soloVer = false) {
         isCreating = crear;
         const btnSubmit = document.getElementById('btnSubmitForm');
 
@@ -614,6 +613,7 @@
             document.getElementById('clienteCondicionDeVenta').value = condicionDeVenta || '';
             document.getElementById('clienteOperacionesContado').checked = String(operacionesContado) === 'true';
             document.getElementById('clienteInhabilitadoFacturar').checked = String(inhabitadoFacturar) === 'true';
+            document.getElementById("SelectListaId").value = priceListId || "";
 
             // Cargar localidades si hay código postal
             if (codigoPostal) {

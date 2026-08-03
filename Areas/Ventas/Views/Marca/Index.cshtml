@@ -1,0 +1,202 @@
+﻿@using PresupuestoMVC.Areas.Ventas.ViewModels
+
+@{
+    @model MarcaViewModel;
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Marca";
+}
+
+<main class="flex-grow-1 container-main">
+    <!-- Header -->
+    <div class="topbar">
+        <form method="get" asp-action="Index" class="searchbox">
+            <div>
+                <i class="bi bi-search"></i>
+                <input class="form-control"
+                       type="text"
+                       name="searchBrands"
+                       value="@ViewData["SearchBrands"]"
+                       placeholder="Buscar marcas..." />
+            </div>
+        </form>
+        <div class="d-flex gap-2 flex-wrap">
+            <button type="button" class="btn btn-success-soft"
+                    onclick="abrirModalMarca('crear')">
+                <i class=" bi bi-plus-lg me-2" id="btnNuevaMarca"></i>
+                Nueva marca
+            </button>
+        </div>
+    </div>
+    <div class="page-head">
+        <div>
+            <h1 class="page-title">@ViewData["Title"]</h1>
+            <p class="page-subtitle">Gestión de marcas.</p>
+        </div>
+    </div>
+
+    <!--Tabla Marca-->
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-0">
+            <div class="table-tools">
+                <div>
+                    <h2 class="section-title">Marcas registradas</h2>
+                    <p class="section-subtitle">
+                        @Model.Marcas.TotalCount marcas registradas.
+                        @* Mostrando @paginacion.Items.Count() de @paginacion.TotalCount *@
+                    </p>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-modern table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th class="py-3">CODIGO</th>
+                            <th class="py-3">NOMBRE</th>
+                            <th class="py-3 text-end">ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var marca in Model.Marcas.Items)
+                        {
+                            <tr>
+                                <td><span class="badge-soft badge-cuenta">@(marca.Code ?? "-")</span></td>
+                                <td class="py-3">@(marca.Name ?? "-")</td>
+                                <td class="pe-3 py-3 text-end">
+                                    <button type="button"
+                                            class="icon-btn"
+                                            title="Ver"
+                                            onclick="abrirModalMarca(
+                                        'ver',
+                                        '@marca.Id',
+                                        '@marca.Code',
+                                        '@marca.Name')">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    <button type="button"
+                                            class="icon-btn"
+                                            title="Editar"
+                                            onclick="abrirModalMarca(
+                                        'editar',
+                                        '@marca.Id',
+                                        '@marca.Code',
+                                        '@marca.Name')">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button type="button"
+                                            class="icon-btn icon-btn-danger"
+                                            title="Eliminar"
+                                            onclick="abrirModalEliminar(
+                                        '@marca.Id', 
+                                        '@marca.Name')">
+                                        <i class="bi bi-trash text-danger"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @* <nav>
+                <ul class="pagination justify-content-center">
+                    @if (Model.Marcas.HasPreviousPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-page="@(Model.Marcas.PageNumber - 1)">
+                                Anterior
+                            </a>
+                        </li>
+                    }
+                    @for (int i = 1; i <= Model.Marcas.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.Marcas.PageNumber ? "active" : "")">
+
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-page="@i">
+                                @i
+                            </a>
+                        </li>
+                    }
+                    @if (Model.Marcas.HasNextPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-page="@(Model.Marcas.PageNumber + 1)">
+                                Siguiente
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav> *@
+        </div>
+    </div>
+</main>
+
+<!-- Modal Articulo (Crear/Ver/Editar) -->
+<div class="modal fade erp-modal-body" id="modalMarca" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog  modal-xl erp-modal">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+
+            <div class="erp-modal-header">
+                <h2 class="erp-modal-title" id="modalMarcaTitle"></h2>
+                <button class="erp-modal-close" type="button" data-bs-dismiss="modal" aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <form id="formMarca" method="post">
+                <div class="modal-body erp-modal-body p-4 bg-white">
+                    <div class="row g-4">
+                        <section class="erp-form-section">
+                            <!-- Datos Básicos -->
+                            <h3 class="erp-form-section-title">Datos de la marca</h3>
+                            <div class="row g-3 mb-3">
+                                <!-- Codigo -->
+                                <div class="col-md-4">
+                                    <label class="form-label">Codigo</label>
+                                    <input type="text" id="marcaCodigo" class="form-control" placeholder="Ej. PUM-123" required>
+                                </div>
+                                <!-- Nombre -->
+                                <div class="col-md-4">
+                                    <label class="form-label">Nombre</label>
+                                    <input type="text" id="marcaNombre" class="form-control" placeholder="Ej. Puma" required>
+                                </div>   
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <div class="erp-modal-footer">
+                    <button type="button" class="btn btn-soft btn-pill" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary btn-pill" id="btnSubmitForm"></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Eliminación -->
+<div class="modal fade" id="modalEliminarMarca" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-body p-5 text-center">
+                <div class="mb-4">
+                    <i class="bi bi-exclamation-circle-fill text-danger" style="font-size: 3rem;"></i>
+                </div>
+                <h5 class="fw-bold mb-2">¿Estás seguro?</h5>
+                <p class="text-muted">Se eliminará a <strong id="nombreMarcaEliminar"></strong></p>
+            </div>
+            <div class="modal-footer border-0 bg-light d-flex justify-content-center gap-2">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger rounded-pill px-4" id="btnEliminarMarca">Sí, Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/marca.js"></script>
+}

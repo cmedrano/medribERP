@@ -26,7 +26,7 @@
                         <th class="py-3">TELÉFONO</th>
                         <th class="py-3">EMAIL</th>
                         <th class="py-3">CATEGORÍA</th>
-                        <th class="py-3">ACTIVO</th>
+                        @* <th class="py-3">ACTIVO</th> *@
                         <th class="pe-4 py-3 text-end">ACCIONES</th>
                     </tr>
                 </thead>
@@ -60,7 +60,7 @@
                                         <span class="text-muted">-</span>
                                     }
                                 </td>
-                                <td>
+                                @* <td>
                                     @if (item.Activo)
                                     {
                                         <span class="badge-soft badge-success">
@@ -73,18 +73,18 @@
                                             <i class="bi bi-circle-fill text-secondary"></i>
                                         </span>
                                     }
-                                </td>
+                                </td> *@
                                 <td class="pe-4 py-4 text-end">
                                     <button type="button"
                                             class="icon-btn"
                                             title="Ver"
-                                            onclick="abrirModalCliente(false, '@item.Id', '@item.Nombre', '@(item.Telefono ?? "")', '@(item.Domicilio ?? "")', '@(item.Localidad ?? "")', '@(item.Provincia ?? "")', '@(item.CodigoPostal ?? "")', '@(item.Email ?? "")', '@(item.Celular ?? "")', '@(item.DNI ?? "")', '@(item.CUIT ?? "")', '@(item.Fantasia ?? "")', '@(item.CondicionDeVenta ?? "")', '@(item.Categoria ?? "")', '@item.OperacionesContado.ToString().ToLower()', '@item.InhabilitadoFacturar.ToString().ToLower()', true)">
+                                            onclick="abrirModalCliente(false, '@item.Id', '@item.Nombre', '@(item.Telefono ?? "")', '@(item.Domicilio ?? "")', '@(item.Localidad ?? "")', '@(item.Provincia ?? "")', '@(item.CodigoPostal ?? "")', '@(item.Email ?? "")', '@(item.Celular ?? "")', '@(item.DNI ?? "")', '@(item.CUIT ?? "")', '@(item.Fantasia ?? "")', '@(item.CondicionDeVenta ?? "")', '@(item.Categoria ?? "")', '@item.OperacionesContado.ToString().ToLower()', '@item.InhabilitadoFacturar.ToString().ToLower()', '@item.PriceListId', true)">
                                         <i class="bi bi-eye"></i>
                                     </button>
                                     <button type="button"
                                             class="icon-btn"
                                             title="Editar"
-                                            onclick="abrirModalCliente(false, '@item.Id', '@item.Nombre', '@(item.Telefono ?? "")', '@(item.Domicilio ?? "")', '@(item.Localidad ?? "")', '@(item.Provincia ?? "")', '@(item.CodigoPostal ?? "")', '@(item.Email ?? "")', '@(item.Celular ?? "")', '@(item.DNI ?? "")', '@(item.CUIT ?? "")', '@(item.Fantasia ?? "")', '@(item.CondicionDeVenta ?? "")', '@(item.Categoria ?? "")', '@item.OperacionesContado.ToString().ToLower()', '@item.InhabilitadoFacturar.ToString().ToLower()', false)">
+                                            onclick="abrirModalCliente(false, '@item.Id', '@item.Nombre', '@(item.Telefono ?? "")', '@(item.Domicilio ?? "")', '@(item.Localidad ?? "")', '@(item.Provincia ?? "")', '@(item.CodigoPostal ?? "")', '@(item.Email ?? "")', '@(item.Celular ?? "")', '@(item.DNI ?? "")', '@(item.CUIT ?? "")', '@(item.Fantasia ?? "")', '@(item.CondicionDeVenta ?? "")', '@(item.Categoria ?? "")', '@item.OperacionesContado.ToString().ToLower()', '@item.InhabilitadoFacturar.ToString().ToLower()', '@item.PriceListId', false)">
                                         <i class="bi bi-pencil"></i>
                                     </button>
                                     <button type="button"

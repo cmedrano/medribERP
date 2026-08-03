@@ -12,5 +12,8 @@ namespace PresupuestoMVC.Models.Entities
 
         [Column("name")]
         public string Name { get; set; }
+
+        [Column("code")]
+        public string Code { get; set; }
     }
 }

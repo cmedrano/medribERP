@@ -1,0 +1,360 @@
+﻿@using PresupuestoMVC.Models.DTOs;
+@using PresupuestoMVC.Models
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Rubros";
+
+    var paginacion = ViewBag.Paginacion as PaginatedResult<ProductCategoryResponseDto>;
+    int inicio = Math.Max(1, paginacion.PageNumber - 2);
+    int fin = Math.Min(paginacion.TotalPages, paginacion.PageNumber + 2);
+}
+<main class="flex-grow-1 container-main">
+    <!-- Header -->
+    <div class="topbar">
+        <form method="get" asp-action="Index" class="searchbox">
+            <div>
+                <i class="bi bi-search"></i>
+                <input class="form-control"
+                       type="text"
+                       name="searchNombre"
+                       value="@ViewData["SearchNombre"]"
+                       placeholder="Buscar Rubro" />
+            </div>
+        </form>
+        <div class="d-flex gap-2 flex-wrap">
+            <button class="btn btn-success-soft" onclick="AbrirModalCrearRubro()"><i class=" bi bi-plus-lg me-2" id="btnNuevoRubro"></i>Nuevo</button>
+        </div>
+    </div>
+    <div class="page-head">
+        <div>
+            <h1 class="page-title">@ViewData["Title"]</h1>
+            <p class="page-subtitle">Gestión de Rubros.</p>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <section class="erp-card table-card">
+        <div class="table-tools">
+            <div>
+                <h2 class="section-title">Listas registradas</h2>
+                <p class="section-subtitle">
+                    Mostrando @paginacion.Items.Count() de @paginacion.TotalCount
+                </p>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-modern table-hover align-middle">
+                <thead class="custom-header text-white">
+                    <tr>
+                        <th class="form-label small">NOMBRE</th>
+                        <th class="form-label small text-end">ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (paginacion != null && paginacion.Items.Any())
+                    {
+                        foreach (var item in paginacion.Items)
+                        {
+                            <tr>
+                                <td><span class="badge-soft badge-cuenta">@item.Name</span></td>
+                                <td class="text-end">
+                                    <button type="button"
+                                            class="icon-btn"
+                                            title="Ver"
+                                            onclick="AbrirModalVerRubro(
+                                            '@item.Name')">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    <button type="button"
+                                            class="icon-btn"
+                                            title="Editar"
+                                            onclick="AbrirModalEditarRubro(
+                                            '@item.Id',
+                                            '@item.Name')">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button type="button"
+                                            class="icon-btn icon-btn-danger"
+                                            title="Eliminar"
+                                            onclick="AbrirModalEliminarRubro('@item.Id','@item.Name')"
+                                            data-bs-target="#modalEliminarRubro">
+                                        <i class="bi bi-trash text-danger"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-4">
+                                No hay listas cargadas.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="table-footer">
+            <small class="text-muted">Página @paginacion.PageNumber de @paginacion.TotalPages</small>
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    <!-- Botón Anterior -->
+                    <li class="page-item @(paginacion.PageNumber == 1 ? "disabled" : "")">
+                        @if (paginacion.PageNumber > 1)
+                        {
+                            <a class="page-link" href="@Url.Action("Index", "ProductCategory", new { Area = "Ventas", pagina = paginacion.PageNumber - 1, tamañoPagina = paginacion.PageSize })">
+                                Anterior
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="page-link">Anterior</span>
+                        }
+                    </li>
+
+                    @for (int i = inicio; i <= fin; i++)
+                    {
+                        <li class="page-item @(i == paginacion.PageNumber ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("Index", "ProductCategory", new { Area = "Ventas", pagina = i, tamañoPagina = paginacion.PageSize })">
+                                @i
+                            </a>
+                        </li>
+                    }
+
+                    <!-- Botón Siguiente -->
+                    <li class="page-item @(paginacion.PageNumber >= paginacion.TotalPages ? "disabled" : "")">
+                        @if (paginacion.PageNumber < paginacion.TotalPages)
+                        {
+                            <a class="page-link" href="@Url.Action("Index", "ProductCategory", new { Area = "Ventas", pagina = paginacion.PageNumber + 1, tamañoPagina = paginacion.PageSize })">
+                                Siguiente
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="page-link">Siguiente</span>
+                        }
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </section>
+</main>
+
+<!-- Modal de Creación -->
+<div class="modal fade" id="modalCrearRubro" tabindex="-1">
+    <div class="modal-dialog erp-modal">
+        <div class="modal-content border-0 shadow-lg">
+
+            <!-- Header -->
+            <div class="erp-modal-header">
+                <h5 class="erp-modal-title" id="modalRubroTitle">
+                    <i class="bi bi-box"></i> Nuevo Rubro
+                </h5>
+                <button class="erp-modal-close"
+                        type="button"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <form action="@Url.Action("CreateProductCategory")" method="post">
+
+                <div class="modal-body d-flex gap-2 p-4">
+                    <div class="w-100">
+                        <div>
+                            <!-- Nombre -->
+                            <div class="mb-3">
+                                <label for="crearRubro" class="form-label">NOMBRE</label>
+                                <input type="text"
+                                       name="Nombre"
+                                       id="crearNombre"
+                                       class="form-control"
+                                       placeholder="Indumentaria" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-soft btn-pill"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                            class="btn btn-primary btn-pill">
+                        <i class="bi bi-check-circle me-1"></i>
+                        Crear rubro
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Editar -->
+<div class="modal fade" id="modalEditarRubro" tabindex="-1">
+    <div class="modal-dialog erp-modal">
+        <div class="modal-content border-0 shadow-lg">
+
+            <!-- Header -->
+            <div class="erp-modal-header">
+                <h5 class="erp-modal-title" id="modalRubroTitle">
+                    <i class="bi bi-box"></i> Editar Rubro
+                </h5>
+                <button class="erp-modal-close"
+                        type="button"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <form action="@Url.Action("EditarProductCategory")" method="post">
+
+                <div class="modal-body d-flex gap-2 p-4">
+                    <div class="w-100">
+                        <!-- Campo oculto para el ID -->
+                        <input type="hidden" id="editRubroId" name="Id" />
+                        <div>
+                            <!-- Nombre -->
+                            <div class="mb-3">
+                                <label for="crearRubro" class="form-label">NOMBRE</label>
+                                <input type="text"
+                                       name="Nombre"
+                                       id="editNombre"
+                                       class="form-control"
+                                       placeholder="ABC123" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-soft btn-pill"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                            class="btn btn-primary btn-pill">
+                        <i class="bi bi-check-circle me-1"></i>
+                        Aceptar
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Ver -->
+<div class="modal fade" id="modalVerRubro" tabindex="-1">
+    <div class="modal-dialog erp-modal">
+        <div class="modal-content border-0 shadow-lg">
+
+            <!-- Header -->
+            <div class="erp-modal-header">
+                <h5 class="erp-modal-title" id="modalRubroTitle">
+                    <i class="bi bi-box"></i> Detalle Rubro
+                </h5>
+                <button class="erp-modal-close"
+                        type="button"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <div class="modal-body gap-2 p-4">
+                <div class="w-100">
+                    <!-- Campo oculto para el ID -->
+                    <input type="hidden" id="verRubroId" name="Id" />
+                    <div>
+                        <!-- codigo -->
+                        <div class="mb-3">
+                            <label for="crearRubro" class="form-label">NOMBRE</label>
+                            <input type="text"
+                                   name="Code"
+                                   id="verNombre"
+                                   class="form-control"
+                                   disabled />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-primary btn-pill"
+                        data-bs-dismiss="modal">
+                    <i class="bi bi-check-circle me-1"></i>
+                    Aceptar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal de Eliminación -->
+<div class="modal fade" id="modalEliminarRubro" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <form action="@Url.Action("DeleteSupplier")" method="post">
+                <div class="modal-body p-5 text-center">
+                    <input type="hidden" id="deleteRubroId" name="id" />
+                    <div class="mb-4">
+                        <i class="bi bi-exclamation-circle-fill text-danger" style="font-size: 3rem;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">¿Estás seguro?</h5>
+                    <p class="text-muted">Se eliminará a <strong id="deleteRubroName"></strong></p>
+                </div>
+                <div class="modal-footer border-0 bg-light d-flex justify-content-center gap-2">
+                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger rounded-pill px-4" id="btnEliminarMarca">Sí, Eliminar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    // --- MODAL CREACIÓN --- //
+    function AbrirModalCrearRubro() {
+        document.getElementById('crearNombre').value = "";
+
+        const modal = new bootstrap.Modal(document.getElementById('modalCrearRubro'));
+        modal.show();
+    }
+
+    // --- MODAL EDICION --- //
+    function AbrirModalEditarRubro(id, nombre) {
+        document.getElementById('editRubroId').value = id;
+        document.getElementById('editNombre').value = nombre;
+
+        const modal = new bootstrap.Modal(document.getElementById('modalEditarRubro'));
+        modal.show();
+    }
+
+    // --- MODAL ELIMINAR --- //
+    function AbrirModalEliminarRubro(id, nombre) {
+        document.getElementById('deleteRubroId').value = id;
+        document.getElementById('deleteRubroName').innerText = nombre;
+
+        const modal = new bootstrap.Modal(document.getElementById('modalEliminarRubro'));
+        modal.show();
+    }
+
+    // --- MODAL VER --- //
+    function AbrirModalVerRubro(nombre) {
+        var txtCodigo = document.getElementById("verNombre").value = nombre;
+
+        const modal = new bootstrap.Modal(document.getElementById('modalVerRubro'));
+        modal.show();
+    }
+</script>
