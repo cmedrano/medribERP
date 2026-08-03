@@ -366,20 +366,17 @@ $('#clientSelect').on('change', function () {
     const clientes = window.clientes;
     const cliente = clientes.find(c => c.Id == clienteId);
 
-    console.log(cliente)
-
     if (!cliente) {
         $('#nombreCliente').val('');
         $('#dniCliente').val('');
         $('#listaPrecioCliente').val('');
+        $('#listaPrecioSelect').val('').trigger('change');
         return;
     }
 
     $('#nombreCliente').val(cliente.Nombre);
     $('#dniCliente').val(cliente.DNI);
-    $('#listaPrecioSelect').val(cliente.PriceListId);
-
-    console.log(cliente.PriceListId)
+    $('#listaPrecioSelect').val(cliente.PriceListId).trigger('change');
 });
 
 $('#listaPrecioSelect').on('change', function () {
