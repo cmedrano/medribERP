@@ -125,7 +125,7 @@ $(document).ready(function () {
 
             saleDetail.push({
                 itemId: itemId,
-                codeItem: codeItem.ToString(),
+                codeItem: codeItem.toString(),
                 nameItem: nameItem,
                 quantity: quantity,
                 precioUnitario: precioUnitario,
@@ -385,6 +385,7 @@ $('#clientSelect').on('change', function () {
 $('#listaPrecioSelect').on('change', function () {
 
     const texto = $(this).find(':selected').text();
+    const option = this.options[this.selectedIndex];
 
-    $('#resumenLista').text(texto || 'Sin seleccionar');
+    $('#resumenLista').text(option.text || 'Sin seleccionar');
 });
