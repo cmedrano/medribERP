@@ -16,11 +16,11 @@ namespace PresupuestoMVC.Repository
         {
             _context = context;
         }
-        public async Task<IEnumerable<BrandResponseDto>> GetAllBrandAsync()
+        public async Task<IEnumerable<BrandResponseDto>> GetAllBrandAsync(int companyId)
         {
             try
             {
-                var brands = await _context.Brand.ToListAsync();
+                var brands = await _context.Brand.Where(b => b.CompanyId == companyId).ToListAsync();
 
                 var brandDto = brands.Select(x => new BrandResponseDto()
                 {
@@ -37,11 +37,11 @@ namespace PresupuestoMVC.Repository
             }
         }
 
-        public async Task<PaginatedResult<BrandResponseDto>> GetAllBrandPageAsync(string searchBrands, int pagina, int tamañoPagina)
+        public async Task<PaginatedResult<BrandResponseDto>> GetAllBrandPageAsync(string searchBrands, int pagina, int tamañoPagina, int companyId)
         {
             try
             {
-                var query = _context.Brand.AsQueryable();
+                var query = _context.Brand. Where(b => b.CompanyId == companyId).AsQueryable();
 
                 if (!string.IsNullOrWhiteSpace(searchBrands))
                 {
@@ -89,6 +89,7 @@ namespace PresupuestoMVC.Repository
 
                 var newBrand = new Brand
                 {
+                    CompanyId = brand.CompanyId,
                     Name = brand.Nombre,
                     Code = brand.Codigo,
                 };

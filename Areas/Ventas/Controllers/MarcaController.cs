@@ -19,8 +19,8 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
         {
             try
             {
-                var marcasPaginadas = await _service.GetAllBrandPageAsync(searchBrands, pageNumber, tamañoPagina);
-
+                int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
+                var marcasPaginadas = await _service.GetAllBrandPageAsync(searchBrands, pageNumber, tamañoPagina, companyId);
                 var viewModel = new MarcaViewModel
                 {
                     Marcas = marcasPaginadas
@@ -45,6 +45,8 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
             {
                 if (request == null)
                     return BadRequest("El cuerpo de la solicitud no puede estar vacío.");
+                int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
+                request.CompanyId = companyId;
 
                 await _service.CreateBrandAsync(request);
 
