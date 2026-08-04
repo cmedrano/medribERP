@@ -6,8 +6,8 @@ namespace PresupuestoMVC.Services.Interfaces
 {
     public interface IBrandService
     {
-        Task<IEnumerable<BrandResponseDto>> GetAllBrandAsync();
-        Task<PaginatedResult<BrandResponseDto>> GetAllBrandPageAsync(string searchBrands, int pagina, int tamañoPagina);
+        Task<IEnumerable<BrandResponseDto>> GetAllBrandAsync(int companyId);
+        Task<PaginatedResult<BrandResponseDto>> GetAllBrandPageAsync(string searchBrands, int pagina, int tamañoPagina, int companyId);
         Task CreateBrandAsync(BrandRequestDto brand);
         Task DeleteBrandAsync(int id);
         Task UpdateBrandAsync(BrandUpdateRequestDto brand);

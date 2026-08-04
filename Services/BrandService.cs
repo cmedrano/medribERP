@@ -14,14 +14,14 @@ namespace PresupuestoMVC.Services
         {
             _brandRepository = brandrRepository;
         }
-        public async Task<IEnumerable<BrandResponseDto>> GetAllBrandAsync()
+        public async Task<IEnumerable<BrandResponseDto>> GetAllBrandAsync(int companyId)
         {
-            return await _brandRepository.GetAllBrandAsync();
+            return await _brandRepository.GetAllBrandAsync(companyId);
         }
 
-        public async Task<PaginatedResult<BrandResponseDto>> GetAllBrandPageAsync(string searchBrands, int pagina, int tamañoPagina)
+        public async Task<PaginatedResult<BrandResponseDto>> GetAllBrandPageAsync(string searchBrands, int pagina, int tamañoPagina, int companyId)
         {
-            return await _brandRepository.GetAllBrandPageAsync(searchBrands, pagina, tamañoPagina);
+            return await _brandRepository.GetAllBrandPageAsync(searchBrands, pagina, tamañoPagina, companyId);
         }
 
         public async Task CreateBrandAsync(BrandRequestDto brand)
