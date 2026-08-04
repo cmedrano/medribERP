@@ -1,4 +1,5 @@
-﻿@using PresupuestoMVC.Areas.Ventas.ViewModels.DTOs
+﻿@using System.Globalization
+@using PresupuestoMVC.Areas.Ventas.ViewModels.DTOs
 
 @{
     @model PreviewPdfViewModel
@@ -38,7 +39,7 @@
 
                 <h2>FACTURA</h2>
 
-                <p><strong>Número:</strong> 0003-00045871</p>
+                <p><strong>Número:</strong> @Model.Sale.Id.ToString("D12")</p>
                 <p><strong>Fecha:</strong> @Model.Sale.DateInserted.ToString("dd/MM/yyyy")</p>
                 <p><strong>Punto Venta:</strong> 0003</p>
 
@@ -123,10 +124,11 @@
                         <tr>
                             <td>@item.CodeItem</td>
                             <td>@item.NameItem</td>
-                            <td class="right">@item.Quantity</td>
-                            <td class="right">$ @item.PrecioUnitario</td>
+                            <td class="right">@item.Quantity.ToString("N2", new CultureInfo("es-AR"))</td>
+                            <td>@item.PrecioUnitario</td>
+                            <td class="right">$ @item.PrecioUnitario.ToString("N2", new CultureInfo("es-AR"))</td>
                             <td class="right">10%</td>
-                            <td class="right">$ @item.Total</td>
+                            <td class="right">$ @item.Total.ToString("N2", new CultureInfo("es-AR"))</td>
                         </tr>
                     }
 
@@ -145,7 +147,9 @@
 
             <tr>
                 <td>Subtotal</td>
-                <td class="right">$ @Model.Sale.Subtotal</td>
+                <td class="right">
+                    @Model.Sale.Subtotal.ToString("N2", new CultureInfo("es-AR"))
+                </td>
             </tr>
 
             @* <tr>
@@ -157,13 +161,15 @@
             {
                 <tr>
                     <td>Descuento (%)</td>
-                    <td class="right">$ @Model.Sale.Descuento</td>
+                    <td class="right">
+                        @Model.Sale.Descuento.ToString("N2", new CultureInfo("es-AR"))
+                    </td>
                 </tr>
             }
 
             <tr class="grand-total">
                 <td>TOTAL</td>
-                <td class="right">$ @Model.Sale.Total</td>
+                <td class="right">$ @Model.Sale.Total.ToString("N2", new CultureInfo("es-AR"))</td>
             </tr>
 
         </table>
@@ -179,7 +185,7 @@
 
             <p>
                 Mercadería sujeta a disponibilidad de stock.
-                Gracias por confiar en Nexus Distribuciones S.A.
+                Gracias por confiar @Model.Company.CompanyName en  S.A.
                 Conserve esta factura como comprobante válido.
             </p>
 

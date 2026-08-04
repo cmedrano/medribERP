@@ -139,10 +139,10 @@ $(document).ready(function () {
             dni: $('#dniCliente').val(),
             priceListId: $('#listaPrecioSelect').val() || 0,
 
-            subtotal: parseFloat($('#resumenSubtotal').text().replace('$', '').replace('.', '')),
-            descuento: parseFloat($('#resumenDescuento').text().replace('$', '').replace('.', '')),
-            recarga: parseFloat($('#resumenRecargo').text().replace('$', '').replace('.', '')),
-            total: parseFloat($('#resumenTotal').text().replace('$', '').replace('.', '')),
+            subtotal: convertirNumero($('#resumenSubtotal').text()),
+            descuento: convertirNumero($('#resumenDescuento').text()),
+            recarga: convertirNumero($('#resumenRecargo').text()),
+            total: convertirNumero($('#resumenTotal').text()),
 
             detail: saleDetail
         };
@@ -386,3 +386,12 @@ $('#listaPrecioSelect').on('change', function () {
 
     $('#resumenLista').text(option.text || 'Sin seleccionar');
 });
+function convertirNumero(texto) {
+    return parseFloat(
+        texto
+            .replace('$', '')
+            .replace(/\./g, '')
+            .replace(',', '.')
+            .trim()
+    );
+}
