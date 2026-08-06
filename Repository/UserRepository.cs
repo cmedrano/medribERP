@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Linq;
+using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +15,8 @@ using System.Text.Json;
 using System.Text;
 using PresupuestoMVC.Helpers;
 using System.Reflection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Hosting;
 
 namespace PresupuestoMVC.Repository
 {
@@ -20,10 +24,13 @@ namespace PresupuestoMVC.Repository
     {
         private readonly IMapper _mapper;
         private readonly AppDbContext _context;
-        public UserRepository(IMapper mapper, AppDbContext context)
+        private readonly IWebHostEnvironment _environment;
+
+        public UserRepository(IMapper mapper, AppDbContext context, IWebHostEnvironment environment)
         {
             _mapper = mapper;
             _context = context;
+            _environment = environment;
         }
         public async Task<IEnumerable<UserResponseDTO>> GetAllUsersAsync(int companyId)
         {
@@ -110,19 +117,20 @@ namespace PresupuestoMVC.Repository
                     s.SetProperty(u => u.UserPasswordHash, passwordHash)
                 );
 
-                var apiKey = Environment.GetEnvironmentVariable("RESEND_API_KEY");
-                if (string.IsNullOrWhiteSpace(apiKey))
+                var info = GetResendInfoMail();
+
+                if (string.IsNullOrWhiteSpace(info?.ApiKey))
                 {
-                    throw new InvalidOperationException("Falta RESEND_API_KEY");
+                    throw new InvalidOperationException("Falta la clave de Resend para el entorno actual.");
                 }
 
                 using var http = new HttpClient();
                 http.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Bearer", apiKey);
+                    new AuthenticationHeaderValue("Bearer", info.ApiKey);
 
                 var payload = new
                 {
-                    from = "dmarc@tupresupuestotest.online",
+                    from = info.FromEmail,
                     to = new[] { email },
                     subject = "📬 Test Solicitud cambio de contraseña",
                     html = $"<p>su nueva contraseña</p>" +
@@ -132,7 +140,17 @@ namespace PresupuestoMVC.Repository
                 var json = JsonSerializer.Serialize(payload);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                await http.PostAsync("https://api.resend.com/emails", content);
+                var response = await http.PostAsync("https://api.resend.com/emails", content);
+                var responseBody = await response.Content.ReadAsStringAsync();
+
+                Console.WriteLine($"ENVIRONMENT_NAME={_environment?.EnvironmentName}");
+                Console.WriteLine($"ASPNETCORE_ENVIRONMENT={Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new InvalidOperationException($"Error al enviar email vía Resend: {response.StatusCode} - {responseBody}");
+                }
+
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
                 return true;
@@ -144,6 +162,44 @@ namespace PresupuestoMVC.Repository
             }
         }
 
+        private InfoMail GetResendInfoMail()
+        {
+            var envName = Environment.GetEnvironmentVariable("APP_ENVIRONMENT")
+                ?? _environment?.EnvironmentName
+                ?? Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
+                ?? Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT")
+                ?? "Production";
+
+            var isTestEnv = string.Equals(envName, "Development", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(envName, "Test", StringComparison.OrdinalIgnoreCase)
+                || envName.Contains("Test", StringComparison.OrdinalIgnoreCase);
+
+            var apiKey = isTestEnv
+                ? Environment.GetEnvironmentVariable("RESEND_API_KEY_TEST")
+                    ?? Environment.GetEnvironmentVariable("RESEND_API_KEY")
+                : Environment.GetEnvironmentVariable("RESEND_API_KEY_PRODUCTION")
+                    ?? Environment.GetEnvironmentVariable("RESEND_API_KEY");
+
+            var fromEmail = isTestEnv
+                ? "dmarc@tupresupuestotest.online"
+                : "dmarc@erp.medribsoftware.com";
+
+            return new InfoMail
+            {
+                FromEmail = fromEmail,
+                ApiKey = apiKey ?? string.Empty
+            };
+        }
+
+        private static bool IsDevelopmentEnvironment()
+        {
+            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
+                ?? Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT")
+                ?? "Production";
+
+            return string.Equals(env, "Development", StringComparison.OrdinalIgnoreCase);
+        }
+
         public async Task<int> GetUsersCountAsync(int companyId)
         {
             var totalUsers = await _context.Users
@@ -151,6 +207,10 @@ namespace PresupuestoMVC.Repository
                 .CountAsync();
             return totalUsers;
         }
-
+        private class InfoMail
+        {
+            public string FromEmail { get; set; } = string.Empty;
+            public string ApiKey { get; set; } = string.Empty;
+        }
     }
 }
