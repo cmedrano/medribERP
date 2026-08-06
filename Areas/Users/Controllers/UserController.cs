@@ -92,7 +92,7 @@ namespace PresupuestoMVC.Controllers
                  );
 
                 var result = await _userService.ResetPassword(email, userId);
-                return RedirectToAction();
+                return RedirectToAction("Index");
             }
             catch(Exception ex)
             {
