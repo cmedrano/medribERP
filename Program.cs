@@ -53,11 +53,9 @@ namespace PresupuestoMVC
 
             var useProductionDatabase = builder.Configuration.GetValue<bool>("UseProductionDatabase");
 
-            var connectionString =
-                builder.Configuration.GetConnectionString("DefaultConnection")
-                ?? builder.Configuration.GetConnectionString("DevelopmentConnection")
-                ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
-                ?? Environment.GetEnvironmentVariable("ConnectionStrings__DevelopmentConnection");
+            string connectionString = useProductionDatabase
+                ? builder.Configuration.GetConnectionString("DefaultConnection")
+                : builder.Configuration.GetConnectionString("DevelopmentConnection");
 
             if (string.IsNullOrWhiteSpace(connectionString))
             {
