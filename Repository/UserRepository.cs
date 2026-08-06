@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.EntityFrameworkCore;
@@ -20,10 +21,13 @@ namespace PresupuestoMVC.Repository
     {
         private readonly IMapper _mapper;
         private readonly AppDbContext _context;
-        public UserRepository(IMapper mapper, AppDbContext context)
+        private readonly IWebHostEnvironment _environment;
+
+        public UserRepository(IMapper mapper, AppDbContext context, IWebHostEnvironment environment)
         {
             _mapper = mapper;
             _context = context;
+            _environment = environment;
         }
         public async Task<IEnumerable<UserResponseDTO>> GetAllUsersAsync(int companyId)
         {
@@ -110,10 +114,10 @@ namespace PresupuestoMVC.Repository
                     s.SetProperty(u => u.UserPasswordHash, passwordHash)
                 );
 
-                var apiKey = Environment.GetEnvironmentVariable("RESEND_API_KEY");
+                var apiKey = GetResendApiKey();
                 if (string.IsNullOrWhiteSpace(apiKey))
                 {
-                    throw new InvalidOperationException("Falta RESEND_API_KEY");
+                    throw new InvalidOperationException("Falta la clave de Resend para el entorno actual.");
                 }
 
                 using var http = new HttpClient();
@@ -142,6 +146,15 @@ namespace PresupuestoMVC.Repository
                 await transaction.RollbackAsync();
                 throw;
             }
+        }
+
+        private string GetResendApiKey()
+        {
+            var envVarName = _environment.IsDevelopment()
+                ? "RESEND_API_KEY_TEST"
+                : "RESEND_API_KEY_PRODUCTION";
+
+            return Environment.GetEnvironmentVariable(envVarName) ?? string.Empty;
         }
 
         public async Task<int> GetUsersCountAsync(int companyId)
