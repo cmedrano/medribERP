@@ -53,13 +53,15 @@ namespace PresupuestoMVC
 
             var useProductionDatabase = builder.Configuration.GetValue<bool>("UseProductionDatabase");
 
-            string connectionString = useProductionDatabase
-                ? builder.Configuration.GetConnectionString("DefaultConnection")
-                : builder.Configuration.GetConnectionString("DevelopmentConnection");
+            var connectionString =
+                builder.Configuration.GetConnectionString("DefaultConnection")
+                ?? builder.Configuration.GetConnectionString("DevelopmentConnection")
+                ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
+                ?? Environment.GetEnvironmentVariable("ConnectionStrings__DevelopmentConnection");
 
             if (string.IsNullOrWhiteSpace(connectionString))
             {
-                throw new Exception("No se encontró la connection string configurada.");
+                throw new Exception("No se encontró la connection string configurada. Define ConnectionStrings__DefaultConnection o ConnectionStrings__DevelopmentConnection en Render.");
             }
 
             //var connectionString =
