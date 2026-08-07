@@ -59,7 +59,7 @@ namespace PresupuestoMVC
 
             if (string.IsNullOrWhiteSpace(connectionString))
             {
-                throw new Exception("No se encontró la connection string configurada. Define ConnectionStrings__DefaultConnection o ConnectionStrings__DevelopmentConnection en Render.");
+                throw new Exception("No se encontró la connection string configurada.");
             }
 
             //var connectionString =
