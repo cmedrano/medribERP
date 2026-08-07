@@ -143,9 +143,6 @@ namespace PresupuestoMVC.Repository
                 var response = await http.PostAsync("https://api.resend.com/emails", content);
                 var responseBody = await response.Content.ReadAsStringAsync();
 
-                Console.WriteLine($"ENVIRONMENT_NAME={_environment?.EnvironmentName}");
-                Console.WriteLine($"ASPNETCORE_ENVIRONMENT={Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
-
                 if (!response.IsSuccessStatusCode)
                 {
                     throw new InvalidOperationException($"Error al enviar email vía Resend: {response.StatusCode} - {responseBody}");
@@ -164,10 +161,8 @@ namespace PresupuestoMVC.Repository
 
         private InfoMail GetResendInfoMail()
         {
-            var envName = Environment.GetEnvironmentVariable("APP_ENVIRONMENT")
-                ?? _environment?.EnvironmentName
+            var envName = _environment?.EnvironmentName
                 ?? Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
-                ?? Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT")
                 ?? "Production";
 
             var isTestEnv = string.Equals(envName, "Development", StringComparison.OrdinalIgnoreCase)
@@ -176,9 +171,7 @@ namespace PresupuestoMVC.Repository
 
             var apiKey = isTestEnv
                 ? Environment.GetEnvironmentVariable("RESEND_API_KEY_TEST")
-                    ?? Environment.GetEnvironmentVariable("RESEND_API_KEY")
-                : Environment.GetEnvironmentVariable("RESEND_API_KEY_PRODUCTION")
-                    ?? Environment.GetEnvironmentVariable("RESEND_API_KEY");
+                : Environment.GetEnvironmentVariable("RESEND_API_KEY_PRODUCTION");
 
             var fromEmail = isTestEnv
                 ? "dmarc@tupresupuestotest.online"
@@ -189,15 +182,6 @@ namespace PresupuestoMVC.Repository
                 FromEmail = fromEmail,
                 ApiKey = apiKey ?? string.Empty
             };
-        }
-
-        private static bool IsDevelopmentEnvironment()
-        {
-            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
-                ?? Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT")
-                ?? "Production";
-
-            return string.Equals(env, "Development", StringComparison.OrdinalIgnoreCase);
         }
 
         public async Task<int> GetUsersCountAsync(int companyId)
