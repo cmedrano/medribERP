@@ -110,5 +110,17 @@ namespace PresupuestoMVC.Repository
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task DeleteProductCategory(int id)
+        {
+            var rubroExiste = await _context.Product_Category
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            if (rubroExiste == null)
+                throw new Exception("No se encontró el rubro.");
+
+            _context.Remove(rubroExiste);
+            await _context.SaveChangesAsync();
+        }
     }
 }

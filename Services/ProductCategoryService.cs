@@ -34,5 +34,10 @@ namespace PresupuestoMVC.Services
         {
             await _productCategoryRepository.Update(productCategoryDto);
         }
+
+        public async Task DeleteProductCategoryAsync(int id)
+        {
+            await _productCategoryRepository.DeleteProductCategory(id);
+        }
     }
 }
