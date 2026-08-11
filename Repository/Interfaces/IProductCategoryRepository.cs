@@ -10,5 +10,6 @@ namespace PresupuestoMVC.Repository.Interfaces
         Task<PaginatedResult<ProductCategoryResponseDto>> GetPagedAsync(int pageNumber, int pageSize, int companyId);
         Task<ProductCategoryResponseDto> CreateProductCategoryAsync(CreateProductCategoryViewRequest productCategoryDto);
         Task Update(UpdateProductCategoryViewRequest productCategoryDto);
+        Task DeleteProductCategory(int id);
     }
 }

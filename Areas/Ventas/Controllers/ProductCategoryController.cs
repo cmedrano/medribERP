@@ -61,7 +61,21 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
             }
         }
 
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> borrarProductCategory(int id)
+        {
+            try
+            {
+                await _productCategoryService.DeleteProductCategoryAsync(id);
 
-
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error: " + ex.Message;
+                return RedirectToAction("Index");
+            }
+        }
     }
 }
