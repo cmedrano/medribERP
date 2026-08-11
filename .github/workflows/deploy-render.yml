@@ -1,6 +1,9 @@
 name: Build and Deploy to Render
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     types:
       - closed
@@ -26,13 +29,24 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
-  deploy:
-    # Solo ejecutar si el Pull Request fue realmente mergeado
-    if: github.event.pull_request.merged == true
+  deploy-dev:
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.base_ref == 'dev'
+    needs: build
 
     runs-on: ubuntu-latest
 
     steps:
-      - name: Trigger Render Deploy
+      - name: Trigger Render Dev Deploy
         run: |
           curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+
+  deploy-production:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger Render Production Deploy
+        run: |
+          curl -X POST "${{ secrets.RENDER_PRODUCTION_DEPLOY_HOOK }}"
