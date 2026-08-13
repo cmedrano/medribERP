@@ -75,7 +75,8 @@ namespace PresupuestoMVC.Repository
                     Date = DateTime.UtcNow,
                     ToAccountId = income.Id,
                     Note = income.Note,
-                    TypeId = 1
+                    TypeId = 1,
+                    Activo = true
                 };
 
                 _context.Income.Add(incomeDto);
@@ -127,7 +128,8 @@ namespace PresupuestoMVC.Repository
                     FromAccountId = transfer.AccountOriginId,
                     ToAccountId = transfer.AccountDestinationId,
                     Note = transfer.Note,
-                    TypeId = 2
+                    TypeId = 2,
+                    Activo = true
                 };
 
                 _context.Income.Add(transferDto);
