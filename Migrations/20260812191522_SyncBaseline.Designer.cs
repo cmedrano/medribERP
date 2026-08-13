@@ -12,8 +12,8 @@ using PresupuestoMVC.Data;
 namespace PresupuestoMVC.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260506190532_FixNameTable")]
-    partial class FixNameTable
+    [Migration("20260812191522_SyncBaseline")]
+    partial class SyncBaseline
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,70 @@ namespace PresupuestoMVC.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("PresupuestoMVC.Models.Entities.ActivityLog", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("action");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer")
+                        .HasColumnName("company_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<long?>("EntityId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("entity_id");
+
+                    b.Property<string>("EntityType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("entity_type");
+
+                    b.Property<string>("IpAddress")
+                        .HasMaxLength(45)
+                        .HasColumnType("character varying(45)")
+                        .HasColumnName("ip_address");
+
+                    b.Property<string>("NewValues")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("new_values");
+
+                    b.Property<string>("OldValues")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("old_values");
+
+                    b.Property<string>("UserAgent")
+                        .HasColumnType("text")
+                        .HasColumnName("user_agent");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("activity_log");
+                });
 
             modelBuilder.Entity("PresupuestoMVC.Models.Entities.AreasPerUser", b =>
                 {
@@ -71,6 +135,10 @@ namespace PresupuestoMVC.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("codigo");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer")
+                        .HasColumnName("company_id");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -155,6 +223,15 @@ namespace PresupuestoMVC.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("code");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer")
+                        .HasColumnName("company_id");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
@@ -191,6 +268,9 @@ namespace PresupuestoMVC.Migrations
                     b.Property<int?>("RubroTypeId")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime?>("UpdateDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<decimal>("ValorGastado")
                         .HasColumnType("numeric");
 
@@ -198,6 +278,8 @@ namespace PresupuestoMVC.Migrations
                         .HasColumnType("numeric");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
 
                     b.HasIndex("CreateByUserId");
 
@@ -232,6 +314,10 @@ namespace PresupuestoMVC.Migrations
                     b.Property<string>("CodigoPostal")
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer")
+                        .HasColumnName("company_id");
 
                     b.Property<string>("CondicionDeVenta")
                         .HasMaxLength(100)
@@ -271,6 +357,10 @@ namespace PresupuestoMVC.Migrations
                     b.Property<bool>("OperacionesContado")
                         .HasColumnType("boolean");
 
+                    b.Property<int>("PriceListId")
+                        .HasColumnType("integer")
+                        .HasColumnName("lista_precio_id");
+
                     b.Property<string>("Provincia")
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
@@ -281,6 +371,8 @@ namespace PresupuestoMVC.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PriceListId");
+
                     b.ToTable("Clientes");
                 });
 
@@ -288,20 +380,75 @@ namespace PresupuestoMVC.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("Id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CP")
+                        .HasColumnType("integer")
+                        .HasColumnName("CP");
+
+                    b.Property<string>("CUIT")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("CUIT");
+
                     b.Property<string>("CompanyName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("CompanyName");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("Country");
 
                     b.Property<DateTime>("CreateDate")
-                        .HasColumnType("timestamp with time zone");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("CreateDate")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("FloorOrApartment")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("FloorOrApartment");
+
+                    b.Property<string>("Locality")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("Locality");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("Phone");
+
+                    b.Property<string>("Province")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("Province");
+
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("Street");
+
+                    b.Property<int>("StreetNumber")
+                        .HasColumnType("integer")
+                        .HasColumnName("StreetNumber");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Company");
+                    b.ToTable("Company", (string)null);
                 });
 
             modelBuilder.Entity("PresupuestoMVC.Models.Entities.Cuenta", b =>
@@ -466,14 +613,14 @@ namespace PresupuestoMVC.Migrations
                     b.ToTable("income_transfers");
                 });
 
-            modelBuilder.Entity("PresupuestoMVC.Models.Entities.LocalidadPostal", b =>
+            modelBuilder.Entity("PresupuestoMVC.Models.Entities.Localidad", b =>
                 {
-                    b.Property<int>("IdCodPostal")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasColumnName("id_cod_postal");
+                        .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("IdCodPostal"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CodigoPostal")
                         .IsRequired()
@@ -481,21 +628,27 @@ namespace PresupuestoMVC.Migrations
                         .HasColumnType("character varying(10)")
                         .HasColumnName("codigo_postal");
 
-                    b.Property<int>("IdProvincia")
-                        .HasColumnType("integer")
-                        .HasColumnName("id_provincia");
+                    b.Property<DateTime>("DateInserted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("date_inserted")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("Localidad")
+                    b.Property<string>("Nombre")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
-                        .HasColumnName("localidad");
+                        .HasColumnName("nombre");
 
-                    b.HasKey("IdCodPostal");
+                    b.Property<int>("ProvinciaId")
+                        .HasColumnType("integer")
+                        .HasColumnName("provincia_id");
 
-                    b.HasIndex("IdProvincia");
+                    b.HasKey("Id");
 
-                    b.ToTable("localidades_postal");
+                    b.HasIndex("ProvinciaId");
+
+                    b.ToTable("localidades", (string)null);
                 });
 
             modelBuilder.Entity("PresupuestoMVC.Models.Entities.Module", b =>
@@ -576,6 +729,10 @@ namespace PresupuestoMVC.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("activo");
 
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer")
+                        .HasColumnName("company_id");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -607,6 +764,10 @@ namespace PresupuestoMVC.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer")
+                        .HasColumnName("company_id");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
@@ -626,10 +787,34 @@ namespace PresupuestoMVC.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Address")
+                        .HasColumnType("text")
+                        .HasColumnName("address");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("text")
+                        .HasColumnName("code");
+
+                    b.Property<string>("Company")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("name");
+                        .HasColumnName("company");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer")
+                        .HasColumnName("company_id");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text")
+                        .HasColumnName("email");
+
+                    b.Property<int?>("Phone")
+                        .HasColumnType("integer")
+                        .HasColumnName("phone");
+
+                    b.Property<string>("Responsible")
+                        .HasColumnType("text")
+                        .HasColumnName("responsible");
 
                     b.HasKey("Id");
 
@@ -641,9 +826,15 @@ namespace PresupuestoMVC.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasColumnName("id_provincia");
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateInserted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("date_inserted")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -653,7 +844,7 @@ namespace PresupuestoMVC.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("provincias");
+                    b.ToTable("provincias", (string)null);
                 });
 
             modelBuilder.Entity("PresupuestoMVC.Models.Entities.RefreshToken", b =>
@@ -885,6 +1076,12 @@ namespace PresupuestoMVC.Migrations
 
             modelBuilder.Entity("PresupuestoMVC.Models.Entities.Budget", b =>
                 {
+                    b.HasOne("PresupuestoMVC.Models.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("PresupuestoMVC.Models.Entities.User", "CreateByUser")
                         .WithMany()
                         .HasForeignKey("CreateByUserId")
@@ -895,9 +1092,22 @@ namespace PresupuestoMVC.Migrations
                         .WithMany()
                         .HasForeignKey("RubroTypeId");
 
+                    b.Navigation("Company");
+
                     b.Navigation("CreateByUser");
 
                     b.Navigation("tipoRubro");
+                });
+
+            modelBuilder.Entity("PresupuestoMVC.Models.Entities.Cliente", b =>
+                {
+                    b.HasOne("PresupuestoMVC.Models.Entities.PriceList", "PriceList")
+                        .WithMany()
+                        .HasForeignKey("PriceListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PriceList");
                 });
 
             modelBuilder.Entity("PresupuestoMVC.Models.Entities.Diary", b =>
@@ -976,12 +1186,12 @@ namespace PresupuestoMVC.Migrations
                     b.Navigation("ToAccount");
                 });
 
-            modelBuilder.Entity("PresupuestoMVC.Models.Entities.LocalidadPostal", b =>
+            modelBuilder.Entity("PresupuestoMVC.Models.Entities.Localidad", b =>
                 {
                     b.HasOne("PresupuestoMVC.Models.Entities.Provincia", "Provincia")
-                        .WithMany()
-                        .HasForeignKey("IdProvincia")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithMany("Localidades")
+                        .HasForeignKey("ProvinciaId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Provincia");
@@ -1028,6 +1238,11 @@ namespace PresupuestoMVC.Migrations
                         .IsRequired();
 
                     b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("PresupuestoMVC.Models.Entities.Provincia", b =>
+                {
+                    b.Navigation("Localidades");
                 });
 
             modelBuilder.Entity("PresupuestoMVC.Models.Entities.RubroType", b =>

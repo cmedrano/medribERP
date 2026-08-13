@@ -1,14 +1,11 @@
-name: Build and Deploy to Render
+name: Build, Migrate and Deploy
 
 on:
   push:
     branches:
-      - main
-  pull_request:
-    types:
-      - closed
-    branches:
       - dev
+      - main
+  workflow_dispatch:
 
 jobs:
   build:
@@ -29,24 +26,60 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
-  deploy-dev:
-    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.base_ref == 'dev'
+  migrate-dev:
+    if: github.ref == 'refs/heads/dev'
     needs: build
-
     runs-on: ubuntu-latest
 
+    env:
+      ASPNETCORE_ENVIRONMENT: Development
+      UseProductionDatabase: 'false'
+      ConnectionStrings__DevelopmentConnection: ${{ secrets.DEV_DB_CONNECTION_STRING }}
+
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install EF tool
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Run EF migrations (dev)
+        run: dotnet ef database update --project PresupuestoMVC.csproj --startup-project PresupuestoMVC.csproj --configuration Release --no-build
+
       - name: Trigger Render Dev Deploy
         run: |
           curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
 
-  deploy-production:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+  migrate-production:
+    if: github.ref == 'refs/heads/main'
     needs: build
-
     runs-on: ubuntu-latest
 
+    env:
+      ASPNETCORE_ENVIRONMENT: Production
+      UseProductionDatabase: 'true'
+      ConnectionStrings__DefaultConnection: ${{ secrets.PROD_DB_CONNECTION_STRING }}
+
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install EF tool
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Run EF migrations (prod)
+        run: dotnet ef database update --project PresupuestoMVC.csproj --startup-project PresupuestoMVC.csproj --configuration Release --no-build
+
       - name: Trigger Render Production Deploy
         run: |
           curl -X POST "${{ secrets.RENDER_PRODUCTION_DEPLOY_HOOK }}"

@@ -15,6 +15,11 @@ namespace PresupuestoMVC.Models.Entities
         public int CompanyId { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
+        public DateTime? DeleteDate { get; set; }
+        public User? UpdateByUser { get; set; }
+        public int? UpdateByUserId { get; set; }
+        public User? DeleteByUser { get; set; }
+        public int? DeleteByUserId { get; set; }
 
         // Navegación
         public RubroType tipoRubro { get; set; }
