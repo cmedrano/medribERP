@@ -30,5 +30,8 @@ namespace PresupuestoMVC.Models.Entities
         [Column("to_account_id")]
         public int ToAccountId { get; set; }
         public Cuenta ToAccount { get; set; }
+
+        [Column("activo")]
+        public bool Activo { get; set; }
     }
 }
