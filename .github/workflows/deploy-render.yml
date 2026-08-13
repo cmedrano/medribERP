@@ -48,6 +48,12 @@ jobs:
       - name: Install EF tool
         run: dotnet tool install --global dotnet-ef
 
+      - name: Restore project dependencies
+        run: dotnet restore
+
+      - name: Build project
+        run: dotnet build --configuration Release --no-restore
+
       - name: Run EF migrations (dev)
         run: dotnet ef database update --project PresupuestoMVC.csproj --startup-project PresupuestoMVC.csproj --configuration Release --no-build
 
@@ -76,6 +82,12 @@ jobs:
 
       - name: Install EF tool
         run: dotnet tool install --global dotnet-ef
+
+      - name: Restore project dependencies
+        run: dotnet restore
+
+      - name: Build project
+        run: dotnet build --configuration Release --no-restore
 
       - name: Run EF migrations (prod)
         run: dotnet ef database update --project PresupuestoMVC.csproj --startup-project PresupuestoMVC.csproj --configuration Release --no-build
