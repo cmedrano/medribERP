@@ -13,5 +13,8 @@
 
         public int CuentaId { get; set; }
         public Cuenta Cuenta { get; set; }
+        public string? ColumnStringTest { get; set; }
+        public int ColumnIntTest { get; set; }
+        public int ColumnTestDev { get; set; }
     }
 }

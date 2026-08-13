@@ -12,9 +12,15 @@ namespace PresupuestoMVC.Models.Entities
 
         [Column("articulo_id")]
         public int ArticuloId { get; set; }
+        
+        [ForeignKey(nameof(ArticuloId))]
+        public Articulo? Articulo { get; set; }
 
         [Column("lista_precio_id")]
         public int ListaPrecioId { get; set; }
+
+        [ForeignKey(nameof(ListaPrecioId))]
+        public PriceList? PriceList { get; set; }
 
         [Column("precio")]
         public decimal Precio { get; set; }

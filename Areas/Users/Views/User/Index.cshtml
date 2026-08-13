@@ -253,21 +253,21 @@
 </main>
 
 <!-- Modal de Creación -->
- <div class="modal fade" id="modalCrear" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content border-success">
+<div class="modal fade erp-modal-body" id="modalCrear" tabindex="-1">
+    <div class="modal-dialog  modal-xl erp-modal">
+        <div class="modal-content border-0 shadow-lg rounded-4">
             <!-- Header verde -->
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">
-                    <i class="bi bi-plus-circle me-2"></i>Nuevo Usuario
-                </h5>
-                <button type="button" class="btn-close btn-close-white"
-                        data-bs-dismiss="modal"></button>
+
+            <div class="erp-modal-header">
+                <h2 class="erp-modal-title"><span class="erp-modal-title-icon"><i class="bi bi-box-seam"></i></span>Nuevo Usuario</h2>
+                <button class="erp-modal-close" type="button" data-bs-dismiss="modal" aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
 
             <!-- Formulario -->
             <form action="@Url.Action("CreateUser")" method="post">
-                <div class="modal-body">
+                <div class="modal-body erp-modal-body p-4 bg-white">
 
                     <!-- Usuario -->
                     <div class="mb-3">
@@ -328,7 +328,7 @@
                                 data-bs-dismiss="modal">
                             Cancelar
                         </button>
-                        <button type="submit" class="btn btn-success">
+                        <button type="submit" class="btn btn-primary btn-pill">
                             <i class="bi bi-check-circle me-1"></i>Crear Usuario
                         </button>
                     </div>

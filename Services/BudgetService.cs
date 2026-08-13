@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using PresupuestoMVC.Areas.Accounting.Data.DTOs;
 using PresupuestoMVC.Data;
-using PresupuestoMVC.Migrations;
 using PresupuestoMVC.Models.DTOs;
 using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Models.ViewModels;

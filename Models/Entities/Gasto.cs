@@ -24,6 +24,12 @@ namespace PresupuestoMVC.Models.Entities
         public DateTime? UpdateDate { get; set; }
         public DateTime? DeleteDate { get; set; }
         public int CompanyId { get; set; }
+
+        [ForeignKey(nameof(CompanyId))]
+        public Company? Company { get; set; }
         public int? PeriodoId { get; set; }
+
+        [ForeignKey(nameof(PeriodoId))]
+        public PeriodoResumen? Periodo { get; set; }
     }
 }

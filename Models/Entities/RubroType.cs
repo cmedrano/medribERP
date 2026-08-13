@@ -1,4 +1,6 @@
-﻿namespace PresupuestoMVC.Models.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace PresupuestoMVC.Models.Entities
 {
     public class RubroType
     {
@@ -8,6 +10,9 @@
         public int? RubroPadreId { get; set; }
         public RubroType? RubroPadre { get; set; }
         public int CompanyId { get; set; }
+
+        [ForeignKey(nameof(CompanyId))]
+        public Company? Company { get; set; }
         //public bool EsSistema { get; set; }
         public ICollection<RubroType> SubRubros { get; set; } = new List<RubroType>();
     }
