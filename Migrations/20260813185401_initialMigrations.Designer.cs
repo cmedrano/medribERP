@@ -12,8 +12,8 @@ using PresupuestoMVC.Data;
 namespace PresupuestoMVC.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260812191522_SyncBaseline")]
-    partial class SyncBaseline
+    [Migration("20260813185401_initialMigrations")]
+    partial class initialMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -110,6 +110,8 @@ namespace PresupuestoMVC.Migrations
 
                     b.HasIndex("ModuleId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("areas_per_user");
                 });
 
@@ -181,6 +183,12 @@ namespace PresupuestoMVC.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BrendId");
+
+                    b.HasIndex("ProductCategoryId");
+
+                    b.HasIndex("ProviderId");
+
                     b.ToTable("articulos");
                 });
 
@@ -210,6 +218,10 @@ namespace PresupuestoMVC.Migrations
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ArticuloId");
+
+                    b.HasIndex("ListaPrecioId");
 
                     b.ToTable("articulos_precios");
                 });
@@ -262,10 +274,19 @@ namespace PresupuestoMVC.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int?>("DeleteByUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("DeleteDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("Mes")
                         .HasColumnType("integer");
 
                     b.Property<int?>("RubroTypeId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("UpdateByUserId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdateDate")
@@ -283,7 +304,11 @@ namespace PresupuestoMVC.Migrations
 
                     b.HasIndex("CreateByUserId");
 
+                    b.HasIndex("DeleteByUserId");
+
                     b.HasIndex("RubroTypeId");
+
+                    b.HasIndex("UpdateByUserId");
 
                     b.ToTable("Budget");
                 });
@@ -474,6 +499,8 @@ namespace PresupuestoMVC.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyId");
+
                     b.ToTable("Cuentas");
                 });
 
@@ -484,6 +511,15 @@ namespace PresupuestoMVC.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ColumnIntTest")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ColumnStringTest")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ColumnTestDev")
+                        .HasColumnType("integer");
 
                     b.Property<int>("CuentaId")
                         .HasColumnType("integer");
@@ -558,11 +594,15 @@ namespace PresupuestoMVC.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyId");
+
                     b.HasIndex("CreateByUserId");
 
                     b.HasIndex("CuentaId");
 
                     b.HasIndex("DeleteByUserId");
+
+                    b.HasIndex("PeriodoId");
 
                     b.HasIndex("RubroTypeId");
 
@@ -898,6 +938,8 @@ namespace PresupuestoMVC.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyId");
+
                     b.HasIndex("RubroPadreId");
 
                     b.ToTable("RubroType");
@@ -1071,7 +1113,61 @@ namespace PresupuestoMVC.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("PresupuestoMVC.Models.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Module");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("PresupuestoMVC.Models.Entities.Articulo", b =>
+                {
+                    b.HasOne("PresupuestoMVC.Models.Entities.Brand", "Brand")
+                        .WithMany()
+                        .HasForeignKey("BrendId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PresupuestoMVC.Models.Entities.ProductCategory", "ProductCategory")
+                        .WithMany()
+                        .HasForeignKey("ProductCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PresupuestoMVC.Models.Entities.Provider", "Provider")
+                        .WithMany()
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Brand");
+
+                    b.Navigation("ProductCategory");
+
+                    b.Navigation("Provider");
+                });
+
+            modelBuilder.Entity("PresupuestoMVC.Models.Entities.ArticulosPrecios", b =>
+                {
+                    b.HasOne("PresupuestoMVC.Models.Entities.Articulo", "Articulo")
+                        .WithMany()
+                        .HasForeignKey("ArticuloId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PresupuestoMVC.Models.Entities.PriceList", "PriceList")
+                        .WithMany()
+                        .HasForeignKey("ListaPrecioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Articulo");
+
+                    b.Navigation("PriceList");
                 });
 
             modelBuilder.Entity("PresupuestoMVC.Models.Entities.Budget", b =>
@@ -1088,13 +1184,25 @@ namespace PresupuestoMVC.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("PresupuestoMVC.Models.Entities.User", "DeleteByUser")
+                        .WithMany()
+                        .HasForeignKey("DeleteByUserId");
+
                     b.HasOne("PresupuestoMVC.Models.Entities.RubroType", "tipoRubro")
                         .WithMany()
                         .HasForeignKey("RubroTypeId");
 
+                    b.HasOne("PresupuestoMVC.Models.Entities.User", "UpdateByUser")
+                        .WithMany()
+                        .HasForeignKey("UpdateByUserId");
+
                     b.Navigation("Company");
 
                     b.Navigation("CreateByUser");
+
+                    b.Navigation("DeleteByUser");
+
+                    b.Navigation("UpdateByUser");
 
                     b.Navigation("tipoRubro");
                 });
@@ -1108,6 +1216,17 @@ namespace PresupuestoMVC.Migrations
                         .IsRequired();
 
                     b.Navigation("PriceList");
+                });
+
+            modelBuilder.Entity("PresupuestoMVC.Models.Entities.Cuenta", b =>
+                {
+                    b.HasOne("PresupuestoMVC.Models.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("PresupuestoMVC.Models.Entities.Diary", b =>
@@ -1131,6 +1250,12 @@ namespace PresupuestoMVC.Migrations
 
             modelBuilder.Entity("PresupuestoMVC.Models.Entities.Gasto", b =>
                 {
+                    b.HasOne("PresupuestoMVC.Models.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("PresupuestoMVC.Models.Entities.User", "CreateByUser")
                         .WithMany()
                         .HasForeignKey("CreateByUserId")
@@ -1147,6 +1272,10 @@ namespace PresupuestoMVC.Migrations
                         .WithMany()
                         .HasForeignKey("DeleteByUserId");
 
+                    b.HasOne("PresupuestoMVC.Models.Entities.PeriodoResumen", "Periodo")
+                        .WithMany()
+                        .HasForeignKey("PeriodoId");
+
                     b.HasOne("PresupuestoMVC.Models.Entities.RubroType", "RubroType")
                         .WithMany()
                         .HasForeignKey("RubroTypeId")
@@ -1157,11 +1286,15 @@ namespace PresupuestoMVC.Migrations
                         .WithMany()
                         .HasForeignKey("UpdateByUserId");
 
+                    b.Navigation("Company");
+
                     b.Navigation("CreateByUser");
 
                     b.Navigation("Cuenta");
 
                     b.Navigation("DeleteByUser");
+
+                    b.Navigation("Periodo");
 
                     b.Navigation("RubroType");
 
@@ -1210,10 +1343,18 @@ namespace PresupuestoMVC.Migrations
 
             modelBuilder.Entity("PresupuestoMVC.Models.Entities.RubroType", b =>
                 {
+                    b.HasOne("PresupuestoMVC.Models.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("PresupuestoMVC.Models.Entities.RubroType", "RubroPadre")
                         .WithMany("SubRubros")
                         .HasForeignKey("RubroPadreId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Company");
 
                     b.Navigation("RubroPadre");
                 });
