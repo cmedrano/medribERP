@@ -7,7 +7,7 @@ namespace PresupuestoMVC.Models.Entities
     public class Articulo
     {
         [Key]
-        [Column("id")] // Mapeo explícito a minúsculas
+        [Column("id")] // Mapeo explï¿½cito a minï¿½sculas
         public int Id { get; set; }
 
         [Required]
@@ -36,11 +36,20 @@ namespace PresupuestoMVC.Models.Entities
         [Column("rubroId")]
         public int ProductCategoryId { get; set; }
 
+        [ForeignKey(nameof(ProductCategoryId))]
+        public ProductCategory? ProductCategory { get; set; }
+
         [Column("marcaId")]
         public int BrendId { get; set; }
 
+        [ForeignKey(nameof(BrendId))]
+        public Brand? Brand { get; set; }
+
         [Column("proveedorId")]
         public int ProviderId { get; set; }
+
+        [ForeignKey(nameof(ProviderId))]
+        public Provider? Provider { get; set; }
 
         [Column("precio_compra")]
         public decimal? PurchasePrice { get; set; }

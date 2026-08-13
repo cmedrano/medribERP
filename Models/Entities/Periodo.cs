@@ -1,16 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿//using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PresupuestoMVC.Models.Entities
-{
-    [Table("periods")]
-    public class Periodo
-    {
-        [Column("id")]
-        public int Id { get; set; }
-        [Column("fecha")]
-        public DateTime Fecha { get; set; }
+//namespace PresupuestoMVC.Models.Entities
+//{
+//    [Table("periods")]
+//    public class Periodo
+//    {
+//        [Column("id")]
+//        public int Id { get; set; }
+//        [Column("fecha")]
+//        public DateTime Fecha { get; set; }
 
-        [Column("valor_presupuestado")]
-        public int ValorPresupuestado { get; set; }
-    }
-}
+//        [Column("valor_presupuestado")]
+//        public int ValorPresupuestado { get; set; }
+//    }
+//}

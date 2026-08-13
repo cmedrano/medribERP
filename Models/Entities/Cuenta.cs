@@ -1,4 +1,6 @@
-﻿namespace PresupuestoMVC.Models.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace PresupuestoMVC.Models.Entities
 {
     public class Cuenta
     {
@@ -7,5 +9,8 @@
         public decimal SaldoInicial { get; set; }
         public decimal SaldoActual { get; set; }
         public int CompanyId { get; set; }
+
+        [ForeignKey(nameof(CompanyId))]
+        public Company? Company { get; set; }
     }
 }

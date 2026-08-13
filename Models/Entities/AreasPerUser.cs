@@ -13,6 +13,9 @@ namespace PresupuestoMVC.Models.Entities
         [Column("user_id")]
         public int UserId { get; set; }
 
+        [ForeignKey(nameof(UserId))]
+        public User? User { get; set; }
+
         [Column("module_id")]
         public int ModuleId { get; set; }
 
