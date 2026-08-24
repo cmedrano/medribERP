@@ -10,10 +10,11 @@ namespace PresupuestoMVC.Data
 
         }
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<RefreshToken> RefreshTokens { get; set; }
+        // Accouting
         public DbSet<Budget> Budget { get; set; }
         public DbSet<RubroType> RubroType { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Gasto> Gastos { get; set; }
         public DbSet<Diary> Diary { get; set; }
         public DbSet<Cuenta> Cuentas { get; set; }
@@ -64,6 +65,7 @@ namespace PresupuestoMVC.Data
                 .HasOne(t => t.ToAccount)
                 .WithMany()
                 .HasForeignKey(t => t.ToAccountId)
+                .HasConstraintName("fk_income_transfers_to_account_id_account")
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<PriceList>(entity =>
