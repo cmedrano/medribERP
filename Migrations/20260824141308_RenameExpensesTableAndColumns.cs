@@ -138,9 +138,15 @@ namespace PresupuestoMVC.Migrations
                 END $$;
                 """);
 
-            migrationBuilder.RenameTable(
-                name: "Diary",
-                newName: "diary");
+            migrationBuilder.Sql("""
+                DO $$
+                BEGIN
+                    IF to_regclass('"Diary"') IS NOT NULL
+                    AND to_regclass('diary') IS NULL THEN
+                        ALTER TABLE "Diary" RENAME TO diary;
+                    END IF;
+                END $$;
+                """);
 
             migrationBuilder.RenameTable(
                 name: "Budget",
