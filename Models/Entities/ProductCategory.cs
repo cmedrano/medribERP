@@ -7,7 +7,7 @@ namespace PresupuestoMVC.Models.Entities
     public class ProductCategory
     {
         [Key]
-        [Column("Id")]
+        [Column("id")]
         public int Id { get; set; }
 
         [Column("name")]

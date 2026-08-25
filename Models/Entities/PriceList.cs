@@ -3,17 +3,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PresupuestoMVC.Models.Entities
 {
-    [Table("listas_precios")]
+    [Table("price_list")]
     public class PriceList
     {
         [Key]
         [Column("id")]
         public int Id { get; set; }
 
-        [Column("nombre")]
+        [Column("name")]
         public string Nombre { get; set; }
 
-        [Column("activo")]
+        [Column("active")]
         public bool Activo { get; set; }
 
         [Column("create_at")]
@@ -22,7 +22,7 @@ namespace PresupuestoMVC.Models.Entities
         [Column("update_at")]
         public DateTime UpdatedAt { get; set; }
 
-        [Column("descripcion")]
+        [Column("description")]
         public string? Descripcion { get; set; }
 
         [Column("company_id")]
