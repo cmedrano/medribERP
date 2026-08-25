@@ -14,19 +14,21 @@ namespace PresupuestoMVC.Data
         public DbSet<Budget> Budget { get; set; }
         public DbSet<RubroType> RubroType { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Gasto> Gastos { get; set; }
         public DbSet<Diary> Diary { get; set; }
         public DbSet<Cuenta> Cuentas { get; set; }
-        public DbSet<Income> Income { get; set; }
+
+        // Ventas
+        public DbSet<Articulo> Articulos { get; set; }
         public DbSet<Cliente> Clientes { get; set; }
+        public DbSet<Brand> Brand { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<PriceList> PriceList { get; set; }
+        public DbSet<ProductCategory> Product_Category { get; set; }
+        public DbSet<Income> Income { get; set; }
         public DbSet<Provincia> Provincias { get; set; }
         public DbSet<Localidad> Localidades { get; set; }
-        public DbSet<Articulo> Articulos { get; set; }
-        public DbSet<PriceList> PriceList { get; set; }
         public DbSet<Provider> Provider { get; set; }
-        public DbSet<Brand> Brand { get; set; }
-        public DbSet<ProductCategory> Product_Category { get; set; }
         public DbSet<AreasPerUser> AreasPerUser { get; set; }
         public DbSet<ArticulosPrecios> ArticulosPrecios { get; set; }
         //public DbSet<Periodo> Periodos { get; set; }
@@ -249,11 +251,6 @@ namespace PresupuestoMVC.Data
                     .HasColumnName("CreateDate")
                     .HasDefaultValueSql("CURRENT_TIMESTAMP");
             });
-
-
-
-
         }
-
     }
 }

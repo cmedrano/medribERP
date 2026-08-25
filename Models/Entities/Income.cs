@@ -31,7 +31,7 @@ namespace PresupuestoMVC.Models.Entities
         public int ToAccountId { get; set; }
         public Cuenta ToAccount { get; set; }
 
-        [Column("activo")]
+        [Column("active")]
         public bool Activo { get; set; }
     }
 }
