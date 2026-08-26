@@ -189,21 +189,6 @@ namespace PresupuestoMVC.Migrations
                 table: "client",
                 newName: "IX_client_lista_precio_id");
 
-            migrationBuilder.RenameColumn(
-                name: "precio",
-                table: "articles_prices",
-                newName: "price");
-
-            migrationBuilder.RenameColumn(
-                name: "lista_precio_id",
-                table: "articles_prices",
-                newName: "price_list_id");
-
-            migrationBuilder.RenameColumn(
-                name: "articulo_id",
-                table: "articles_prices",
-                newName: "article_id");
-
             // migrationBuilder.RenameIndex(
             //     name: "IX_articulos_precios_lista_precio_id",
             //     table: "articles_prices",
@@ -285,11 +270,6 @@ namespace PresupuestoMVC.Migrations
                 column: "id");
 
             migrationBuilder.AddPrimaryKey(
-                name: "PK_articles_prices",
-                table: "articles_prices",
-                column: "id");
-
-            migrationBuilder.AddPrimaryKey(
                 name: "PK_articles",
                 table: "articles",
                 column: "id");
@@ -316,22 +296,6 @@ namespace PresupuestoMVC.Migrations
                 column: "provider_id",
                 principalTable: "provider",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_articles_prices_articles_article_id",
-                table: "articles_prices",
-                column: "article_id",
-                principalTable: "articles",
-                principalColumn: "id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_articles_prices_listas_precios_price_list_id",
-                table: "articles_prices",
-                column: "price_list_id",
-                principalTable: "listas_precios",
-                principalColumn: "id",
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
@@ -367,14 +331,6 @@ namespace PresupuestoMVC.Migrations
                 table: "articles");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_articles_prices_articles_article_id",
-                table: "articles_prices");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_articles_prices_listas_precios_price_list_id",
-                table: "articles_prices");
-
-            migrationBuilder.DropForeignKey(
                 name: "FK_client_listas_precios_lista_precio_id",
                 table: "client");
 
@@ -387,20 +343,12 @@ namespace PresupuestoMVC.Migrations
                 table: "client");
 
             migrationBuilder.DropPrimaryKey(
-                name: "PK_articles_prices",
-                table: "articles_prices");
-
-            migrationBuilder.DropPrimaryKey(
                 name: "PK_articles",
                 table: "articles");
 
             migrationBuilder.RenameTable(
                 name: "client",
                 newName: "Clientes");
-
-            migrationBuilder.RenameTable(
-                name: "articles_prices",
-                newName: "articulos_precios");
 
             migrationBuilder.RenameTable(
                 name: "articles",
@@ -535,16 +483,6 @@ namespace PresupuestoMVC.Migrations
                 name: "article_id",
                 table: "articulos_precios",
                 newName: "articulo_id");
-
-            migrationBuilder.RenameIndex(
-                name: "IX_articles_prices_price_list_id",
-                table: "articulos_precios",
-                newName: "IX_articulos_precios_lista_precio_id");
-
-            migrationBuilder.RenameIndex(
-                name: "IX_articles_prices_article_id",
-                table: "articulos_precios",
-                newName: "IX_articulos_precios_articulo_id");
 
             migrationBuilder.RenameColumn(
                 name: "unit_measure",
