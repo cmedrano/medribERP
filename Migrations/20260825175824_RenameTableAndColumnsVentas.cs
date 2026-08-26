@@ -18,13 +18,17 @@ namespace PresupuestoMVC.Migrations
                 name: "FK_Articulos_proveedorId_provider",
                 table: "articulos");
 
-            migrationBuilder.DropForeignKey(
-                name: "articulos_precios_articulo_id_fkey",
-                table: "articulos_precios");
-
-            migrationBuilder.DropForeignKey(
-                name: "articulos_precios_lista_precio_id_fkey",
-                table: "articulos_precios");
+            migrationBuilder.Sql("""
+                DO $$
+                BEGIN
+                    IF to_regclass('"articulos_precios"') IS NOT NULL THEN
+                        ALTER TABLE "articulos_precios"
+                            DROP CONSTRAINT IF EXISTS "articulos_precios_articulo_id_fkey";
+                        ALTER TABLE "articulos_precios"
+                            DROP CONSTRAINT IF EXISTS "articulos_precios_lista_precio_id_fkey";
+                    END IF;
+                END $$;
+                """);
 
             migrationBuilder.DropForeignKey(
                 name: "FK_Clientes_listas_precios_lista_precio_id",
@@ -38,9 +42,15 @@ namespace PresupuestoMVC.Migrations
                 name: "Clientes_pkey",
                 table: "Clientes");
 
-            migrationBuilder.DropPrimaryKey(
-                name: "articulos_precios_pkey",
-                table: "articulos_precios");
+            migrationBuilder.Sql("""
+                DO $$
+                BEGIN
+                    IF to_regclass('"articulos_precios"') IS NOT NULL THEN
+                        ALTER TABLE "articulos_precios"
+                            DROP CONSTRAINT IF EXISTS "articulos_precios_pkey";
+                    END IF;
+                END $$;
+                """);
 
             migrationBuilder.DropPrimaryKey(
                 name: "articulos_pkey",
@@ -50,9 +60,15 @@ namespace PresupuestoMVC.Migrations
                 name: "Clientes",
                 newName: "client");
 
-            migrationBuilder.RenameTable(
-                name: "articulos_precios",
-                newName: "articles_prices");
+            migrationBuilder.Sql("""
+                DO $$
+                BEGIN
+                    IF to_regclass('"articulos_precios"') IS NOT NULL
+                       AND to_regclass('articles_prices') IS NULL THEN
+                        ALTER TABLE "articulos_precios" RENAME TO articles_prices;
+                    END IF;
+                END $$;
+                """);
 
             migrationBuilder.RenameTable(
                 name: "articulos",
