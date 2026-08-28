@@ -49,6 +49,8 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
                 if (request == null)
                     return BadRequest("El cuerpo de la solicitud no puede estar vacío.");
 
+                request.CompanyId = int.Parse(User.FindFirst("CompanyId")?.Value);
+
                 var result = await _facturacionService.CreateSaleAsync(request);
 
                 return Ok(result);
@@ -65,7 +67,8 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
         {
             try
             {
-                var ventas = await _facturacionService.GetRecentSalesAsync();
+                int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
+                var ventas = await _facturacionService.GetRecentSalesAsync(companyId);
 
                 var result = ventas.Select(v => new
                 {

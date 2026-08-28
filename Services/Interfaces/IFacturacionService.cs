@@ -6,7 +6,7 @@ namespace PresupuestoMVC.Services.Interfaces
     public interface IFacturacionService
     {
         Task<int> CreateSaleAsync(SaleRequestDTO request);
-        Task<IEnumerable<Sale>> GetRecentSalesAsync();
+        Task<IEnumerable<Sale>> GetRecentSalesAsync(int companyId);
         Task<Sale> GetSaleByIdAsync(int id);
         Task<Company> GetCompanyInfoAsync(int id);
     }

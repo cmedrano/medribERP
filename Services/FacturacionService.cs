@@ -35,6 +35,7 @@ namespace PresupuestoMVC.Services
                     NameClient = request.NameClient,
                     DNI = request.DNI,
                     PriceListId = request.PriceListId,
+                    CompanyId = request.CompanyId,
 
                     Subtotal = request.Subtotal,
                     Descuento = request.Descuento,
@@ -70,9 +71,9 @@ namespace PresupuestoMVC.Services
             }
         }
 
-        public async Task<IEnumerable<Sale>> GetRecentSalesAsync()
+        public async Task<IEnumerable<Sale>> GetRecentSalesAsync(int companyId)
         {
-            var sales = await _saleRepository.GetAllAsync();
+            var sales = await _saleRepository.GetAllAsync(companyId);
 
             if (sales == null || !sales.Any())
                 throw new Exception("No se encontraron ventas");
