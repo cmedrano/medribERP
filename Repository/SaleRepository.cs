@@ -21,9 +21,10 @@ namespace PresupuestoMVC.Repository
                 .FirstOrDefaultAsync(s => s.Id == id);
         }
 
-        public async Task<IEnumerable<Sale>> GetAllAsync()
+        public async Task<IEnumerable<Sale>> GetAllAsync(int companyId)
         {
             return await _context.Sales
+                .Where(s => s.CompanyId == companyId)
                 .Include(s => s.Detail)
                 .ToListAsync();
         }
