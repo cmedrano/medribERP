@@ -171,22 +171,61 @@ namespace PresupuestoMVC.Controllers
             {
                 var user = await _loginService.GetByEmailAsync(model);
 
-                if (user == null)
+                if (user != null)
                 {
-                    ModelState.AddModelError(nameof(model.Email),
-                        "No existe ningún usuario registrado con ese correo.");
+                    // Por seguridad no revelamos si el correo existe o no: siempre
+                    // mostramos el mismo mensaje, pero solo enviamos el correo si el
+                    // usuario existe realmente.
+                    var token = await _loginService.GeneratePasswordResetTokenAsync(user);
+                    var resetLink = Url.Action("ResetPassword", "Login", new { token }, Request.Scheme);
 
-                    return View("Views/Recover/Recover.cshtml", model);
+                    await _loginService.SendPasswordResetEmailAsync(user.UserEmail, resetLink);
                 }
 
-                // Aquí continuará la lógica para enviar el correo.
-
-                return RedirectToAction("Login", "Login");
+                TempData["SuccessMessage"] = "Si el correo ingresado está registrado, te enviamos las instrucciones para restablecer tu contraseña.";
+                return RedirectToAction("Recover", "Login");
             }
             catch (InvalidOperationException ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
                 return View("Views/Recover/Recover.cshtml", model);
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError(string.Empty, "No se pudo enviar el correo de recuperación. Intenta nuevamente más tarde.");
+                return View("Views/Recover/Recover.cshtml", model);
+            }
+        }
+
+        // GET: /Login/ResetPassword - Muestra el formulario para crear una nueva contraseña
+        [HttpGet]
+        public IActionResult ResetPassword(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+                return RedirectToAction("Recover", "Login");
+
+            var model = new ResetPasswordViewRequest { Token = token };
+            return View("Views/Recover/ResetPassword.cshtml", model);
+        }
+
+        // POST: /Login/ResetPassword - Procesa el formulario de nueva contraseña
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewRequest model)
+        {
+            if (!ModelState.IsValid)
+                return View("Views/Recover/ResetPassword.cshtml", model);
+
+            try
+            {
+                await _loginService.ResetPasswordAsync(model);
+
+                TempData["SuccessMessage"] = "Tu contraseña fue actualizada correctamente. Ya podés iniciar sesión.";
+                return RedirectToAction("Login", "Login");
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View("Views/Recover/ResetPassword.cshtml", model);
             }
         }
 

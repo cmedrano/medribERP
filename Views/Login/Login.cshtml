@@ -97,6 +97,11 @@
         <form asp-action="Login" method="post">
             <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+            }
+
             <div class="mb-3">
                 <label asp-for="Username" class="form-label"></label>
                 <input asp-for="Username" class="form-control" placeholder="Correo electrónico" />
@@ -109,9 +114,9 @@
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
-            @* <div class="text-end mb-3">
+            <div class="text-end mb-3">
                 <a asp-action="Recover" class="link-orange">¿Olvidaste tu contraseña?</a>
-            </div> *@
+            </div>
 
             <button type="submit" class="btn btn-primary w-100 py-2">
                 Ingresar
