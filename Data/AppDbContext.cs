@@ -23,6 +23,7 @@ namespace PresupuestoMVC.Data
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Brand> Brand { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
         public DbSet<PriceList> PriceList { get; set; }
         public DbSet<ProductCategory> Product_Category { get; set; }
         public DbSet<Income> Income { get; set; }

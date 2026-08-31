@@ -11,5 +11,8 @@ namespace PresupuestoMVC.Services
         Task<RefreshTokenResponseDto> RefreshTokenAsync(RefreshViewRequest request);
         Task<RegisterResponseDto> RegisterAsync(RegisterViewRequest registerRequest);
         Task<User> GetByEmailAsync(RecoverViewModel viewModel);
+        Task<string> GeneratePasswordResetTokenAsync(User user);
+        Task SendPasswordResetEmailAsync(string email, string resetLink);
+        Task<bool> ResetPasswordAsync(ResetPasswordViewRequest model);
     }
 }

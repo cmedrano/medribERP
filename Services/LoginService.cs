@@ -1,30 +1,37 @@
 ﻿using Konscious.Security.Cryptography;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PresupuestoMVC.Data;
+using PresupuestoMVC.Helpers;
 using PresupuestoMVC.Models.DTOs;
 using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Models.ViewModels;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 
 namespace PresupuestoMVC.Services
 {
     public class LoginService : ILoginService
     {
         private readonly AppDbContext _context;
+        private readonly IWebHostEnvironment _environment;
         private readonly string _jwtKey;
         private readonly string _jwtIssuer;
         private readonly string _jwtAudience;
         private readonly int _jwtExpiryMinutes;
         private readonly int _refreshTokenExpiryDays = 7; // Refresh token dura 7 días
+        private readonly int _passwordResetTokenExpiryMinutes = 30; // El enlace de recuperación dura 30 minutos
 
-        public LoginService(AppDbContext context ,IConfiguration configuration)
+        public LoginService(AppDbContext context, IConfiguration configuration, IWebHostEnvironment environment)
         {
             _context = context;
+            _environment = environment;
             _jwtKey = configuration["JwtSettings:Key"]!;
             _jwtIssuer = configuration["JwtSettings:Issuer"]!;
             _jwtAudience = configuration["JwtSettings:Audience"]!;
@@ -278,6 +285,121 @@ namespace PresupuestoMVC.Services
         {
             return await _context.Users
                 .FirstOrDefaultAsync(u => u.UserEmail == viewModel.Email);
+        }
+
+        // Genera y persiste un token de recuperación de contraseña para el usuario
+        public async Task<string> GeneratePasswordResetTokenAsync(User user)
+        {
+            // Invalido cualquier token previo aún vigente para este usuario
+            var previousTokens = await _context.PasswordResetTokens
+                .Where(t => t.UserId == user.Id && !t.IsUsed)
+                .ToListAsync();
+
+            foreach (var previousToken in previousTokens)
+            {
+                previousToken.IsUsed = true;
+            }
+
+            var resetToken = new PasswordResetToken
+            {
+                Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32))
+                    .Replace("+", "-").Replace("/", "_").Replace("=", ""),
+                UserId = user.Id,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(_passwordResetTokenExpiryMinutes),
+                IsUsed = false,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.PasswordResetTokens.Add(resetToken);
+            await _context.SaveChangesAsync();
+
+            return resetToken.Token;
+        }
+
+        // Envía el correo con el enlace para restablecer la contraseña, vía Resend
+        public async Task SendPasswordResetEmailAsync(string email, string resetLink)
+        {
+            var info = GetResendInfoMail();
+
+            if (string.IsNullOrWhiteSpace(info.ApiKey))
+                throw new InvalidOperationException("Falta la clave de Resend para el entorno actual.");
+
+            using var http = new HttpClient();
+            http.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", info.ApiKey);
+
+            var payload = new
+            {
+                from = info.FromEmail,
+                to = new[] { email },
+                subject = "🔑 Recuperación de contraseña",
+                html = $"<p>Recibimos una solicitud para restablecer tu contraseña.</p>" +
+                       $"<p>Hacé clic en el siguiente enlace para crear una nueva contraseña. Este enlace vence en {_passwordResetTokenExpiryMinutes} minutos:</p>" +
+                       $"<p><a href=\"{resetLink}\">{resetLink}</a></p>" +
+                       $"<p>Si no solicitaste este cambio, podés ignorar este correo.</p>"
+            };
+
+            var json = JsonSerializer.Serialize(payload);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await http.PostAsync("https://api.resend.com/emails", content);
+            var responseBody = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+                throw new InvalidOperationException($"Error al enviar email vía Resend: {response.StatusCode} - {responseBody}");
+        }
+
+        // Valida el token de recuperación y actualiza la contraseña del usuario
+        public async Task<bool> ResetPasswordAsync(ResetPasswordViewRequest model)
+        {
+            var resetToken = await _context.PasswordResetTokens
+                .FirstOrDefaultAsync(t => t.Token == model.Token);
+
+            if (resetToken == null || resetToken.IsUsed || resetToken.ExpiresAt < DateTime.UtcNow)
+                throw new InvalidOperationException("El enlace de recuperación es inválido o ha expirado.");
+
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == resetToken.UserId);
+
+            if (user == null)
+                throw new InvalidOperationException("El usuario no existe.");
+
+            user.UserPasswordHash = HashPasswordHelper.GetHashPassword(model.NewPassword);
+            resetToken.IsUsed = true;
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        private InfoMail GetResendInfoMail()
+        {
+            var envName = _environment?.EnvironmentName
+                ?? Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
+                ?? "Production";
+
+            var isTestEnv = string.Equals(envName, "Development", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(envName, "Test", StringComparison.OrdinalIgnoreCase)
+                || envName.Contains("Test", StringComparison.OrdinalIgnoreCase);
+
+            var apiKey = isTestEnv
+                ? Environment.GetEnvironmentVariable("RESEND_API_KEY_TEST")
+                : Environment.GetEnvironmentVariable("RESEND_API_KEY_PRODUCTION");
+
+            var fromEmail = isTestEnv
+                ? "dmarc@tupresupuestotest.online"
+                : "dmarc@erp.medribsoftware.com";
+
+            return new InfoMail
+            {
+                FromEmail = fromEmail,
+                ApiKey = apiKey ?? string.Empty
+            };
+        }
+
+        private class InfoMail
+        {
+            public string FromEmail { get; set; } = string.Empty;
+            public string ApiKey { get; set; } = string.Empty;
         }
 
         // Método para hashear contraseñas con Argon2 (formato estándar)
