@@ -42,9 +42,16 @@
             <!-- Menú -->
             <div class="nav-group-title">General</div>
             <nav class="nav flex-column">
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="nav-link  @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")">
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="nav-link  @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
                     <i class="bi bi-house-door"></i>Menú
                 </a>
+
+                @if (modules.Contains("home"))
+                {
+                <a asp-area="" asp-controller="Home" asp-action="Index2" id="navHome2" class="nav-link ajax-nav @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index2" ? "active" : "")">
+                    <i class="bi bi-house-door-fill"></i>Inicio
+                </a>              
+                }
             </nav>
             @{
                 var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
@@ -241,7 +248,7 @@
                  
         </div>
         <!-- Main Content -->
-        <div class=" content">
+        <div class=" content" id="mainContent">
             @RenderBody()
         </div>
     </div>
