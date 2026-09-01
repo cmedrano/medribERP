@@ -3,7 +3,7 @@
 @using System.Globalization
 
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = PresupuestoMVC.Helpers.LayoutHelper.Resolve(Context);
     var periodos = ViewBag.Periodos as IEnumerable<PeriodResponseDto>;
     var years = ViewBag.Years as IEnumerable<Year>;
     var months = ViewBag.Months as IEnumerable<Month>;
@@ -222,7 +222,7 @@
         return meses[numero - 1];
     }
 
-    document.addEventListener("DOMContentLoaded", function () {
+    onContentReady(function () {
         @if (!ViewData.ModelState.IsValid)
         {
                 <text>

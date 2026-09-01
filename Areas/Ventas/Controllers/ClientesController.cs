@@ -68,12 +68,6 @@ namespace PresupuestoMVC.Controllers
                 ViewData["SearchNombre"] = searchNombre ?? "";
                 ViewData["SearchFantasia"] = searchFantasia ?? "";
 
-                // Si es una petición AJAX, retorna solo el partial view de la tabla
-                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                {
-                    return PartialView("_TablaClientesPartial", resultado);
-                }
-
                 return View(resultado);
             }
             catch (Exception ex)

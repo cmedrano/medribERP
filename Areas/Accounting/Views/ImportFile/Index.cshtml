@@ -1,6 +1,6 @@
 ﻿@using PresupuestoMVC.Models.DTOs
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = PresupuestoMVC.Helpers.LayoutHelper.Resolve(Context);
     ViewData["Title"] = "Importar";
     var accounts = ViewBag.Cuentas as IEnumerable<CuentaResponseDto>;
     var categories = ViewBag.Rubros as IEnumerable<CategoryResponseDto>;
