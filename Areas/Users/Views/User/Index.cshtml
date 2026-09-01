@@ -2,7 +2,7 @@
 @using PresupuestoMVC.Models.DTOs
 @using PresupuestoMVC.Enums;
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = PresupuestoMVC.Helpers.LayoutHelper.Resolve(Context);
     ViewData["Title"] = "Usuarios";
     var users = ViewBag.Users as IEnumerable<UserResponseDTO>;
     var roles = ViewBag.Roles;
