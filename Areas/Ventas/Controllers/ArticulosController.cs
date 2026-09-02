@@ -78,6 +78,7 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error al cargar los artículos");
                 TempData["Error"] = "Error al cargar los artículos: " + ex.Message;
                 return RedirectToAction("Error", "Home");
             }
