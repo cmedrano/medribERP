@@ -104,6 +104,18 @@ namespace PresupuestoMVC.Controllers
         {
             return View();
         }
+
+        public IActionResult Index2()
+        {
+            bool isAjax = string.Equals(Request.Headers["X-Requested-With"], "XMLHttpRequest", StringComparison.OrdinalIgnoreCase);
+
+            if (isAjax)
+            {
+                return PartialView("Views/Home/_Home2Content.cshtml");
+            }
+
+            return View("Views/Home/Home2.cshtml");
+        }
         public IActionResult Dashboard()
         {
             return View();

@@ -4,7 +4,7 @@
 @{
     @model PreviewPdfViewModel
 
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = PresupuestoMVC.Helpers.LayoutHelper.Resolve(Context);
 
     var descuento = (Model.Sale.Descuento / Model.Sale.Subtotal) * 100;
 }

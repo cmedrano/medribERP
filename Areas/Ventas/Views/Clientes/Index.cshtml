@@ -2,7 +2,7 @@
 @model PaginacionRespuestaDto<ClienteResponseDTO>
 
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = PresupuestoMVC.Helpers.LayoutHelper.Resolve(Context);
     ViewData["Title"] = "Clientes";
     var priceList = ViewBag.PriceList;
     var provincia = ViewBag.Provincia;
@@ -380,7 +380,7 @@
     const MIN_SEARCH_LENGTH = 3;
 
     // Inicializar event listeners en los inputs
-    document.addEventListener('DOMContentLoaded', function() {
+    onContentReady(function () {
         const inputNombre = document.getElementById('inputNombre');
         const inputNombreFantasia = document.getElementById('inputNombreFantasia');
         const formCliente = document.getElementById('formCliente');

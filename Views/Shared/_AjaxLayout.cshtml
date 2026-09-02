@@ -1,0 +1,8 @@
+@{
+    Layout = null;
+    // Le pasamos el título de la página al cliente por header para que
+    // site.js pueda actualizar document.title sin necesitar el <head>.
+    Context.Response.Headers["X-Page-Title"] = ViewData["Title"]?.ToString() ?? "";
+}
+@RenderBody()
+@await RenderSectionAsync("Scripts", required: false)

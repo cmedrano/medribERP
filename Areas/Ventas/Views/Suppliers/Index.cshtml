@@ -1,7 +1,7 @@
 ﻿@using PresupuestoMVC.Models.DTOs;
 @using PresupuestoMVC.Models
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = PresupuestoMVC.Helpers.LayoutHelper.Resolve(Context);
     ViewData["Title"] = "Proveedores";
 
     var paginacion = ViewBag.Paginacion as PaginatedResult<ProviderResponseDto>;

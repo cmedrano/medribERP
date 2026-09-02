@@ -1,3 +1,4 @@
-﻿@{
-    Layout = "_Layout";
+@using PresupuestoMVC.Helpers
+@{
+    Layout = LayoutHelper.Resolve(Context, "_Layout");
 }
