@@ -24,8 +24,15 @@ namespace PresupuestoMVC
 
             var builder = WebApplication.CreateBuilder(args);
 
-            // Razor Runtime Compilation
-            builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            // Razor Runtime Compilation: sólo en Development. En builds publicados
+            // (test/producción) el "dotnet publish" recorta los reference assemblies
+            // que este paquete necesita para recompilar vistas en caliente, lo que
+            // provoca un 500 la primera vez que una vista necesita recompilarse.
+            var mvcBuilder = builder.Services.AddControllersWithViews();
+            if (builder.Environment.IsDevelopment())
+            {
+                mvcBuilder.AddRazorRuntimeCompilation();
+            }
 
             // Habilitar sesión para que TempData conserve mensajes entre redirecciones
             builder.Services.AddSession();
