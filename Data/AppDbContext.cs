@@ -17,6 +17,7 @@ namespace PresupuestoMVC.Data
         public DbSet<Gasto> Gastos { get; set; }
         public DbSet<Diary> Diary { get; set; }
         public DbSet<Cuenta> Cuentas { get; set; }
+        public DbSet<Balance> Balances { get; set; }
 
         // Ventas
         public DbSet<Articulo> Articulos { get; set; }

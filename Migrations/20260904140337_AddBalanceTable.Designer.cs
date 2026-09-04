@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PresupuestoMVC.Data;
@@ -11,9 +12,11 @@ using PresupuestoMVC.Data;
 namespace PresupuestoMVC.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260904140337_AddBalanceTable")]
+    partial class AddBalanceTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -232,17 +235,13 @@ namespace PresupuestoMVC.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Anio")
-                        .HasColumnType("integer")
-                        .HasColumnName("year");
-
                     b.Property<int>("CompanyId")
                         .HasColumnType("integer")
                         .HasColumnName("company_id");
 
-                    b.Property<int>("Mes")
+                    b.Property<int>("PresupuestoId")
                         .HasColumnType("integer")
-                        .HasColumnName("month");
+                        .HasColumnName("presupuesto_id");
 
                     b.Property<decimal>("ValorBalance")
                         .HasColumnType("numeric")
@@ -251,6 +250,8 @@ namespace PresupuestoMVC.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
+
+                    b.HasIndex("PresupuestoId");
 
                     b.ToTable("balance");
                 });
@@ -1309,7 +1310,15 @@ namespace PresupuestoMVC.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("PresupuestoMVC.Models.Entities.Budget", "Presupuesto")
+                        .WithMany()
+                        .HasForeignKey("PresupuestoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Company");
+
+                    b.Navigation("Presupuesto");
                 });
 
             modelBuilder.Entity("PresupuestoMVC.Models.Entities.Budget", b =>
