@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using NLog.Web;
 using PresupuestoMVC.Data;
 using PresupuestoMVC.Repositories;
 using PresupuestoMVC.Repository;
@@ -19,10 +20,33 @@ namespace PresupuestoMVC
     {
         public static void Main(string[] args)
         {
+            NLog.LogManager.Setup().LoadConfigurationFromAppSettings();
+            var logger = NLog.LogManager.GetCurrentClassLogger();
+            try
+            {
+                RunApp(args);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "El programa se detuvo por una excepción no controlada");
+                throw;
+            }
+            finally
+            {
+                NLog.LogManager.Shutdown();
+            }
+        }
+
+        private static void RunApp(string[] args)
+        {
             // Licencia de QuestPDF
             QuestPDF.Settings.License = LicenseType.Community;
 
             var builder = WebApplication.CreateBuilder(args);
+
+            // Reemplazar los proveedores de logging por defecto por NLog
+            builder.Logging.ClearProviders();
+            builder.Host.UseNLog();
 
             // Razor Runtime Compilation: sólo en Development. En builds publicados
             // (test/producción) el "dotnet publish" recorta los reference assemblies
@@ -78,6 +102,7 @@ namespace PresupuestoMVC
             // Registro del servicios
             builder.Services.AddScoped<ILoginService, LoginService>();
             builder.Services.AddScoped<IBudgetService, BudgetService>();
+            builder.Services.AddScoped<IBalanceService, BalanceService>();
             builder.Services.AddScoped<IGastoService, GastoService>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();

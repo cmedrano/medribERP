@@ -42,6 +42,9 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
         {
             try
             {
+                if (pagina < 1) pagina = 1;
+                if (tamañoPagina < 1) tamañoPagina = 10;
+
                 int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
                 var articulos = await _articuloService.ObtenerTodosActivosAsync(companyId);
                 var total = await _articuloService.ObtenerTotalAsync();
@@ -78,6 +81,7 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error al cargar los artículos");
                 TempData["Error"] = "Error al cargar los artículos: " + ex.Message;
                 return RedirectToAction("Error", "Home");
             }

@@ -1,0 +1,271 @@
+@using PresupuestoMVC.Areas.Accounting.Data.Model
+@using PresupuestoMVC.Models.Entities
+@using PresupuestoMVC.Helpers
+@using System.Globalization
+@{
+    Layout = PresupuestoMVC.Helpers.LayoutHelper.Resolve(Context);
+    ViewData["Title"] = "Balance";
+    var meses = ViewBag.Meses as IEnumerable<MesViewModel>;
+    var anios = ViewBag.Anios as IEnumerable<int>;
+    var balances = ViewBag.Balances as IEnumerable<Balance>;
+}
+<!-- Header -->
+<div class="topbar">
+    <div class="searchbox">
+        <i class="bi bi-search"></i>
+        <input class="form-control" type="text" placeholder="Buscar..." disabled />
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <button class="btn btn-success-soft" onclick="abrirModalGenerarBalance()">
+            <i class="bi bi-plus-lg me-2" id="btnNuevoBalance"></i>Generar Balance
+        </button>
+    </div>
+</div>
+<div class="page-head">
+    <div>
+        <h1 class="page-title">@ViewData["Title"]</h1>
+        <p class="page-subtitle">Sistema de balance de cuentas.</p>
+    </div>
+</div>
+
+<!-- Contenido -->
+<section class="erp-card table-card">
+    <div class="table-tools">
+        <div>
+            <h2 class="section-title">Balance</h2>
+            <p class="section-subtitle">
+                Mostrando @(balances?.Count() ?? 0)
+            </p>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-modern table-hover align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Mes</th>
+                    <th scope="col">Año</th>
+                    <th class="text-end" scope="col">Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (balances != null && balances.Any())
+                {
+                    foreach (var balance in balances)
+                    {
+                        <tr>
+                            <td>@MonthHelper.MonthName(balance.Mes)</td>
+                            <td>@balance.Anio</td>
+                            <td class="text-end">@balance.ValorBalance.ToString("C0", new CultureInfo("es-AR"))</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="3" class="text-center text-muted">
+                            Todavía no hay información de balance para mostrar
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Modal Generar Balance -->
+<div class="modal fade" id="modalGenerarBalance" tabindex="-1">
+    <div class="modal-dialog modal-lg erp-modal">
+        <div class="modal-content border-0 shadow-lg">
+
+            <!-- Header -->
+            <div class="erp-modal-header">
+                <h5 class="erp-modal-title">
+                    <i class="bi bi-bar-chart-line me-2"></i>Generar Balance
+                </h5>
+                <button type="button"
+                        class="erp-modal-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <form id="formGenerarBalance" action="@Url.Action("GenerarBalance")" method="post" onsubmit="return validarGenerarBalance()">
+            <div class="modal-body">
+
+                <!-- Filtros -->
+                <div class="row align-items-end mb-3">
+                    <div class="col-md-6">
+                        <label for="balanceMesFilter" class="form-label fw-semibold">
+                            <i class="bi bi-calendar-month me-1"></i>Mes
+                        </label>
+                        <select class="form-select" id="balanceMesFilter" name="mes" onchange="cargarPresupuestosBalance()">
+                            @if (meses != null)
+                            {
+                                foreach (var mesItem in meses)
+                                {
+                                    <option value="@mesItem.Numero"
+                                            selected="@(ViewBag.MesActual?.ToString() == mesItem.Numero.ToString())">
+                                        @mesItem.Nombre
+                                    </option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="balanceAnioFilter" class="form-label fw-semibold">
+                            <i class="bi bi-calendar3 me-1"></i>Año
+                        </label>
+                        <select class="form-select" id="balanceAnioFilter" name="anio" onchange="cargarPresupuestosBalance()">
+                            @if (anios != null)
+                            {
+                                foreach (var anio in anios)
+                                {
+                                    <option value="@anio"
+                                            selected="@(ViewBag.AnioActual?.ToString() == anio.ToString())">
+                                        @anio
+                                    </option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Suma de balance seleccionado -->
+                <div class="alert alert-light border d-flex justify-content-between align-items-center mb-3">
+                    <span class="fw-semibold">
+                        <i class="bi bi-check2-square me-1"></i>Seleccionados: <span id="balanceSeleccionadosCount">0</span>
+                    </span>
+                    <span class="fw-semibold">
+                        Balance: <span id="balanceSumaSeleccionados">$0</span>
+                    </span>
+                </div>
+
+                <!-- Grilla de Presupuesto -->
+                <div class="table-responsive">
+                    <table class="table table-modern table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="width:40px;">
+                                    <input type="checkbox" class="form-check-input" id="balanceSelectAll" onchange="toggleSeleccionarTodos(this)" />
+                                </th>
+                                <th scope="col">Rubro</th>
+                                <th class="text-end" scope="col">Valor Inicial</th>
+                                <th class="text-end" scope="col">Valor Gastado</th>
+                                <th class="text-end" scope="col">Balance</th>
+                                <th scope="col">Mes</th>
+                                <th scope="col">Año</th>
+                            </tr>
+                        </thead>
+                        <tbody id="balancePresupuestoBody">
+                            <tr>
+                                <td colspan="7" class="text-center text-muted">Cargando...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-soft btn-pill"
+                        data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="submit"
+                        class="btn btn-primary btn-pill">
+                    <i class="bi bi-check-circle me-1"></i>
+                    Generar
+                </button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function abrirModalGenerarBalance() {
+        const modal = new bootstrap.Modal(document.getElementById('modalGenerarBalance'));
+        modal.show();
+        cargarPresupuestosBalance();
+    }
+
+    async function cargarPresupuestosBalance() {
+        const mes = document.getElementById('balanceMesFilter').value;
+        const anio = document.getElementById('balanceAnioFilter').value;
+        const tbody = document.getElementById('balancePresupuestoBody');
+        const selectAll = document.getElementById('balanceSelectAll');
+        selectAll.checked = false;
+
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">Cargando...</td></tr>';
+        actualizarSumaBalance();
+
+        try {
+            const params = new URLSearchParams();
+            if (mes) params.append('mes', mes);
+            if (anio) params.append('anio', anio);
+
+            const response = await fetch('@Url.Action("GetPresupuestos")?' + params.toString());
+            const data = await response.json();
+
+            if (data && !Array.isArray(data) && data.error) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger">${data.error}</td></tr>`;
+                return;
+            }
+
+            if (!Array.isArray(data) || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No hay presupuestos para el período seleccionado</td></tr>';
+                return;
+            }
+
+            const formatoMoneda = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 });
+            const nombresMeses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+            tbody.innerHTML = data.map(item => `
+                <tr>
+                    <td>
+                        <input type="checkbox" class="form-check-input balance-item-check" name="presupuestoIds" value="${item.id}" data-disponible="${item.disponible}" onchange="actualizarSumaBalance()" />
+                    </td>
+                    <td>${item.rubro ?? '-'}</td>
+                    <td class="text-end">${formatoMoneda.format(item.valorInicial)}</td>
+                    <td class="text-end">${formatoMoneda.format(item.valorGastado)}</td>
+                    <td class="text-end">${formatoMoneda.format(item.disponible)}</td>
+                    <td>${nombresMeses[item.mes - 1] ?? item.mes}</td>
+                    <td>${item.anio}</td>
+                </tr>
+            `).join('');
+
+            actualizarSumaBalance();
+        } catch (err) {
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center text-danger">Error al cargar los presupuestos</td></tr>';
+            actualizarSumaBalance();
+        }
+    }
+
+    function toggleSeleccionarTodos(checkbox) {
+        document.querySelectorAll('.balance-item-check').forEach(c => c.checked = checkbox.checked);
+        actualizarSumaBalance();
+    }
+
+    function actualizarSumaBalance() {
+        const formatoMoneda = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 });
+        const seleccionados = document.querySelectorAll('.balance-item-check:checked');
+
+        const suma = Array.from(seleccionados)
+            .reduce((acc, c) => acc + parseFloat(c.dataset.disponible || '0'), 0);
+
+        document.getElementById('balanceSeleccionadosCount').innerText = seleccionados.length;
+        document.getElementById('balanceSumaSeleccionados').innerText = formatoMoneda.format(suma);
+    }
+
+    function validarGenerarBalance() {
+        const seleccionados = document.querySelectorAll('.balance-item-check:checked');
+        if (seleccionados.length === 0) {
+            alert('Debe seleccionar al menos un presupuesto para generar el balance.');
+            return false;
+        }
+        return true;
+    }
+</script>
