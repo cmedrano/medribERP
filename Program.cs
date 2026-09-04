@@ -102,6 +102,7 @@ namespace PresupuestoMVC
             // Registro del servicios
             builder.Services.AddScoped<ILoginService, LoginService>();
             builder.Services.AddScoped<IBudgetService, BudgetService>();
+            builder.Services.AddScoped<IBalanceService, BalanceService>();
             builder.Services.AddScoped<IGastoService, GastoService>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
