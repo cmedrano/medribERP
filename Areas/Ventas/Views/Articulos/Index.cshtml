@@ -123,47 +123,74 @@
                                 <!-- Rubro -->
                                 <div class="col-md-4">
                                     <label for="SelectRubroId" class="form-label">Rubro</label>
-                                    <select id="SelectRubroId" name="ProductCategoryId"
-                                            class="form-select" required>
-                                        <option value="">Seleccionar rubro...</option>
-                                        @if (productCategories != null)
-                                        {
-                                            foreach (var productCategory in productCategories)
+                                    <div class="input-group">
+                                        <select id="SelectRubroId" name="ProductCategoryId"
+                                                class="form-select" required>
+                                            <option value="">Seleccionar rubro...</option>
+                                            @if (productCategories != null)
                                             {
-                                                <option value="@productCategory.Id">@productCategory.Name</option>
+                                                foreach (var productCategory in productCategories)
+                                                {
+                                                    <option value="@productCategory.Id">@productCategory.Name</option>
+                                                }
                                             }
-                                        }
-                                    </select>
+                                        </select>
+                                        <button type="button"
+                                                class="btn btn-outline-secondary"
+                                                title="Nuevo rubro"
+                                                id="btnNuevoRubroDesdeArticulo"
+                                                onclick="AbrirModalCrearRubro()">
+                                            <i class="bi bi-plus-lg"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <!-- Marca -->
                                 <div class="col-md-4">
                                     <label class="form-label">Marca</label>
-                                    <select id="BrendId" name="BrendId"
-                                            class="form-select" required>
-                                        <option value="">Seleccionar marca...</option>
-                                        @if (brands != null)
-                                        {
-                                            foreach (var brend in brands)
+                                    <div class="input-group">
+                                        <select id="BrendId" name="BrendId"
+                                                class="form-select" required>
+                                            <option value="">Seleccionar marca...</option>
+                                            @if (brands != null)
                                             {
-                                                <option value="@brend.Id">@brend.Name</option>
+                                                foreach (var brend in brands)
+                                                {
+                                                    <option value="@brend.Id">@brend.Name</option>
+                                                }
                                             }
-                                        }
-                                    </select>
+                                        </select>
+                                        <button type="button"
+                                                class="btn btn-outline-secondary"
+                                                title="Nueva marca"
+                                                id="btnNuevaMarcaDesdeArticulo"
+                                                onclick="AbrirModalCrearMarca()">
+                                            <i class="bi bi-plus-lg"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <!-- Proveedor -->
                                 <div class="col-md-4">
                                     <label class="form-label">Proveedor</label>
-                                    <select id="providerId" name="ProviderId"
-                                            class="form-select" required>
-                                        <option value="">Seleccionar proveedor...</option>
-                                        @if (providers != null)
-                                        {
-                                            foreach (var provider in providers)
+                                    <div class="input-group">
+                                        <select id="providerId" name="ProviderId"
+                                                class="form-select" required>
+                                            <option value="">Seleccionar proveedor...</option>
+                                            @if (providers != null)
                                             {
-                                                <option value="@provider.Id">@provider.Company</option>
+                                                foreach (var provider in providers)
+                                                {
+                                                    <option value="@provider.Id">@provider.Company</option>
+                                                }
                                             }
-                                        }
-                                    </select>
+                                        </select>
+                                        <button type="button"
+                                                class="btn btn-outline-secondary"
+                                                title="Nuevo proveedor"
+                                                id="btnNuevoProveedorDesdeArticulo"
+                                                onclick="AbrirModalCrearProveedor()">
+                                            <i class="bi bi-plus-lg"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <!-- Precio de compra -->
                                 <div class="col-md-4">
@@ -217,6 +244,223 @@
                     <button type="button" class="btn btn-soft btn-pill" data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-primary btn-pill" id="btnSubmitForm"></button>
                 </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Creación de Rubro (desde Articulos) -->
+<div class="modal fade" id="modalCrearRubro" tabindex="-1">
+    <div class="modal-dialog erp-modal">
+        <div class="modal-content border-0 shadow-lg">
+
+            <!-- Header -->
+            <div class="erp-modal-header">
+                <h5 class="erp-modal-title" id="modalRubroTitle">
+                    <i class="bi bi-box"></i> Nuevo Rubro
+                </h5>
+                <button class="erp-modal-close"
+                        type="button"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <form id="formCrearRubro" action="@Url.Action("CreateProductCategory", "ProductCategory", new { area = "Ventas" })" method="post">
+
+                <div class="modal-body d-flex gap-2 p-4">
+                    <div class="w-100">
+                        <div>
+                            <!-- Nombre -->
+                            <div class="mb-3">
+                                <label for="crearNombre" class="form-label">NOMBRE</label>
+                                <input type="text"
+                                       name="Nombre"
+                                       id="crearNombre"
+                                       class="form-control"
+                                       placeholder="Indumentaria" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-soft btn-pill"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                            class="btn btn-primary btn-pill">
+                        <i class="bi bi-check-circle me-1"></i>
+                        Crear rubro
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Creación de Marca (desde Articulos) -->
+<div class="modal fade" id="modalCrearMarca" tabindex="-1">
+    <div class="modal-dialog erp-modal">
+        <div class="modal-content border-0 shadow-lg">
+
+            <!-- Header -->
+            <div class="erp-modal-header">
+                <h5 class="erp-modal-title" id="modalMarcaTitle">
+                    <i class="bi bi-box"></i> Nueva Marca
+                </h5>
+                <button class="erp-modal-close"
+                        type="button"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <form id="formCrearMarca">
+
+                <div class="modal-body d-flex gap-2 p-4">
+                    <div class="w-100">
+                        <div>
+                            <!-- Codigo -->
+                            <div class="mb-3">
+                                <label class="form-label">CODIGO</label>
+                                <input type="text"
+                                       id="crearMarcaCodigo"
+                                       class="form-control"
+                                       placeholder="Ej. PUM-123" />
+                            </div>
+                            <!-- Nombre -->
+                            <div class="mb-3">
+                                <label class="form-label">NOMBRE</label>
+                                <input type="text"
+                                       id="crearMarcaNombre"
+                                       class="form-control"
+                                       placeholder="Ej. Puma" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-soft btn-pill"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                            class="btn btn-primary btn-pill">
+                        <i class="bi bi-check-circle me-1"></i>
+                        Crear marca
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Creación de Proveedor (desde Articulos) -->
+<div class="modal fade" id="modalCrearProveedor" tabindex="-1">
+    <div class="modal-dialog erp-modal">
+        <div class="modal-content border-0 shadow-lg">
+
+            <!-- Header -->
+            <div class="erp-modal-header">
+                <h5 class="erp-modal-title" id="modalProveedorTitle">
+                    <i class="bi bi-box"></i> Nuevo Proveedor
+                </h5>
+                <button class="erp-modal-close"
+                        type="button"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <form id="formCrearProveedor" action="@Url.Action("CreateSupplier", "Suppliers", new { area = "Ventas" })" method="post">
+
+                <div class="modal-body d-flex gap-2 p-4">
+                    <div class="w-100 d-flex">
+                        <div>
+                            <!-- Codigo -->
+                            <div class="mb-3">
+                                <label class="form-label">CODIGO</label>
+                                <input type="text"
+                                       name="Codigo"
+                                       id="crearProveedorCode"
+                                       class="form-control"
+                                       placeholder="ABC123" />
+                            </div>
+                            <!-- Empresa -->
+                            <div class="mb-3">
+                                <label class="form-label">EMPRESA</label>
+                                <input type="text"
+                                       name="Empresa"
+                                       id="crearProveedorEmpresa"
+                                       class="form-control"
+                                       placeholder="Microsoft"
+                                       required />
+                            </div>
+                            <!-- Telefono -->
+                            <div class="mb-3">
+                                <label class="form-label">TELEFONO</label>
+                                <input type="number"
+                                       name="Telefono"
+                                       id="crearProveedorTelefono"
+                                       class="form-control"
+                                       placeholder="1122334455" />
+                            </div>
+                        </div>
+                        <div>
+                            <!-- Direccion -->
+                            <div class="mb-3">
+                                <label class="form-label">DIRECCION</label>
+                                <input type="text"
+                                       name="Direccion"
+                                       id="crearProveedorDireccion"
+                                       class="form-control"
+                                       placeholder="Rivadavia 123" />
+                            </div>
+                            <!-- Mail -->
+                            <div class="mb-3">
+                                <label class="form-label">MAIL</label>
+                                <input type="text"
+                                       name="Mail"
+                                       id="crearProveedorMail"
+                                       class="form-control"
+                                       placeholder="email@gmail.com" />
+                            </div>
+                            <!-- Responsable -->
+                            <div class="mb-3">
+                                <label class="form-label">RESPONSABLE</label>
+                                <input type="text"
+                                       name="Responsable"
+                                       id="crearProveedorResponsable"
+                                       class="form-control"
+                                       placeholder="Luis" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-soft btn-pill"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                            class="btn btn-primary btn-pill">
+                        <i class="bi bi-check-circle me-1"></i>
+                        Crear proveedor
+                    </button>
+                </div>
+
             </form>
         </div>
     </div>
@@ -468,6 +712,137 @@
     function abrirModalLista(){
        $('#subModal').modal('show');
     }
+
+    // --- MODAL CREACIÓN DE RUBRO (desde Articulos) --- //
+    function AbrirModalCrearRubro() {
+        document.getElementById('crearNombre').value = "";
+
+        const modal = new bootstrap.Modal(document.getElementById('modalCrearRubro'));
+        modal.show();
+    }
+
+    document.getElementById('formCrearRubro').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                const select = document.getElementById('SelectRubroId');
+                const option = document.createElement('option');
+                option.value = data.id;
+                option.text = data.nombre;
+                select.appendChild(option);
+                select.value = data.id;
+
+                bootstrap.Modal.getInstance(document.getElementById('modalCrearRubro')).hide();
+            } else {
+                alert(data.error || 'No se pudo crear el rubro.');
+            }
+        } catch (err) {
+            alert('Ocurrió un error al crear el rubro.');
+        }
+    });
+
+    // --- MODAL CREACIÓN DE MARCA (desde Articulos) --- //
+    function AbrirModalCrearMarca() {
+        document.getElementById('crearMarcaCodigo').value = "";
+        document.getElementById('crearMarcaNombre').value = "";
+
+        const modal = new bootstrap.Modal(document.getElementById('modalCrearMarca'));
+        modal.show();
+    }
+
+    document.getElementById('formCrearMarca').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const codigo = document.getElementById('crearMarcaCodigo').value.trim();
+        const nombre = document.getElementById('crearMarcaNombre').value.trim();
+
+        if (codigo === "" || nombre === "") {
+            alert("Complete todos los campos.");
+            return;
+        }
+
+        try {
+            const response = await fetch('@Url.Action("Crear", "Marca", new { area = "Ventas" })', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ codigo: codigo, nombre: nombre })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const select = document.getElementById('BrendId');
+                const option = document.createElement('option');
+                option.value = data.id;
+                option.text = data.nombre;
+                select.appendChild(option);
+                select.value = data.id;
+
+                bootstrap.Modal.getInstance(document.getElementById('modalCrearMarca')).hide();
+            } else {
+                const error = await response.text();
+                alert(error || 'No se pudo crear la marca.');
+            }
+        } catch (err) {
+            alert('Ocurrió un error al crear la marca.');
+        }
+    });
+
+    // --- MODAL CREACIÓN DE PROVEEDOR (desde Articulos) --- //
+    function AbrirModalCrearProveedor() {
+        document.getElementById('crearProveedorCode').value = "";
+        document.getElementById('crearProveedorEmpresa').value = "";
+        document.getElementById('crearProveedorTelefono').value = "";
+        document.getElementById('crearProveedorDireccion').value = "";
+        document.getElementById('crearProveedorMail').value = "";
+        document.getElementById('crearProveedorResponsable').value = "";
+
+        const modal = new bootstrap.Modal(document.getElementById('modalCrearProveedor'));
+        modal.show();
+    }
+
+    document.getElementById('formCrearProveedor').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                const select = document.getElementById('providerId');
+                const option = document.createElement('option');
+                option.value = data.id;
+                option.text = data.nombre;
+                select.appendChild(option);
+                select.value = data.id;
+
+                bootstrap.Modal.getInstance(document.getElementById('modalCrearProveedor')).hide();
+            } else {
+                alert(data.error || 'No se pudo crear el proveedor.');
+            }
+        } catch (err) {
+            alert('Ocurrió un error al crear el proveedor.');
+        }
+    });
 
     function savedSubModal() {
     

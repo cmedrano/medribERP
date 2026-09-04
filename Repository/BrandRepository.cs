@@ -78,7 +78,7 @@ namespace PresupuestoMVC.Repository
             }
         }
 
-        public async Task CreateBrandAsync(BrandRequestDto brand)
+        public async Task<Brand> CreateBrandAsync(BrandRequestDto brand)
         {
             try
             {
@@ -96,6 +96,8 @@ namespace PresupuestoMVC.Repository
 
                 await _context.Brand.AddAsync(newBrand);
                 await _context.SaveChangesAsync();
+
+                return newBrand;
 
             }
             catch (Exception ex)

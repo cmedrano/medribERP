@@ -1,6 +1,7 @@
 ﻿using PresupuestoMVC.Areas.Ventas.ViewModels.DTOs;
 using PresupuestoMVC.Models;
 using PresupuestoMVC.Models.DTOs;
+using PresupuestoMVC.Models.Entities;
 using PresupuestoMVC.Repository.Interfaces;
 using PresupuestoMVC.Services.Interfaces;
 
@@ -24,9 +25,9 @@ namespace PresupuestoMVC.Services
             return await _brandRepository.GetAllBrandPageAsync(searchBrands, pagina, tamañoPagina, companyId);
         }
 
-        public async Task CreateBrandAsync(BrandRequestDto brand)
+        public async Task<Brand> CreateBrandAsync(BrandRequestDto brand)
         {
-            await _brandRepository.CreateBrandAsync(brand);
+            return await _brandRepository.CreateBrandAsync(brand);
         }
 
         public async Task DeleteBrandAsync(int id)
