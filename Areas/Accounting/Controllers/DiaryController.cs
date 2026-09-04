@@ -72,10 +72,20 @@ namespace PresupuestoMVC.Areas.Accounting.Controllers
                 ViewBag.GastoTotalSemana = gastoPorSemana;
                 ViewBag.TotalGsstosporMes = totalGsstosporMes;
 
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return PartialView("_TablaGastosPartial");
+                }
+
                 return View();
             }
             catch (Exception ex)
             {
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return StatusCode(500, "Error al cargar los datos: " + ex.Message);
+                }
+
                 // Manejar error y redirigir a página de error
                 TempData["Error"] = "Error al cargar los datos: " + ex.Message;
                 return RedirectToAction("Error", "Home");

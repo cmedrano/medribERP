@@ -48,9 +48,9 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
                 int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
                 request.CompanyId = companyId;
 
-                await _service.CreateBrandAsync(request);
+                var res = await _service.CreateBrandAsync(request);
 
-                return Ok();
+                return Ok(new { id = res.Id, nombre = res.Name, codigo = res.Code });
             }
             catch (Exception ex)
             {
