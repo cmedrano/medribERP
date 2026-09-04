@@ -34,10 +34,21 @@ namespace PresupuestoMVC.Areas.Ventas.Controllers
                 int companyId = int.Parse(User.FindFirst("CompanyId")?.Value);
                 ProductCategoryDto.CompanyId = companyId;
                 var res = await _productCategoryService.CreateProductCategoryAsync(ProductCategoryDto);
+
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = true, id = res.Id, nombre = res.Name });
+                }
+
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = false, error = ex.Message });
+                }
+
                 TempData["Error"] = "Error: " + ex.Message;
                 return RedirectToAction("Index");
 
